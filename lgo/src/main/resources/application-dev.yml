@@ -1,0 +1,22 @@
+server:
+  port: 8081
+
+spring:
+  datasource:
+    username: root
+    password: manh2001
+    url: jdbc:mysql://localhost:3306/server_test?serverTimezone=UTC
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+lgo:
+  app:
+    jwtSecret: lgohust
+    jwtExpirationMs: 86400000
