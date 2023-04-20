@@ -1,3 +1,12 @@
+import jwt_decode from "jwt-decode";
+
+const token = localStorage.getItem("token");
+
+let decoded = null;
+if (token) {
+  decoded = jwt_decode(token);
+}
+
 const paserly = (parsely, value) => {
   let validate = true;
   switch (parsely.name) {
@@ -31,6 +40,7 @@ const paserly = (parsely, value) => {
         if (value.length < Number(parsely.required)) {
           validate = false;
         }
+        console.log(value.length, parsely.required);
       }
       validatemL();
       break;
@@ -40,9 +50,7 @@ const paserly = (parsely, value) => {
           validate = false;
         }
       }
-      if (parsely.required == false) {
-        validateTrim();
-      }
+      validateTrim();
       break;
     case "phone":
       function validatePhone() {
@@ -73,4 +81,31 @@ function handleValidate(arrValue, listConfig) {
   return result;
 }
 
-export { paserly, handleValidate };
+// drap
+function dragstart_handler(e) {
+  // Add different types of drag data
+  console.log(e.target.tagName);
+  e.dataTransfer.dropEffect = "copy";
+  e.dataTransfer.setData("text/html", e.target.outerHTML);
+  e.dataTransfer.setData("id", e.target.id);
+  e.dataTransfer.setData("tagName", e.target.tagName);
+}
+function dragover_handler(e) {
+  e.preventDefault();
+  e.dataTransfer.dropEffect = "move";
+}
+function drop_handler(e, boxDrag) {
+  e.preventDefault();
+  console.log("X: " + e.clientX + " | Y: " + e.clientY);
+  const html = e.dataTransfer.getData("text/html");
+  boxDrag.current.innerHTML = boxDrag.current.innerHTML + html;
+}
+
+export {
+  paserly,
+  handleValidate,
+  dragover_handler,
+  dragstart_handler,
+  drop_handler,
+  decoded,
+};

@@ -3,9 +3,10 @@ export default function http() {
   const token = localStorage.getItem("token")
     ? localStorage.getItem("token")
     : null;
+  let auth = "Authorization";
   const headers = {
     "Content-Type": "application/json",
-    Authorization: token,
+    [auth]: `Bearer ${token}`,
   };
 
   var service = {

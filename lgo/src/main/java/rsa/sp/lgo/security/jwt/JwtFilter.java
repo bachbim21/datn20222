@@ -4,13 +4,14 @@ import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
-import org.springframework.web.filter.OncePerRequestFilter;
 import rsa.sp.lgo.core.Constants;
 import rsa.sp.lgo.exceptions.BadRequestAlertException;
 import rsa.sp.lgo.model.User;
@@ -22,17 +23,21 @@ import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+@Component
 public class JwtFilter extends GenericFilterBean {
     private static Logger logger = LoggerFactory.getLogger(JwtFilter.class);
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    public void setUserRepository(UserRepository userRepository) {
+        this.userRepository = userRepository;
+    }
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
@@ -41,13 +46,11 @@ public class JwtFilter extends GenericFilterBean {
         if(authorization != null && authorization.startsWith(Constants.AUTH_TOKEN_PREFIX)) {
             String token = authorization.substring(Constants.AUTH_TOKEN_PREFIX.length());
 
-
             User user = userRepository.findFirstByJwtToken(token);
             if(user == null || user.getActive()== null || !user.getActive()){
                 throw new BadRequestAlertException("Invalid JWT signature.", "auth", "Invalid JWT signature.");
 
             }
-
             if(validateToken(token)) {
                 Authentication authentication = getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -96,30 +99,6 @@ public class JwtFilter extends GenericFilterBean {
         }
         return false;
     }
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
-//            throws ServletException, IOException {
-//        try {
-//            String jwt = parseJwt(request);
-//            if (jwt != null && tokenProvider.validateToken(jwt)) {
-//                String email = tokenProvider.getEmailFromJwt(jwt);
-//
-//                UserDetails userDetails = userService.loadUserByUsername(email);
-//                UsernamePasswordAuthenticationToken authentication =
-//                        new UsernamePasswordAuthenticationToken(
-//                                userDetails,
-//                                null,
-//                                userDetails.getAuthorities());
-//                authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
-//
-//                SecurityContextHolder.getContext().setAuthentication(authentication);
-//            }
-//        } catch (Exception e) {
-//            logger.error("Cannot set user authentication: {}", e);
-//        }
-//
-//        filterChain.doFilter(request, response);
-//    }
 
 
 }

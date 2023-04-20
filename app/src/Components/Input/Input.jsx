@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from "react";
-import { paserly } from "../../app.validate";
+import { paserly } from "../../app.function";
 import "./Input.css";
 export default function Input({
   id,
@@ -8,6 +8,7 @@ export default function Input({
   isSubmit,
   deps,
   placeholder,
+  setState,
 }) {
   const [error, setError] = useState(null);
   const e = useRef(null);
@@ -35,12 +36,15 @@ export default function Input({
         setError(null);
       }
     }
+
     // check dependency from either input
-    if (deps && deps.value.length > 0) {
+    if (deps) {
       for (var i = 0; i < deps.value.length; i++) {
-        if (deps.value[i] != e.current.value && index > 1) {
+        if (String(deps.value[i]) == String(e.current.value) && index > 1) {
           setError(deps.message[i]);
           break;
+        } else {
+          setError(null);
         }
       }
     }
@@ -49,11 +53,17 @@ export default function Input({
     <div>
       <input
         ref={e}
+        name={id}
         id={id}
         type={type}
         placeholder={placeholder ? placeholder : null}
         className="block w-full px-4 py-2 mt-2 text-gray-800 bg-white border rounded-md border-indigo-900 ring-neutral-400 focus:outline-none focus:ring focus:ring-opacity-40"
         data-check={dataCheck}
+        onChange={(e) => {
+          if (id == "password") {
+            setState(e.target.value);
+          }
+        }}
       />
       <span className="block h-4 text-red-700 text-base">{error}</span>
     </div>

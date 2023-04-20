@@ -3,8 +3,10 @@ package rsa.sp.lgo.core;
 import org.springframework.beans.factory.annotation.Value;
 
 public class Constants  {
-    public final static String ROLE_USER = "USER";
-    public final static String ROLE_ADMIN = "ADMIN";
+    public final static String ROLE_USER = "ROLE_USER";
+    public final static String ROLE_ADMIN = "ROLE_ADMIN";
+    public final static String ADMIN = "ADMIN";
+    public static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
     public static final String SPRING_PROFILE_DEVELOPMENT = "dev";
     public static final String SPRING_PROFILE_PRODUCTION = "prod";
     public static final String SYSTEM_ACCOUNT = "system";

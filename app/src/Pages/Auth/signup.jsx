@@ -1,14 +1,15 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, useNavigate } from "react-router-dom";
 import { message } from "../../app.constants";
 import Input from "../../Components/Input/Input";
 import { useState } from "react";
+import { handleValidate } from "../../app.function";
+import AuthService from "../../Service/auth.service";
 export default function Signup() {
   const [isSubmit, setIsSubmit] = useState(false);
-  const [name, setName] = useState();
-  const [email, setEmail] = useState();
-  const [password, setPassword] = useState();
-  const [birthDay, setBirthDay] = useState();
-  const listInput = [
+  const [isLoading, setIsloading] = useState(false);
+  const [password, SetPassword] = useState();
+  const navigate = useNavigate();
+  const configInput = [
     {
       label: "Tên",
       id: "name",
@@ -17,8 +18,8 @@ export default function Signup() {
       dataCheck: [
         {
           name: "minLength",
-          required: 8,
-          message: message.log_minLength8,
+          required: 6,
+          message: message.log_minLength6,
         },
         {
           name: "maxLength",
@@ -26,7 +27,6 @@ export default function Signup() {
           message: message.log_maxLength50,
         },
       ],
-      setState: setName,
     },
     {
       label: "Email",
@@ -54,13 +54,7 @@ export default function Signup() {
           required: false,
           message: message.log_not_whitespace,
         },
-        {
-          name: "pattern",
-          required: "^[a-zA-Z0-9_-]{8,}$",
-          message: message.log_password,
-        },
       ],
-      setState: setEmail,
     },
     {
       label: "Mật khẩu",
@@ -74,16 +68,16 @@ export default function Signup() {
         },
         {
           name: "minLength",
-          required: 8,
-          message: message.log_minLength8,
+          required: 6,
+          message: message.log_minLength6,
         },
         {
           name: "pattern",
-          required: "^[a-zA-Z0-9_-]{8,}$",
+          required: "^[a-zA-Z0-9_-]{6,}$",
           message: message.log_password,
         },
       ],
-      setState: setPassword,
+      setState: SetPassword,
     },
     {
       label: "Xác nhận mật khẩu",
@@ -97,16 +91,15 @@ export default function Signup() {
         },
         {
           name: "pattern",
-          required: "[^s@]+@[^s@]+.[^s@]+$",
+          required: "^[a-zA-Z0-9_-]{6,}$",
           message: message.log_password,
         },
         {
           name: "minLength",
-          required: 8,
-          message: message.log_minLength8,
+          required: 6,
+          message: message.log_minLength6,
         },
       ],
-      setState: null,
       deps: {
         value: [password],
         message: [message.log_not_match_password],
@@ -131,8 +124,28 @@ export default function Signup() {
   const handleSignup = (e) => {
     e.preventDefault();
     setIsSubmit(!isSubmit);
-    let user = { name, email, password, birthDay };
-    console.log(user);
+    // check match required
+    var status = handleValidate(e.target, configInput);
+    console.log(status);
+    if (status) {
+      setIsloading(true);
+      try {
+        AuthService()
+          .signup({
+            name: e.target["name"].value,
+            email: e.target["email"].value,
+            password: e.target["password"].value,
+            birthDay: e.target["date"].value,
+          })
+          .then((response) => {
+            console.log(response);
+            setIsloading(false);
+            // navigate("/", { replace: true });
+          });
+      } catch {
+        console.error(message.wrong_email);
+      }
+    }
   };
   return (
     <div className="m-4 sm:mx-10 relative bg-default flex flex-col justify-center min-h-screen">
@@ -143,7 +156,7 @@ export default function Signup() {
         <form
           className="mt-6 grid sm:grid-cols-2 gap-x-5"
           onSubmit={handleSignup}>
-          {listInput.map((e) => {
+          {configInput.map((e) => {
             return (
               <div key={e.id} className="mb-2">
                 <label

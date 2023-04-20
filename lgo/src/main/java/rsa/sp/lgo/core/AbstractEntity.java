@@ -12,14 +12,6 @@ public class AbstractEntity implements Serializable {
     private Long  created;
     private  Long  updated;
     private Boolean active;
-    @Transient
-    private static String PRIV_CREATE;
-    @Transient
-    private static String PRIV_VIEW;
-    @Transient
-    private static String PRIV_UPDATE;
-    @Transient
-    private static String PRIV_DELETE;
 
     public Boolean getActive() {
         return active;
@@ -61,35 +53,5 @@ public class AbstractEntity implements Serializable {
         this.updated = updated;
     }
 
-    public static String getPrivCreate() {
-        return PRIV_CREATE;
-    }
 
-    public static void setPrivCreate(String privCreate) {
-        PRIV_CREATE = privCreate;
-    }
-
-    public static String getPrivView() {
-        return PRIV_VIEW;
-    }
-
-    public static void setPrivView(String privView) {
-        PRIV_VIEW = privView;
-    }
-
-    public static String getPrivUpdate() {
-        return PRIV_UPDATE;
-    }
-
-    public static void setPrivUpdate(String privUpdate) {
-        PRIV_UPDATE = privUpdate;
-    }
-
-    public static String getPrivDelete() {
-        return PRIV_DELETE;
-    }
-
-    public static void setPrivDelete(String privDelete) {
-        PRIV_DELETE = privDelete;
-    }
 }

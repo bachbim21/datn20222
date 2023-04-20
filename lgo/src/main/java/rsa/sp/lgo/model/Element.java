@@ -3,6 +3,8 @@ package rsa.sp.lgo.model;
 import rsa.sp.lgo.core.IdEntity;
 
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
@@ -11,9 +13,14 @@ public class Element extends IdEntity {
     private String tag;
     private String text;
     private String classes;
-    private String tagId;
+    private String configId;
     private String style;
     private String type;
+    private String  code;
+    private Boolean def;
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    private User user;
 
     public String getTag() {
         return tag;
@@ -39,12 +46,12 @@ public class Element extends IdEntity {
         this.classes = classes;
     }
 
-    public String getTagId() {
-        return tagId;
+    public String getConfigId() {
+        return configId;
     }
 
-    public void setTagId(String tagId) {
-        this.tagId = tagId;
+    public void setConfigId(String configId) {
+        this.configId = configId;
     }
 
     public String getStyle() {
@@ -61,5 +68,29 @@ public class Element extends IdEntity {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getCode() {
+        return code;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
+    }
+
+    public Boolean getDef() {
+        return def;
+    }
+
+    public void setDef(Boolean def) {
+        this.def = def;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
     }
 }

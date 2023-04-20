@@ -1,42 +1,35 @@
 package rsa.sp.lgo.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import rsa.sp.lgo.core.IdEntity;
 
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
+import javax.persistence.*;
 
 @Entity
 @Table(name = "nodes")
 public class Node extends IdEntity {
-    private Boolean isRoot;
-    private Boolean isFolder;
+    private Boolean parentId;
+    private Boolean folder;
     private String name;
     private String code;
     private Integer level;
-    private Integer numberChild;
+    private Integer typeFile;
 
     @ManyToOne
-    @JoinColumn(name = "user_id")
+    @JoinColumn(name = "user_id",referencedColumnName = "id")
     private User user;
 
-    public Boolean getRoot() {
-        return isRoot;
-    }
+    @OneToOne
+    @JoinColumn(name="tech_id")
+    private Tech tech;
 
-    public void setRoot(Boolean root) {
-        isRoot = root;
-    }
 
     public Boolean getFolder() {
-        return isFolder;
+        return folder;
     }
 
-
-
     public void setFolder(Boolean folder) {
-        isFolder = folder;
+        this.folder = folder;
     }
 
     public String getName() {
@@ -63,11 +56,35 @@ public class Node extends IdEntity {
         this.level = level;
     }
 
-    public Integer getNumberChild() {
-        return numberChild;
+    public Boolean getParentId() {
+        return parentId;
     }
 
-    public void setNumberChild(Integer numberChild) {
-        this.numberChild = numberChild;
+    public void setParentId(Boolean parentId) {
+        this.parentId = parentId;
+    }
+
+    public Integer getTypeFile() {
+        return typeFile;
+    }
+
+    public void setTypeFile(Integer typeFile) {
+        this.typeFile = typeFile;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public Tech getTech() {
+        return tech;
+    }
+
+    public void setTech(Tech tech) {
+        this.tech = tech;
     }
 }

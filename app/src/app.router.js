@@ -3,6 +3,7 @@ import { createBrowserRouter, redirect } from "react-router-dom";
 import Home from "./Pages/HomePage";
 import Login from "./Pages/Auth/login";
 import Signup from "./Pages/Auth/signup";
+import Project from "./Pages/Project";
 import DefaultLayout from "./Components/Layout/DefaultLayout";
 
 const token = localStorage.getItem("token");
@@ -18,7 +19,18 @@ const router = createBrowserRouter([
       {
         path: "",
         element: <Home />,
-        // loader: teamLoader,
+        loader: () => {
+          if (!token) return redirect("/login");
+          return null;
+        },
+      },
+      {
+        path: "project/:id",
+        element: <Project />,
+        loader: () => {
+          if (!token) return redirect("/login");
+          return null;
+        },
       },
     ],
   },

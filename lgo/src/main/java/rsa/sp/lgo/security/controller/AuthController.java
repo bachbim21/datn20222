@@ -48,7 +48,7 @@ public class AuthController {
         return new ResponseEntity<JWTToken>(jwtToken, httpHeaders, HttpStatus.OK);
     }
 
-    @PostMapping("/signup")
+    @RequestMapping(path = "/signup", method = RequestMethod.POST)
     public ResponseEntity<?> registerUser(@Valid @RequestBody SignupRequest signUpRequest) {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
@@ -72,7 +72,7 @@ public class AuthController {
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
-                    case "ADMIN":
+                    case "ROLE_ADMIN":
                         Role adminRole = roleRepository.findByName(Constants.ROLE_ADMIN)
                                 .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
                         roles.add(adminRole);

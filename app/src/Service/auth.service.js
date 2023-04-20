@@ -1,9 +1,9 @@
-import http from "../../app.service";
+import http from "../app.service";
 
 export default function AuthService() {
   var service = {
     login: login,
-    // create: create,
+    signup: signup,
     // update: update,
     // deleteOne: deleteOne,
   };
@@ -18,7 +18,14 @@ export default function AuthService() {
         return response;
       });
   }
-
+  function signup(data) {
+    console.log(data);
+    return http()
+      .post("/auth/signup", data)
+      .then(function (response) {
+        return response;
+      });
+  }
   // async getUserInfo() {
   //   const response = await this.get("/user");
 

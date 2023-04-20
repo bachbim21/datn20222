@@ -4,13 +4,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rsa.sp.lgo.core.CrudService;
 import rsa.sp.lgo.exceptions.BadRequestAlertException;
 import rsa.sp.lgo.exceptions.InvalidCredentialsException;
 import rsa.sp.lgo.model.User;
 import rsa.sp.lgo.repository.UserRepository;
 
 @Service
-public class UserService {
+public class UserService extends CrudService<User, Long> {
     private static Logger logger = LoggerFactory.getLogger(UserService.class);
     @Autowired
     private UserRepository userRepository;
