@@ -1,7 +1,7 @@
 package rsa.sp.lgo.repository;
 
 import org.springframework.stereotype.Repository;
-import rsa.sp.lgo.model.User;
+import rsa.sp.lgo.models.User;
 import rsa.sp.lgo.core.CustomJpaRepository;
 
 

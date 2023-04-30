@@ -3,7 +3,7 @@ package rsa.sp.lgo.service;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rsa.sp.lgo.core.CrudService;
-import rsa.sp.lgo.model.Element;
+import rsa.sp.lgo.models.Element;
 import rsa.sp.lgo.repository.ElementRepository;
 
 

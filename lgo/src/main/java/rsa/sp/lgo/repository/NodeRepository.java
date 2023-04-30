@@ -3,7 +3,7 @@ package rsa.sp.lgo.repository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import rsa.sp.lgo.core.CustomJpaRepository;
-import rsa.sp.lgo.model.Node;
+import rsa.sp.lgo.models.Node;
 
 import java.util.List;
 

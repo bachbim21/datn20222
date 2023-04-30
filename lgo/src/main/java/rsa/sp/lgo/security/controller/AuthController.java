@@ -12,13 +12,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 //import rsa.sp.lgo.security.jwt.JwtTokenProvider;
 import rsa.sp.lgo.core.Constants;
-import rsa.sp.lgo.model.Role;
-import rsa.sp.lgo.model.User;
+import rsa.sp.lgo.core.SecurityUtils;
+import rsa.sp.lgo.core.error.EmailAlreadyExitsException;
+import rsa.sp.lgo.core.error.RoleNotFoundException;
+import rsa.sp.lgo.models.Role;
+import rsa.sp.lgo.models.User;
 import rsa.sp.lgo.repository.RoleRepository;
 import rsa.sp.lgo.repository.UserRepository;
-import rsa.sp.lgo.security.entity.LoginRequest;
-import rsa.sp.lgo.security.entity.SignupRequest;
-import rsa.sp.lgo.security.entity.MessageResponse;
+import rsa.sp.lgo.security.model.LoginRequest;
+import rsa.sp.lgo.security.model.SignupRequest;
+import rsa.sp.lgo.security.model.MessageResponse;
 import rsa.sp.lgo.security.service.AuthService;
 
 import javax.validation.Valid;
@@ -26,9 +29,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @RestController
-@CrossOrigin(origins = "http://localhost:3000")
 @RequestMapping("/api/auth")
-public class AuthController {
+public class AuthController  {
     private static final Logger logger = LoggerFactory.getLogger(AuthController.class);
     @Autowired
     private AuthService authService;
@@ -36,12 +38,10 @@ public class AuthController {
     private UserRepository userRepository;
     @Autowired
     private RoleRepository roleRepository;
-    @Autowired
-    PasswordEncoder encoder;
 
     @RequestMapping(path = "/login", method = RequestMethod.POST)
     public ResponseEntity<JWTToken> token(@RequestBody LoginRequest login) {
-        String token = this.authService.token(login.getEmail(), login.getPassword(), login.getRememberMe());
+        String token = this.authService.token(login.getEmail(), login.getPassword(), login.getRemember());
         HttpHeaders httpHeaders = new HttpHeaders();
         httpHeaders.add(Constants.AUTH_HEADER_STRING, "Bearer " + token);
         JWTToken jwtToken = new JWTToken(token);
@@ -53,12 +53,12 @@ public class AuthController {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
             return ResponseEntity
                     .badRequest()
-                    .body(new MessageResponse("Error: Email is already exits!"));
+                    .body(new EmailAlreadyExitsException());
         }
 
         // Create new user's account
         User user = new User(signUpRequest.getName(), signUpRequest.getEmail(), signUpRequest.getBirthDay(), signUpRequest.getAvatar(),
-                encoder.encode(signUpRequest.getPassword()));
+                signUpRequest.getPassword());
 
         Set<String> strRoles = signUpRequest.getRoles();
         Set<Role> roles = new HashSet<>();
@@ -67,34 +67,42 @@ public class AuthController {
 
         if (strRoles == null) {
             Role userRole = roleRepository.findByName(Constants.ROLE_USER)
-                    .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    .orElseThrow(() -> new RoleNotFoundException());
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
-                    case "ROLE_ADMIN":
+                    case Constants.ROLE_ADMIN:
                         Role adminRole = roleRepository.findByName(Constants.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                                .orElseThrow(() -> new RoleNotFoundException());
                         roles.add(adminRole);
-
                         break;
                     default:
-                        Role userRole = roleRepository.findByName(Constants.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
+                        new  RoleNotFoundException();
                 }
             });
         }
 
         user.setRole(roles);
+        beforeCreate(user);
         userRepository.save(user);
 
         return ResponseEntity.ok(new MessageResponse("User registered successfully!"));
     }
+    private void beforeCreate(User user) {
+        user.setCreated(System.currentTimeMillis());
+        user.setUpdated(System.currentTimeMillis());
 
-    /**
-     * Object to return as body in JWT Authentication.
-     */
+        if(user.getCreatedBy() == null) {
+            String currentUsername = SecurityUtils.getCurrentUserLogin();
+            user.setCreatedBy(currentUsername);
+            user.setUpdatedBy(currentUsername);
+        }
+        if(user.getActive() == null) {
+            user.setActive(true);
+        }
+    }
+
     static class JWTToken {
 
         private String token;

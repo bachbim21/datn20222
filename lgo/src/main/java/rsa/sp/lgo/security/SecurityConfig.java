@@ -31,32 +31,22 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-    @Bean
-    public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
-    }
-
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http
+        http.cors().and().csrf().disable()
                 .addFilterBefore(jwtFilter,UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
-                .exceptionHandling()
-                .and()
-                .csrf()
-                .disable()
-                .headers()
-                .frameOptions()
-                .disable()
-                .and()
-                .sessionManagement()
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .and()
+                .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and()
                 .authorizeRequests()
+                .antMatchers(HttpMethod.OPTIONS).permitAll()
                 .antMatchers("/api/auth/**").permitAll()
-                .antMatchers("/api/users/forgot-password/init").permitAll()
-                .antMatchers("/api/users/forgot-password/finish").permitAll()
-                .antMatchers("/api/users/active-new-user").permitAll()
-                .antMatchers("/api/admin/**").hasAuthority(Constants.ROLE_ADMIN);
+                .antMatchers(HttpMethod.POST,"/api/user").permitAll()
+                .antMatchers(HttpMethod.GET,"/api/element").permitAll()
+                .antMatchers("/api/user/forgot-password/init").permitAll()
+                .antMatchers("/api/user/forgot-password/finish").permitAll()
+                .antMatchers("/api/user/active-new-user").permitAll()
+                .antMatchers("/api/admin/**").hasAuthority(Constants.ROLE_ADMIN)
+                .anyRequest().permitAll();
+
     }
 }

@@ -3,10 +3,9 @@ export default function http() {
   const token = localStorage.getItem("token")
     ? localStorage.getItem("token")
     : null;
-  let auth = "Authorization";
   const headers = {
     "Content-Type": "application/json",
-    [auth]: `Bearer ${token}`,
+    Authorization: token ? "Bearer " + token : null,
   };
 
   var service = {
@@ -38,7 +37,8 @@ export default function http() {
     });
 
     if (!response.ok) {
-      throw new Error("Something went wrong"); // xử lý lỗi
+      console.log(response);
+      throw new Error("dada"); // xử lý lỗi
     }
 
     return response.json(); // trả về dữ liệu từ response

@@ -7,9 +7,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import rsa.sp.lgo.core.Constants;
-import rsa.sp.lgo.exceptions.InvalidCredentialsException;
-import rsa.sp.lgo.model.Role;
-import rsa.sp.lgo.model.User;
+import rsa.sp.lgo.core.error.BadRequestException;
+import rsa.sp.lgo.models.Role;
+import rsa.sp.lgo.models.User;
 import rsa.sp.lgo.service.UserService;
 
 import javax.transaction.Transactional;
@@ -37,7 +37,7 @@ public class AuthService {
         User user = userService.authenticate(email, password);
         logger.info("Validate user", email);
         if(user == null) {
-            throw new InvalidCredentialsException();
+            throw new BadRequestException("User not found");
         }
 
         Date validity;

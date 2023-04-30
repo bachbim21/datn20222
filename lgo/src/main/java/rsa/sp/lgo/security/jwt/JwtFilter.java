@@ -4,7 +4,6 @@ import io.jsonwebtoken.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
@@ -13,8 +12,8 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.filter.GenericFilterBean;
 import rsa.sp.lgo.core.Constants;
-import rsa.sp.lgo.exceptions.BadRequestAlertException;
-import rsa.sp.lgo.model.User;
+import rsa.sp.lgo.core.error.BadRequestException;
+import rsa.sp.lgo.models.User;
 import rsa.sp.lgo.repository.UserRepository;
 import rsa.sp.lgo.security.UserPrincipal;
 
@@ -48,7 +47,7 @@ public class JwtFilter extends GenericFilterBean {
 
             User user = userRepository.findFirstByJwtToken(token);
             if(user == null || user.getActive()== null || !user.getActive()){
-                throw new BadRequestAlertException("Invalid JWT signature.", "auth", "Invalid JWT signature.");
+                throw new BadRequestException("Người dùng không tồn tại, yêu cầu đăng nhập lại");
 
             }
             if(validateToken(token)) {

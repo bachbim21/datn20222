@@ -5,6 +5,10 @@
 .modal-checkbox {
   display: none;
 }
+.ant-modal-header {
+  border-bottom: 1px solid #e8e8e8;
+  height: 34px;
+}
 
 .modal-label {
   text-align: center;
@@ -38,4 +42,11 @@
   max-width: 600px;
   margin: 10% auto;
   padding: 20px;
+}
+.custom-font {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+    "Helvetica Neue", Arial, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol", "Noto Color Emoji";
+  font-size: 14px;
+  line-height: 22px;
 }

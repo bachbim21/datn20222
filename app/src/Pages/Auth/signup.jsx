@@ -1,201 +1,159 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { message } from "../../app.constants";
-import Input from "../../Components/Input/Input";
-import { useState } from "react";
-import { handleValidate } from "../../app.function";
+import { log } from "../../utils/app.constants";
+import { useDispatch, useSelector } from "react-redux";
+import logo from "../../assets/images/go.png";
+import { loading } from "../../redux/selector";
+import { LoadingService } from "../../Components/Layout/layout.slice";
 import AuthService from "../../Service/auth.service";
+import { LoadingOutlined } from "@ant-design/icons";
+import moment from "moment";
+import { Form, Input, Button, DatePicker, Spin, message } from "antd";
 export default function Signup() {
-  const [isSubmit, setIsSubmit] = useState(false);
-  const [isLoading, setIsloading] = useState(false);
-  const [password, SetPassword] = useState();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const configInput = [
-    {
-      label: "Tên",
-      id: "name",
-      type: "text",
-      placeholder: "Tên",
-      dataCheck: [
-        {
-          name: "minLength",
-          required: 6,
-          message: message.log_minLength6,
-        },
-        {
-          name: "maxLength",
-          required: 50,
-          message: message.log_maxLength50,
-        },
-      ],
-    },
-    {
-      label: "Email",
-      id: "email",
-      type: "text",
-      placeholder: "user@gmail.com",
-      dataCheck: [
-        {
-          name: "required",
-          required: true,
-          message: message.log_required,
-        },
-        {
-          name: "pattern",
-          required: "[^s@]+@[^s@]+.[^s@]+$",
-          message: message.log_email,
-        },
-        {
-          name: "maxLength",
-          required: 50,
-          message: message.log_maxLength50,
-        },
-        {
-          name: "whitespace",
-          required: false,
-          message: message.log_not_whitespace,
-        },
-      ],
-    },
-    {
-      label: "Mật khẩu",
-      id: "password",
-      type: "password",
-      dataCheck: [
-        {
-          name: "required",
-          required: true,
-          message: message.log_required,
-        },
-        {
-          name: "minLength",
-          required: 6,
-          message: message.log_minLength6,
-        },
-        {
-          name: "pattern",
-          required: "^[a-zA-Z0-9_-]{6,}$",
-          message: message.log_password,
-        },
-      ],
-      setState: SetPassword,
-    },
-    {
-      label: "Xác nhận mật khẩu",
-      id: "password-current",
-      type: "password",
-      dataCheck: [
-        {
-          name: "required",
-          required: true,
-          message: message.log_required,
-        },
-        {
-          name: "pattern",
-          required: "^[a-zA-Z0-9_-]{6,}$",
-          message: message.log_password,
-        },
-        {
-          name: "minLength",
-          required: 6,
-          message: message.log_minLength6,
-        },
-      ],
-      deps: {
-        value: [password],
-        message: [message.log_not_match_password],
-      },
-    },
-    {
-      label: "Ngày sinh",
-      id: "date",
-      type: "date",
-      placeholder: "dd/MM/yyyy",
-      dataCheck: [
-        {
-          name: "date:dd/MM/yyyy",
-          required: "dd/MM/yyyy",
-          message: message.log_date,
-        },
-      ],
-    },
-  ];
+  const [messageApi, contextHolder] = message.useMessage();
+  const antIcon = <LoadingOutlined style={{ fontSize: 34 }} spin />;
+  const loadingContext = useSelector(loading);
+  const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
 
-  // create user
-  const handleSignup = (e) => {
-    e.preventDefault();
-    setIsSubmit(!isSubmit);
-    // check match required
-    var status = handleValidate(e.target, configInput);
-    console.log(status);
-    if (status) {
-      setIsloading(true);
-      try {
-        AuthService()
-          .signup({
-            name: e.target["name"].value,
-            email: e.target["email"].value,
-            password: e.target["password"].value,
-            birthDay: e.target["date"].value,
+  const onFinish = (values) => {
+    dispatch(
+      LoadingService({
+        text: "Đang xử lý",
+        status: true,
+      })
+    );
+    AuthService()
+      .signup({
+        email: values.email,
+        name: values.name,
+        password: values.password,
+        birthDate: moment(values.date).valueOf(),
+      })
+      .then((response) => {
+        dispatch(
+          LoadingService({
+            text: "",
+            status: false,
           })
-          .then((response) => {
-            console.log(response);
-            setIsloading(false);
-            // navigate("/", { replace: true });
-          });
-      } catch {
-        console.error(message.wrong_email);
-      }
-    }
+        );
+        messageApi.open({
+          type: "success",
+          content: log.signup_success,
+          duration: 3,
+        });
+        setTimeout(() => {
+          navigate("/login");
+        }, 3000);
+      })
+      .catch((e) => {
+        dispatch(
+          LoadingService({
+            text: "",
+            status: false,
+          })
+        );
+        messageApi.open({
+          type: "error",
+          content: log.email_exits,
+          duration: 3,
+        });
+      });
   };
   return (
-    <div className="m-4 sm:mx-10 relative bg-default flex flex-col justify-center min-h-screen">
-      <div className="w-full p-6 m-auto h-full  bg-white rounded-md shadow-xl shadow-gray-800 border-2 border-indigo-900 md:w-9/12 lg:max-w-4xl">
-        <h1 className="text-3xl font-semibold text-center text-gray-800 underline uppercase ">
-          Signup
-        </h1>
-        <form
-          className="mt-6 grid sm:grid-cols-2 gap-x-5"
-          onSubmit={handleSignup}>
-          {configInput.map((e) => {
-            return (
-              <div key={e.id} className="mb-2">
-                <label
-                  htmlFor={e.id}
-                  className="block text-base font-semibold text-gray-800">
-                  {e.label}
-                  <span className="mx-1 font-black">*</span>
-                </label>
-                <Input
-                  id={e.id}
-                  type={e.type}
-                  setState={e.setState}
-                  isSubmit={isSubmit}
-                  dataCheck={JSON.stringify(e.dataCheck)}
-                  deps={e.deps ? e.deps : null}
-                  placeholder={e.placeholder}
-                />
-              </div>
-            );
-          })}
+    <div className=" flex justify-center relative items-center min-h-screen p-4 overflow-hidde bg-blue-900">
+      {contextHolder}
+      <Spin
+        className="bg-white/30 rounded-lg"
+        tip={loadingContext.text}
+        size="large"
+        indicator={antIcon}
+        spinning={loadingContext.status}>
+        <div className="mx-4 sm:mx-0 p-6 bg-white rounded-md shadow-md shadow-yellow-300 border-2 min-w-fit">
+          <img src={logo} alt="logo" className="w-20 h-20 mx-auto" />
+          <Form
+            name="register"
+            validateTrigger="onSubmit"
+            onFinish={onFinish}
+            style={{ maxWidth: 560, margin: "auto" }}
+            className="grid w-full mobile:grid-cols-2 gap-x-3"
+            layout="vertical"
+            autoComplete="off">
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                { required: true, message: message.log_required },
+                {
+                  type: "email",
+                  message: message.log_email,
+                },
+              ]}>
+              <Input placeholder="user@gmail.com" />
+            </Form.Item>
+            <Form.Item label="Tên" name="name">
+              <Input />
+            </Form.Item>
 
-          <div className="mt-6 sm:mt-8">
-            <button
-              className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover:bg-gray-500 focus:outline-none focus:bg-gray-700 border-2 border-gray-800"
-              type="submit">
-              Xác nhận
-            </button>
-          </div>
-        </form>
+            <Form.Item
+              label="Mật khẩu"
+              name="password"
+              rules={[
+                { required: true, message: message.log_required },
+                { max: 20, message: message.log_maxLength20 },
+                { min: 6, message: message.log_minLength6 },
+              ]}>
+              <Input.Password />
+            </Form.Item>
+            <Form.Item
+              label="Xác nhận mật khẩu"
+              name="confirm_password"
+              dependencies={["password"]}
+              rules={[
+                { required: true, message: message.log_required },
+                { max: 20, message: message.log_maxLength20 },
+                { min: 6, message: message.log_minLength6 },
+                ({ getFieldValue }) => ({
+                  validator(_, value) {
+                    if (!value || getFieldValue("password") === value) {
+                      return Promise.resolve();
+                    }
+                    return Promise.reject(
+                      new Error(message.log_not_match_password)
+                    );
+                  },
+                }),
+              ]}>
+              <Input.Password />
+            </Form.Item>
+            <Form.Item
+              label="Ngày sinh"
+              name="date"
+              rules={[{ type: "date", message: message.log_date }]}>
+              <DatePicker
+                className="w-full"
+                placeholder="dd/MM/yyyy"
+                format={dateFormatList}
+              />
+            </Form.Item>
+            <Form.Item className="flex justify-center items-end">
+              <Button type="primary" htmlType="submit" className="bg-blue-500">
+                Đăng ký
+              </Button>
+            </Form.Item>
+          </Form>
 
-        <p className="mt-8  font-light text-center text-gray-700">
-          Bạn đã có tài khoản{" "}
-          <NavLink
-            className="font-medium text-gray-700 hover:underline"
-            to="/login">
-            Đăng nhập
-          </NavLink>
-        </p>
-      </div>
+          <p className="mobile:mt-8 custom-font text-center">
+            <span className="mx-4">Bạn đã có tài khoản?</span>
+            <NavLink
+              type="button"
+              className="custom-font hover:text-blue-400"
+              to="/login">
+              Đăng nhập
+            </NavLink>
+          </p>
+        </div>
+      </Spin>
     </div>
   );
 }

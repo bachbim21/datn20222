@@ -1,0 +1,31 @@
+@startuml
+skinparam defaultFontName Verdana
+title Schedule Report - Create/Update Receiver
+hide footbox
+autonumber "<b>[0]"
+
+User -> Webapp: yêu cầu tạo tài khoản
+note left
+ User {
+    email,
+    name,
+    password,
+    birthDay,
+ }
+end note
+Webapp -> Webapp: kiểm tra đầu vào
+alt Kiểm tra -> Hợp lệ
+Webapp -> SignupEndPoint: gửi yêu cầu
+SignupEndPoint -> SignupService: gọi chức năng tạo tài khoản
+SignupService -> SignupService: kiểm tra email
+    alt Kiểm tra email -> email chưa có trong database
+    SignupService -> SignupService: thực hiện tạo tài khoản
+    SignupService -> SignupEndPoint: trạng thái tạo thành công
+    SignupEndPoint -> Webapp: trạng thái tạo thành công
+    Webapp -> User:trạng thái tạo thành công
+    else Kiểm tra email -> email đã tồn tại
+else Kiểm tra -> Không hợp lệ
+    Webapp -> User : yêu cầu nhập lại thông tin
+end
+@enduml
+

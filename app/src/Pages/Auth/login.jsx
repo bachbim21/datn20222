@@ -1,164 +1,135 @@
 import { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import AuthService from "../../Service/auth.service";
-import { message, status } from "../../app.constants";
-import Input from "../../Components/Input/Input";
-import { handleValidate } from "../../app.function";
-import PopupLoading from "../../Components/Notify/loading.service";
+import { log, status } from "../../utils/app.constants";
+import { decode } from "../../utils/app.function";
+import logo from "../../assets/images/go.png";
+import { Form, Input, Button, Checkbox, Spin, message } from "antd";
+import { useDispatch, useSelector } from "react-redux";
+import { LoadingService } from "../../Components/Layout/layout.slice";
+import { loading } from "../../redux/selector";
+import { LoadingOutlined } from "@ant-design/icons";
 
 function Login() {
-  const [isSubmit, setIsSubmit] = useState(false);
-  const [isLoading, setIsloading] = useState(false);
-  const [password, SetPassword] = useState();
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+  const [remember, setRemember] = useState();
+  const [messageApi, contextHolder] = message.useMessage();
+  const antIcon = <LoadingOutlined style={{ fontSize: 34 }} spin />;
+  const loadingContext = useSelector(loading);
 
-  const configInput = [
-    {
-      label: "Email",
-      id: "email",
-      type: "text",
-      placeholder: "user@gmail.com",
-      dataCheck: [
-        {
-          name: "required",
-          required: "not",
-          message: message.log_required,
-        },
-        {
-          name: "maxLength",
-          required: 50,
-          message: message.log_maxLength50,
-        },
-        {
-          name: "pattern",
-          required: "[^s@]+@[^s@]+.[^s@]+$",
-          message: message.log_email,
-        },
-        {
-          name: "whitespace",
-          required: false,
-          message: message.log_not_whitespace,
-        },
-      ],
-    },
-    {
-      label: "Mật khẩu",
-      id: "password",
-      type: "password",
-      dataCheck: [
-        {
-          name: "required",
-          required: true,
-          message: message.log_required,
-        },
-        {
-          name: "minLength",
-          required: 6,
-          message: message.log_minLength6,
-        },
-        {
-          name: "pattern",
-          required: "^[a-zA-Z0-9_-]{6,}$",
-          message: message.log_password,
-        },
-        {
-          name: "whitespace",
-          required: false,
-          message: message.log_not_whitespace,
-        },
-      ],
-      setState: SetPassword,
-    },
-  ];
-
-  const handleLogin = (e) => {
-    e.preventDefault();
-    setIsSubmit(!isSubmit);
-    // check match required
-    var status = handleValidate(e.target, configInput);
-    if (status) {
-      setIsloading(true);
-      try {
-        AuthService()
-          .login({
-            email: e.target["email"].value,
-            password: e.target["password"].value,
-            rememberMe: e.target["remember"].checked,
+  const onFinish = (values) => {
+    dispatch(
+      LoadingService({
+        text: "Đang xử lý",
+        status: true,
+      })
+    );
+    AuthService()
+      .login(values)
+      .then((response) => {
+        console.log(response);
+        localStorage.setItem("token", response.token);
+        decode(response.token);
+        dispatch(
+          LoadingService({
+            text: "",
+            status: false,
           })
-          .then((response) => {
-            setIsloading(false);
-            navigate("/", { replace: true });
-          });
-      } catch {
-        console.error(message.wrong_email);
-      }
-    }
+        );
+        navigate("/", { replace: true });
+      })
+      .catch((e) => {
+        console.log(e);
+        dispatch(
+          LoadingService({
+            text: "",
+            status: false,
+          })
+        );
+        messageApi.open({
+          type: "error",
+          content: log.wrong_login,
+          duration: 3,
+        });
+      });
+  };
+
+  const onRememberChange = (e) => {
+    setRemember(e.target.checked);
   };
 
   return (
-    <div className="mx-4 sm:mx-20 relative flex flex-col justify-center min-h-screen overflow-hidden bg-default">
-      <div className=" w-full p-6 m-auto h-full  bg-whiteC rounded-md shadow-xl shadow-gray-800 border-2 border-indigo-900 lg:max-w-xl">
-        <h1 className="text-3xl font-semibold text-center text-gray-800 underline uppercase ">
-          Login
-        </h1>
-        <form className="mt-6" onSubmit={handleLogin}>
-          {configInput.map((i) => {
-            return (
-              <div key={i.id} className="mb-2">
-                <label
-                  htmlFor={i.id}
-                  className="block text-base font-semibold text-gray-800">
-                  {i.label}
-                  <span className="mx-1 font-black">*</span>
-                </label>
-                <Input
-                  id={i.id}
-                  type={i.type}
-                  isSubmit={isSubmit}
-                  dataCheck={JSON.stringify(i.dataCheck)}
-                  placeholder={i.placeholder}
-                  setState={i.setState}
-                />
+    <div className=" flex justify-center items-center min-h-screen overflow-hidde bg-blue-900">
+      {contextHolder}
+      <Spin
+        className="bg-white/30 rounded-lg"
+        tip={loadingContext.text}
+        size="large"
+        indicator={antIcon}
+        spinning={loadingContext.status}>
+        <div className="mx-4 sm:mx-0 mobile:w-96 p-6 h-full bg-white rounded-md shadow-md shadow-yellow-300 border-2 max-w-md">
+          <img src={logo} alt="logo" className="w-20 h-20 mx-auto" />
+          <Form
+            name="login"
+            validateTrigger="onSubmit"
+            initialValues={{ remember: false }}
+            onFinish={onFinish}
+            style={{ maxWidth: 300, margin: "auto" }}
+            layout="vertical"
+            autoComplete="off">
+            <Form.Item
+              label="Email"
+              name="email"
+              rules={[
+                { required: true, message: log.log_required },
+                {
+                  pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
+                  message: log.log_email,
+                },
+              ]}>
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Password"
+              name="password"
+              rules={[
+                { required: true, message: log.log_required },
+                { max: 20, message: log.log_maxLength20 },
+                { min: 6, message: log.log_minLength6 },
+              ]}>
+              <Input.Password />
+            </Form.Item>
+            <div className="flex flex-row justify-between">
+              <Form.Item name="remember" valuePropName="checked">
+                <Checkbox onChange={onRememberChange}>Nhớ mật khẩu</Checkbox>
+              </Form.Item>
+              <div className="flex items-center" style={{ height: "32px" }}>
+                <NavLink to="/forget-password" style={{ height: "22px" }}>
+                  Quên mật khẩu ?
+                </NavLink>
               </div>
-            );
-          })}
-          <div className="flex justify-between">
-            <div>
-              <label
-                htmlFor="remember"
-                className="text-md font-light text-gray-700 px-2">
-                Nhớ mật khẩu
-              </label>
-              <input id="remember" name="remember" type="checkbox" />
             </div>
-            <a
-              href="#"
-              className="text-md font-light text-gray-700 hover:underline">
-              Quên mật khẩu?
-            </a>
-          </div>
 
-          <div className="mt-6">
-            <button
-              className="w-full px-4 py-2 tracking-wide text-white transition-colors duration-200 transform bg-gray-700 rounded-md hover:bg-gray-500 focus:outline-none focus:bg-gray-700"
-              type="submit">
-              Đăng nhập
-            </button>
-          </div>
-        </form>
+            <Form.Item className="flex justify-center">
+              <Button type="primary" htmlType="submit" className="bg-blue-500">
+                Đăng nhập
+              </Button>
+            </Form.Item>
+          </Form>
 
-        <p className="mt-8  font-light text-center text-gray-700">
-          {" "}
-          Bạn chưa có tài khoản?{" "}
-          <NavLink
-            type="button"
-            className="font-medium text-gray-700 hover:underline"
-            to="/signup">
-            Đăng ký
-          </NavLink>
-        </p>
-      </div>
-      <PopupLoading isLoading={isLoading} />
+          <p className="mt-8 custom-font text-center">
+            <span className="mx-4">Bạn chưa có tài khoản?</span>
+            <NavLink
+              type="button"
+              className="custom-font hover:text-blue-400"
+              to="/signup">
+              Đăng ký
+            </NavLink>
+          </p>
+        </div>
+      </Spin>
     </div>
   );
 }

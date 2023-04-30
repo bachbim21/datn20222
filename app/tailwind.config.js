@@ -8,12 +8,15 @@ module.exports = {
       },
       colors: {},
       lineHeight: {},
+      screens: {
+        mobile: "480px",
+      },
       aspectRatio: {
         "4/3": "4 / 3",
       },
       flexBasis: {},
       backgroundColor: {
-        default: "#F8F8F8",
+        custom: "#F8F8F8",
       },
     },
     plugins: [],

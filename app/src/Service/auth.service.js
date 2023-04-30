@@ -14,12 +14,10 @@ export default function AuthService() {
     return http()
       .post("/auth/login", data)
       .then(function (response) {
-        localStorage.setItem("token", response.token);
         return response;
       });
   }
   function signup(data) {
-    console.log(data);
     return http()
       .post("/auth/signup", data)
       .then(function (response) {
