@@ -1,15 +1,21 @@
-import Element from "./element";
+import { sizeWindown } from "../../redux/selector";
+import { useSelector, useDispatch } from "react-redux";
 import { useState, useEffect } from "react";
 import ElementService from "../../Service/element.service";
 import imageE from "../../assets/images/elements.png";
-import { dragstart_handler } from "../../utils/app.function";
+import { dragStartCopy } from "../../utils/app.function";
 import { Input } from "antd";
+import TreeFolder from "../TreeFolder";
+import ElementDefault from "./element-default";
+import { SetDataElement } from "./element.slice";
 
-export default function NavbarElement(params) {
+export default function NavbarElement({ project }) {
   const [elements, setElements] = useState([]);
-  useEffect(() => {
+  const size = useSelector(sizeWindown);
+  const dispatch = useDispatch();
+  function getListElement(param) {
     ElementService()
-      .getAll()
+      .getAll(`query=${param}&page=0&size=1000`)
       .then((response) => {
         if (response.length > 0) {
           setElements(response);
@@ -18,16 +24,24 @@ export default function NavbarElement(params) {
       .catch((err) => {
         alert("Khong co quyen truy cap");
       });
+  }
+  useEffect(() => {
+    getListElement("");
   }, []);
   function searchElement(e) {
-    console.log(e.target.value);
+    let tag = e.target.value;
+    let params = "";
+    if (tag != null && tag != "") {
+      params = `tag==${tag}`;
+    }
+    getListElement(params);
   }
 
   return (
     <div
       id="element"
       className="fixed w-40 bg-custom  shadow-xl shadow-yellow-950 top-14 left-0 bottom-0">
-      <div className="relative">
+      <div className="relative h-full">
         <div className="flex flex-row items-center">
           <img
             src={imageE}
@@ -42,20 +56,25 @@ export default function NavbarElement(params) {
           <Input onChange={searchElement} placeholder="tìm kiếm" />
         </div>
         <nav
-          className="ml-8 mr-2 h-full flex flex-col gap-y-2 overflow-y-scroll"
-          style={{ minHeight: "200px" }}>
+          style={{
+            height: `calc(${size.height}px - 204px)`,
+          }}
+          className={`ml-6 flex flex-col items-center gap-y-2 overflow-y-scroll`}>
           {elements.length > 0 &&
             elements.map((e) => {
               return (
-                <Element
+                <ElementDefault
                   key={e.id}
                   data={e}
                   draggable="true"
-                  onDragStart={dragstart_handler}
+                  onDragStart={(e) =>
+                    dragStartCopy(e, dispatch, SetDataElement)
+                  }
                 />
               );
             })}
         </nav>
+        <TreeFolder />
       </div>
     </div>
   );

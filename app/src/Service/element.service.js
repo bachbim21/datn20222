@@ -11,9 +11,9 @@ export default function ElementService() {
 
   return service;
 
-  function getAll() {
+  function getAll(param) {
     return http()
-      .get("/element")
+      .get("/element/search?" + param)
       .then(function (response) {
         return response;
       });

@@ -28,7 +28,7 @@ export default function Signup() {
         email: values.email,
         name: values.name,
         password: values.password,
-        birthDate: moment(values.date).valueOf(),
+        // birthDate: moment(values.date).valueOf(),
       })
       .then((response) => {
         dispatch(
@@ -61,7 +61,7 @@ export default function Signup() {
       });
   };
   return (
-    <div className=" flex justify-center relative items-center min-h-screen p-4 overflow-hidde bg-blue-900">
+    <div className=" flex justify-center items-center min-h-screen overflow-hidde bg-blue-900">
       {contextHolder}
       <Spin
         className="bg-white/30 rounded-lg"
@@ -69,16 +69,18 @@ export default function Signup() {
         size="large"
         indicator={antIcon}
         spinning={loadingContext.status}>
-        <div className="mx-4 sm:mx-0 p-6 bg-white rounded-md shadow-md shadow-yellow-300 border-2 min-w-fit">
+        <div className="mx-4 my-8 sm:mx-0 mobile:w-96 p-6 h-full bg-white rounded-md shadow-md shadow-yellow-300 border-2 max-w-md">
           <img src={logo} alt="logo" className="w-20 h-20 mx-auto" />
           <Form
             name="register"
             validateTrigger="onSubmit"
             onFinish={onFinish}
-            style={{ maxWidth: 560, margin: "auto" }}
-            className="grid w-full mobile:grid-cols-2 gap-x-3"
+            style={{ maxWidth: 300, margin: "auto" }}
             layout="vertical"
             autoComplete="off">
+            <Form.Item label="Tên" name="name">
+              <Input />
+            </Form.Item>
             <Form.Item
               label="Email"
               name="email"
@@ -91,10 +93,6 @@ export default function Signup() {
               ]}>
               <Input placeholder="user@gmail.com" />
             </Form.Item>
-            <Form.Item label="Tên" name="name">
-              <Input />
-            </Form.Item>
-
             <Form.Item
               label="Mật khẩu"
               name="password"
@@ -126,16 +124,6 @@ export default function Signup() {
               ]}>
               <Input.Password />
             </Form.Item>
-            <Form.Item
-              label="Ngày sinh"
-              name="date"
-              rules={[{ type: "date", message: message.log_date }]}>
-              <DatePicker
-                className="w-full"
-                placeholder="dd/MM/yyyy"
-                format={dateFormatList}
-              />
-            </Form.Item>
             <Form.Item className="flex justify-center items-end">
               <Button type="primary" htmlType="submit" className="bg-blue-500">
                 Đăng ký
@@ -147,7 +135,7 @@ export default function Signup() {
             <span className="mx-4">Bạn đã có tài khoản?</span>
             <NavLink
               type="button"
-              className="custom-font hover:text-blue-400"
+              className="custom-font hover:text-blue-400 decoration-solid underline "
               to="/login">
               Đăng nhập
             </NavLink>

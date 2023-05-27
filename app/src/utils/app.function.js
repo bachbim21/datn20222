@@ -1,4 +1,8 @@
 import jwt_decode from "jwt-decode";
+import React from "react";
+import { Element } from "../Components/Navbar/element";
+import ReactDOM from "react-dom/client";
+// import ReactDOM from "react-dom";
 
 function decode(token) {
   let thisToken = token ? token : localStorage.getItem("token");
@@ -85,33 +89,98 @@ function handleValidate(arrValue, listConfig) {
   }
   return result;
 }
-
+const generateUniqueId = () => {
+  return Math.random().toString(36).substring(2) + Date.now().toString(36);
+};
 // drap
-function dragstart_handler(e) {
+function dragStartCopy(e, dispatch, setData) {
   // Add different types of drag data
-  console.log(e.target.tagName);
   e.dataTransfer.dropEffect = "copy";
   e.dataTransfer.setData("text/html", e.target.outerHTML);
-  e.dataTransfer.setData("id", e.target.id);
   e.dataTransfer.setData("tagName", e.target.tagName);
+  dispatch(
+    setData({
+      tag: e.target.tagName.toLowerCase(),
+      text: e.target.innerHTML,
+      type: null,
+      width: "100%",
+      height: "50px",
+    })
+  );
 }
-function dragover_handler(e) {
+function dragOverCopy(e) {
   e.preventDefault();
+  e.stopPropagation();
   e.dataTransfer.dropEffect = "move";
+  e.target.classList.add("over");
 }
-function drop_handler(e, boxDrag) {
+function dragLeaveCopy(e) {
   e.preventDefault();
-  console.log("X: " + e.clientX + " | Y: " + e.clientY);
-  const html = e.dataTransfer.getData("text/html");
-  boxDrag.current.innerHTML = boxDrag.current.innerHTML + html;
+  e.stopPropagation();
+  e.target.classList.remove("over");
+}
+
+// const html = e.dataTransfer.getData("text/html");
+// // boxDrag.current.innerHTML = boxDrag.current.innerHTML + html;
+
+function dropCopy(e, data, dispatch) {
+  e.preventDefault();
+  e.target.classList.remove("over");
+  const id = generateUniqueId();
+  // set event
+  var size = setSize(data.tag);
+  const element = React.createElement(Element, {
+    id: id,
+    tag: data.tag,
+    className: "hover-dashed bg-black text-white",
+    width: size[0],
+    height: size[1],
+    display: size[2],
+    text: data.text,
+    dispatch: dispatch,
+  });
+
+  const container = document.createElement("div");
+  console.log(container);
+  // ReactDOM.render(element, container);
+  ReactDOM.createRoot(container).render(element);
+  const parentElement = e.target; // Phần tử cha
+  let child = container.getElementsByClassName("hover-dashed");
+  let a = container.getRootNode();
+  console.log(container.firstChild, a.firstChild);
+  // parentElement.appendChild(tempElement.firstChild);
+}
+
+function setSize(tag) {
+  switch (tag) {
+    case "div":
+      return ["100%", "50px", "block"];
+    case "h1":
+      return ["200px", "50px", "inline-block"];
+    case "h2":
+      return ["200px", "50px", "inline-block"];
+    case "h3":
+      return ["200px", "50px", "inline-block"];
+    case "h4":
+      return ["200px", "50px", "inline-block"];
+    case "h5":
+      return ["200px", "50px", "inline-block"];
+    case "button":
+      return ["170px", "40px", "inline-block"];
+    case "input":
+      return ["200px", "30px", "inline-block"];
+    default:
+      return ["300px", "50px", "inline-block"];
+  }
 }
 
 export {
   paserly,
   handleValidate,
-  dragover_handler,
-  dragstart_handler,
-  drop_handler,
+  dragOverCopy,
+  dragStartCopy,
+  dropCopy,
+  dragLeaveCopy,
   decoded,
   decode,
 };

@@ -84,11 +84,11 @@ function Login() {
               rules={[
                 { required: true, message: log.log_required },
                 {
-                  pattern: /^[^\s@]+@[^\s@]+\.[^\s@]+$/,
-                  message: log.log_email,
+                  type: "email",
+                  message: message.log_email,
                 },
               ]}>
-              <Input />
+              <Input placeholder="user@gmail.com" />
             </Form.Item>
 
             <Form.Item
@@ -106,7 +106,10 @@ function Login() {
                 <Checkbox onChange={onRememberChange}>Nhớ mật khẩu</Checkbox>
               </Form.Item>
               <div className="flex items-center" style={{ height: "32px" }}>
-                <NavLink to="/forget-password" style={{ height: "22px" }}>
+                <NavLink
+                  className="decoration-solid underline "
+                  to="/forget-password"
+                  style={{ height: "22px" }}>
                   Quên mật khẩu ?
                 </NavLink>
               </div>
@@ -123,7 +126,7 @@ function Login() {
             <span className="mx-4">Bạn chưa có tài khoản?</span>
             <NavLink
               type="button"
-              className="custom-font hover:text-blue-400"
+              className="custom-font hover:text-blue-400 decoration-solid underline "
               to="/signup">
               Đăng ký
             </NavLink>

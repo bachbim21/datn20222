@@ -59,7 +59,7 @@ export default function http() {
   }
 
   async function deleteOne(url) {
-    const response = await fetch(`${this.baseUrl}${url}`, {
+    const response = await fetch(`${baseUrl}${url}`, {
       method: "DELETE",
       headers: headers,
     });
@@ -67,7 +67,6 @@ export default function http() {
     if (!response.ok) {
       throw new Error("Something went wrong"); // xử lý lỗi
     }
-
-    return response.json(); // trả về dữ liệu từ response
+    return response; // trả về dữ liệu từ response
   }
 }

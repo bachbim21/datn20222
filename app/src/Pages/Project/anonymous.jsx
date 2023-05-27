@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
-import { dragover_handler, drop_handler } from "../../utils/app.function";
-import NavbarElement from "../../Components/Element/navbar";
+import { dragOverCopy, dropCopy } from "../../utils/app.function";
+import NavbarElement from "../../Components/Navbar/navbar";
 
 export default function AnonymousProject(params) {
   const [idElement, setIdElement] = useState(null);
@@ -13,8 +13,8 @@ export default function AnonymousProject(params) {
         <div
           ref={boxEDrag}
           className="text-white bg-white"
-          onDrop={drop_handler}
-          onDragOver={dragover_handler}>
+          onDrop={dropCopy}
+          onDragOver={dragOverCopy}>
           alo
         </div>
       </div>

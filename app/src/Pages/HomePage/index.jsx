@@ -30,7 +30,7 @@ export default function Home() {
           setListNode(res);
         });
     }
-  }, []);
+  }, [currentUser.id]);
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -43,6 +43,7 @@ export default function Home() {
 
   const onFinish = (values) => {
     let data = {
+      parentId: 0,
       name: values.name,
       tech: {
         htmlFrameWork: values.html ? "html" : values.reactjs ? "react" : "html",
@@ -52,8 +53,7 @@ export default function Home() {
           ? "bootstrap"
           : "tailwind",
       },
-      level: 0,
-      folder: true,
+      file: false,
       user: { id: currentUser.id },
     };
     dispatch(
@@ -151,10 +151,15 @@ export default function Home() {
           <div className="lg:col-span-2 bg-white rounded-md py-3 px-5 shadow-lg">
             <h3 className="text-base font-medium mb-3">Dự án gần đây</h3>
             <ul className="px-3 grid md:grid-cols-2 gap-3  sm:gap-x-6">
-              <li className=" bg-yellow-300 rounded p-2 text-center">A</li>
-              <li className=" bg-yellow-300 rounded p-2 text-center">B</li>
-              <li className=" bg-yellow-300 rounded p-2 text-center">C</li>
-              <li className=" bg-yellow-300 rounded p-2 text-center">D</li>
+              {listNode.map((node) => {
+                return (
+                  <NavLink key={node.id} to={`/project/${node.id}`}>
+                    <li className=" bg-yellow-300 rounded p-2 text-center">
+                      {node.name}
+                    </li>
+                  </NavLink>
+                );
+              })}
             </ul>
             <button
               className="text-white block text-center w-full mt-6 py-2 px-6 bg-blue-600 rounded cursor-pointer"

@@ -5,8 +5,8 @@ export default function NodeService() {
     getAll: getAll,
     getOne: getOne,
     create: create,
-    // update: update,
-    // deleteOne: deleteOne,
+    update: update,
+    deleteOne: deleteOne,
   };
 
   return service;
@@ -14,7 +14,7 @@ export default function NodeService() {
   function getAll(userId) {
     const params = "id=" + userId;
     return http()
-      .get("/node?" + params)
+      .get("/node/project?" + params)
       .then(function (response) {
         return response;
       });
@@ -29,6 +29,20 @@ export default function NodeService() {
   function create(data) {
     return http()
       .post("/node", data)
+      .then(function (response) {
+        return response;
+      });
+  }
+  function update(data, id) {
+    return http()
+      .post("/node/" + id, data)
+      .then(function (response) {
+        return response;
+      });
+  }
+  function deleteOne(id) {
+    return http()
+      .deleteOne("/node/" + id)
       .then(function (response) {
         return response;
       });
