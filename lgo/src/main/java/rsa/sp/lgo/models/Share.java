@@ -20,6 +20,9 @@ public class Share extends IdEntity {
     @JoinColumn(name = "project_id",referencedColumnName = "id")
     private Node node;
 
+    public Share() {
+    }
+
     public Share(Integer mode, Set<Long> listReceiver, User user, Node node) {
         this.mode = mode;
         this.listReceiver = listReceiver;

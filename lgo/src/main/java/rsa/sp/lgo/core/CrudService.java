@@ -12,8 +12,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
+import rsa.sp.lgo.core.error.Status;
 import rsa.sp.lgo.core.rsql.CustomRsqlVisitor;
 
 import javax.persistence.EntityNotFoundException;
@@ -27,8 +30,15 @@ public class CrudService <T extends AbstractEntity, ID extends Serializable> {
     private static Logger logger = LoggerFactory.getLogger(CrudService.class);
     protected CustomJpaRepository<T, ID> repository;
 
-    public T get(ID id) {
-        return repository.findById(id).orElse(null);
+    public ResponseEntity get(ID id) {
+        T t = repository.findById(id).orElse(null);
+        if(!checkGet(t))
+            return ResponseEntity.badRequest()
+                .body(new ResponseObject("Bạn không có quyền truy cập tài nguyên", 405));
+        return ResponseEntity.ok().body(t);
+    }
+    public Boolean checkGet(T t) {
+        return true;
     }
 
     public T simpleGet(ID id) {
@@ -76,11 +86,11 @@ public class CrudService <T extends AbstractEntity, ID extends Serializable> {
         }
     }
 
-    public T create(T entity) {
+    public ResponseEntity create(T entity) {
         beforeCreate(entity);
         repository.save(entity);
         afterCreate(entity);
-        return entity;
+        return ResponseEntity.status(HttpStatus.CREATED).body(entity);
     }
 
     public List<T> create(List<T> entities) {
@@ -97,18 +107,17 @@ public class CrudService <T extends AbstractEntity, ID extends Serializable> {
         return entities;
     }
 
-    public T update(ID id, T entity) {
+    public ResponseEntity update(ID id, T entity) {
         beforeUpdate(entity);
-        T old = (T) SerializationUtils.clone(get(id));
+        T old = (T) SerializationUtils.clone(simpleGet(id));
         if(entity.getCreated() == null) entity.setCreated(old.getCreated());
         if(entity.getCreatedBy() == null) entity.setCreatedBy(old.getCreatedBy());
         if(old == null) {
-            throw new EntityNotFoundException("No entity with id " + id);
-
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entity);
         }
         repository.save(entity);
         afterUpdate(old,entity);
-        return entity;
+        return ResponseEntity.status(HttpStatus.CREATED).body(entity);
     }
 
     public List<T> saveMany(List<T> entities){
@@ -138,7 +147,7 @@ public class CrudService <T extends AbstractEntity, ID extends Serializable> {
     }
 
     public void deleteById(ID id) {
-        T entity = get(id);
+        T entity = simpleGet(id);
         if(entity.getCreatedBy().equals("system")){
             throw new EntityNotFoundException("Can not remove system object");
         }

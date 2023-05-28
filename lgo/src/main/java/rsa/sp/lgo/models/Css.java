@@ -10,22 +10,21 @@ import javax.persistence.Table;
 @Entity
 @Table(name = "css")
 public class Css extends IdEntity {
-    private String className;
+    private String classCustom;
     private String name;
     private String library;
-    private String isClass;
     private String styleName;
     private String valueStyle;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
 
-    public String getClassName() {
-        return className;
+    public String getClassCustom() {
+        return classCustom;
     }
 
-    public void setClassName(String className) {
-        this.className = className;
+    public void setClassCustom(String classCustom) {
+        this.classCustom = classCustom;
     }
 
     public String getName() {
@@ -42,14 +41,6 @@ public class Css extends IdEntity {
 
     public void setLibrary(String library) {
         this.library = library;
-    }
-
-    public String getIsClass() {
-        return isClass;
-    }
-
-    public void setIsClass(String isClass) {
-        this.isClass = isClass;
     }
 
     public String getStyleName() {

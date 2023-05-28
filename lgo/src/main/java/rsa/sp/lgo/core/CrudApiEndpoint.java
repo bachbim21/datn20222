@@ -31,13 +31,13 @@ public abstract class CrudApiEndpoint <T extends AbstractEntity, ID extends Seri
     }
 
     @RequestMapping(method = RequestMethod.POST)
-    public T create(@RequestBody T entity) {
+    public ResponseEntity create(@RequestBody T entity) {
         logger.info("Call Create API by {}", SecurityUtils.getCurrentUserLogin());
         return service.create(entity);
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.PUT)
-    public T update(@PathVariable(value = "id") ID id, @RequestBody T entity) {
+    public ResponseEntity update(@PathVariable(value = "id") ID id, @RequestBody T entity) {
         logger.info("Call Update API by {}",SecurityUtils.getCurrentUserLogin());
         return service.update(id,entity);
     }
@@ -50,7 +50,7 @@ public abstract class CrudApiEndpoint <T extends AbstractEntity, ID extends Seri
     }
 
     @RequestMapping(value = "{id}", method = RequestMethod.GET)
-    public T get(@PathVariable(value = "id") ID id) {
+    public ResponseEntity get(@PathVariable(value = "id") ID id) {
         return service.get(id);
     }
 

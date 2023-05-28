@@ -48,8 +48,8 @@ public class JwtFilter extends GenericFilterBean {
             User user = userRepository.findFirstByJwtToken(token);
             if(user == null || user.getActive()== null || !user.getActive()){
                 throw new BadRequestException("Người dùng không tồn tại, yêu cầu đăng nhập lại");
-
             }
+            
             if(validateToken(token)) {
                 Authentication authentication = getAuthentication(token);
                 SecurityContextHolder.getContext().setAuthentication(authentication);

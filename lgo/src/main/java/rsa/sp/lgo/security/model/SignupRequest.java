@@ -10,8 +10,6 @@ public class SignupRequest {
     private String password;
     @NotBlank
     private String name;
-    private Long birthDay;
-    private String avatar;
 
     private Set<String> roles;
 
@@ -22,8 +20,6 @@ public class SignupRequest {
         this.email = email;
         this.password = password;
         this.name = name;
-        this.birthDay = birthDay;
-        this.avatar = avatar;
     }
 
     public String getEmail() {
@@ -48,22 +44,6 @@ public class SignupRequest {
 
     public void setName(String name) {
         this.name = name;
-    }
-
-    public Long getBirthDay() {
-        return birthDay;
-    }
-
-    public void setBirthDay(Long birthDay) {
-        this.birthDay = birthDay;
-    }
-
-    public String getAvatar() {
-        return avatar;
-    }
-
-    public void setAvatar(String avatar) {
-        this.avatar = avatar;
     }
 
     public Set<String> getRoles() {

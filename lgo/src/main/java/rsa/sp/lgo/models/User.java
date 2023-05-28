@@ -38,7 +38,7 @@ public class User extends IdEntity {
             )
     private Set<Role> role;
 
-    public User(String name, String email, Long birthDay, String avatar, String password) {
+    public User(String name, String email, String password) {
         this.name = name;
         setEncryptedPassword(password);
         this.email = email;

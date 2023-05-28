@@ -4,6 +4,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import rsa.sp.lgo.security.UserPrincipal;
 
 public class SecurityUtils {
 
@@ -22,6 +23,18 @@ public class SecurityUtils {
             }
         }
         return userName;
+    }
+    public static Long getCurrentUserId() {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        Long id = null;
+        if (authentication != null) {
+            if (authentication.getPrincipal() instanceof UserPrincipal) {
+                UserPrincipal springSecurityUser = (UserPrincipal) authentication.getPrincipal();
+                id = springSecurityUser.getUserId();
+            }
+        }
+        return id;
     }
 
 }
