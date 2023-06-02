@@ -1,29 +1,21 @@
-import { Dropdown, Input, Radio, Space, Select, Button } from "antd";
+import { Dropdown, Input, Radio, Space, Select, Button, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { BsTextareaResize } from "react-icons/bs";
 import CssService from "../../Service/css.service";
-import { useDispatch, useSelector } from "react-redux";
 import { SaveOutlined } from "@ant-design/icons";
-import { SetStyle } from "../Navbar/element.slice";
-import { styleC } from "../../redux/selector";
-import { domId } from "../../redux/selector";
+import { handleCheckClass, getClass } from "../../utils/app.function";
 
 export default function Display({ dom }) {
   const [open, setOpen] = useState(false);
   const [bgColor, setBgColor] = useState([]);
-  const id = useSelector(domId);
-  const style = useSelector(styleC);
-  var sizeDefault = {
-    width: parseInt(dom?.style.width),
-    height: parseInt(dom?.style.height),
-    display: dom?.style.display,
-  };
+  const [defaultValue, setDefault] = useState({
+    backgroundColor: [],
+  });
   const [size, setSize] = useState({
-    width: parseInt(dom?.style.width),
-    height: parseInt(dom?.style.height),
+    width: dom?.offsetWidth,
+    height: dom?.offsetHeight,
     display: dom?.style.display,
   });
-  const dispatch = useDispatch();
   const handleOpenChange = (flag) => {
     setOpen(flag);
   };
@@ -36,28 +28,28 @@ export default function Display({ dom }) {
         setBgColor(res);
       });
   }, []);
-  const handleChangeBg = (value, start, end, specials) => {
-    const containsBGClass = Array.from(dom.classList).filter(
-      (className) => className.startsWith(start) && className.endsWith(end)
-    );
-    for (const special of specials) {
-      console.log(special);
-      dom.classList.remove(special);
-    }
-    dom.classList.remove(containsBGClass[0]);
+  useEffect(() => {
+    setOpen(false);
+    setTimeout(() => {
+      if (dom?.id) {
+        setDefault({
+          backgroundColor: getClass(dom, bgColor),
+        });
+        setSize({
+          width: dom.offsetWidth,
+          height: dom.offsetHeight,
+          display: dom.style.display,
+        });
+      }
+    }, 200);
+  }, [dom?.id, bgColor]);
+
+  const handleChangeBg = (value) => {
+    handleCheckClass(dom, bgColor);
     dom.classList.add(value);
   };
   const handleRadioChange = (event) => {
-    if (id == "rootPage") {
-      dispatch(
-        SetStyle({
-          ...style,
-          display: event.target.value,
-        })
-      );
-    } else {
-      dom.style.display = event.target.value;
-    }
+    dom.style.display = event.target.value;
   };
   const fieldNames = {
     value: "classCustom", // Tên trường dùng làm value
@@ -84,7 +76,7 @@ export default function Display({ dom }) {
         <span className=" w-11 block ml-3">width</span>
         <Space.Compact>
           <Input
-            defaultValue={sizeDefault.width}
+            defaultValue={size.width}
             onChange={(e) => {
               setSize({ ...size, width: e.target.value + "px" });
             }}
@@ -96,16 +88,9 @@ export default function Display({ dom }) {
             style={{ backgroundColor: "#1677ff" }}
             icon={<SaveOutlined />}
             onClick={() => {
-              if (id == "rootPage") {
-                dispatch(
-                  SetStyle({
-                    ...style,
-                    width: size.width,
-                  })
-                );
-                return;
-              }
-              dom.style.width = size.width;
+              dom.id == "root-page"
+                ? (dom.style.width = size.width)
+                : (dom.style.minWidth = size.width);
             }}></Button>
         </Space.Compact>
       </Space>
@@ -113,7 +98,7 @@ export default function Display({ dom }) {
         <span className="w-11 block ml-3">height</span>
         <Space.Compact>
           <Input
-            defaultValue={sizeDefault.height}
+            defaultValue={size.height}
             onChange={(e) => {
               setSize({ ...size, height: e.target.value + "px" });
             }}
@@ -125,16 +110,9 @@ export default function Display({ dom }) {
             style={{ backgroundColor: "#1677ff" }}
             icon={<SaveOutlined />}
             onClick={() => {
-              if (id == "rootPage") {
-                dispatch(
-                  SetStyle({
-                    ...style,
-                    height: size.height,
-                  })
-                );
-                return;
-              }
-              dom.style.height = size.height;
+              dom.id == "root-page"
+                ? (dom.style.height = size.height)
+                : (dom.style.minHeight = size.height);
             }}></Button>
         </Space.Compact>
       </Space>
@@ -148,13 +126,10 @@ export default function Display({ dom }) {
           style={{
             width: "130px",
           }}
-          // listHeight="200"
+          value={defaultValue.backgroundColor[0]}
           placement="bottomLeft"
           placeholder="Select"
-          onChange={(value) => {
-            let special = ["bg-transparent", "bg-black", "bg-white"];
-            handleChangeBg(value, "bg", "0", special);
-          }}
+          onChange={handleChangeBg}
           optionFilterProp="classCustom"
           fieldNames={fieldNames}
           options={bgColor}
@@ -173,15 +148,17 @@ export default function Display({ dom }) {
         trigger={["click"]}
         onOpenChange={handleOpenChange}
         open={open}>
-        <span onClick={(e) => e.preventDefault()}>
-          <BsTextareaResize
-            size="25px"
-            color="red"
-            style={{
-              width: "100%",
-            }}
-          />
-        </span>
+        <Tooltip placement="leftTop" title="display">
+          <span onClick={(e) => e.preventDefault()}>
+            <BsTextareaResize
+              size="25px"
+              color="black"
+              style={{
+                width: "100%",
+              }}
+            />
+          </span>
+        </Tooltip>
       </Dropdown>
     </li>
   );

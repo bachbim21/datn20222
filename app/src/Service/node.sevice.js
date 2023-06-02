@@ -35,7 +35,7 @@ export default function NodeService() {
   }
   function update(data, id) {
     return http()
-      .post("/node/" + id, data)
+      .put("/node/" + id, data)
       .then(function (response) {
         return response;
       });

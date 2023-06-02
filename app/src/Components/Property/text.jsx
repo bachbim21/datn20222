@@ -1,34 +1,23 @@
-import { Dropdown, Input, Radio, Space, Select, Button } from "antd";
+import { Dropdown, Radio, Space, Select, Tooltip, Input, Button } from "antd";
 import { useEffect, useState } from "react";
 import CssService from "../../Service/css.service";
-import { useDispatch, useSelector } from "react-redux";
-import { SaveOutlined } from "@ant-design/icons";
-import { SetStyle } from "../Navbar/element.slice";
-import { styleC } from "../../redux/selector";
-import { domId } from "../../redux/selector";
 import { RxText } from "react-icons/rx";
-
+import { handleCheckClass, getClass } from "../../utils/app.function";
+import { SaveOutlined } from "@ant-design/icons";
 export default function Text({ dom }) {
   const [open, setOpen] = useState(false);
   const [textColor, setTextColor] = useState([]);
   const [textSize, setTextSize] = useState([]);
   const [textWeight, setTextWeight] = useState([]);
-  const id = useSelector(domId);
-  const style = useSelector(styleC);
-  var textDefault = {
-    size: parseInt(dom?.style.fontSize),
-    color: parseInt(dom?.style.color),
-    weight: dom?.style.fontWeight,
-  };
-  const [size, setSize] = useState({
-    size: parseInt(dom?.style.fontSize),
-    color: parseInt(dom?.style.color),
-    weight: dom?.style.fontWeight,
-  });
-  const dispatch = useDispatch();
+  const [textAlign, setTextAlign] = useState([]);
+  const [textContent, setTextContent] = useState(dom?.innerText);
   const handleOpenChange = (flag) => {
     setOpen(flag);
   };
+  useEffect(() => {
+    setOpen(false);
+    setTextContent(dom?.textContent);
+  }, [dom?.id]);
   useEffect(() => {
     var param1 = "query=name==text-color;library==tailwind&page=0&size=1000";
     CssService()
@@ -48,18 +37,34 @@ export default function Text({ dom }) {
       .then((res) => {
         setTextWeight(res);
       });
+    var param4 = "query=name==text-align;library==tailwind&page=0&size=1000";
+    CssService()
+      .getAll(param4)
+      .then((res) => {
+        setTextAlign(res);
+      });
   }, []);
-  const handleChange = (value, key1, key2, specal) => {
-    const containsBGClass = Array.from(dom.classList).filter(
-      (className) =>
-        (className.startsWith("key1") && className.endWith(key2)) ||
-        className.includes(specal)
-    );
-    dom.classList.remove(containsBGClass[0]);
+  const handleChangeColor = (value) => {
+    handleCheckClass(dom, textColor);
+    dom.classList.add(value);
+  };
+  const handleChangeWeight = (value) => {
+    handleCheckClass(dom, textWeight);
+    dom.classList.add(value);
+  };
+  const handleChangeTextSize = (value) => {
+    handleCheckClass(dom, textSize);
     dom.classList.add(value);
   };
   const handleRadioChange = (event) => {
     dom.style.fontStyle = event.target.value;
+  };
+  const handleChangeText = (event) => {
+    dom.innerHTML = event.target.value;
+  };
+  const handleChangeAlign = (value) => {
+    handleCheckClass(dom, textAlign);
+    dom.classList.add(value);
   };
   const fieldNames = {
     value: "classCustom", // Tên trường dùng làm value
@@ -75,7 +80,7 @@ export default function Text({ dom }) {
       <Radio.Group
         className="ml-3"
         onChange={handleRadioChange}
-        defaultValue={dom.style.fontStyle}>
+        defaultValue={dom?.style.fontStyle}>
         <Radio value={"italic"}>italic</Radio>
         <Radio value={"normal"}>normal</Radio>
       </Radio.Group>
@@ -86,12 +91,10 @@ export default function Text({ dom }) {
           style={{
             width: "130px",
           }}
-          // listHeight="150"
+          value={getClass(dom, textWeight)}
           placement="bottomLeft"
           placeholder="Select"
-          onChange={(e) => {
-            handleChange(e, "font", "", "");
-          }}
+          onChange={handleChangeWeight}
           optionFilterProp="classCustom"
           fieldNames={fieldNames}
           options={textWeight}
@@ -104,12 +107,10 @@ export default function Text({ dom }) {
           style={{
             width: "130px",
           }}
-          // listHeight="150"
+          value={getClass(dom, textSize)}
           placement="bottomLeft"
           placeholder="Select"
-          onChange={(e) => {
-            handleChange(e, "text", "", "black");
-          }}
+          onChange={handleChangeTextSize}
           optionFilterProp="classCustom"
           fieldNames={fieldNames}
           options={textSize}
@@ -123,16 +124,48 @@ export default function Text({ dom }) {
           style={{
             width: "130px",
           }}
-          // listHeight="150"
+          value={getClass(dom, textColor)}
           placement="bottomLeft"
           placeholder="Select"
-          onChange={(e) => {
-            handleChange(e, "text", "0", "black");
-          }}
+          onChange={handleChangeColor}
           optionFilterProp="classCustom"
           fieldNames={fieldNames}
           options={textColor}
         />
+      </Space>
+      <Space>
+        <span className=" w-11 block ml-3">align</span>
+        <Select
+          showSearch
+          style={{
+            width: "130px",
+          }}
+          value={getClass(dom, textAlign)}
+          placement="bottomLeft"
+          placeholder="Select"
+          onChange={handleChangeAlign}
+          optionFilterProp="classCustom"
+          fieldNames={fieldNames}
+          options={textAlign}
+        />
+      </Space>
+      <Space>
+        {" "}
+        <span className=" w-11 block">content</span>
+        <Space.Compact>
+          <Input
+            onChange={(event) => setTextContent(event.target.value)}
+            value={textContent}
+          />
+          <Button
+            type="primary"
+            size="small"
+            style={{ backgroundColor: "#1677ff" }}
+            icon={<SaveOutlined />}
+            onClick={() => {
+              dom.innerText = textContent;
+            }}></Button>
+        </Space.Compact>
       </Space>
     </Space>
   );
@@ -146,15 +179,17 @@ export default function Text({ dom }) {
         trigger={["click"]}
         onOpenChange={handleOpenChange}
         open={open}>
-        <span onClick={(e) => e.preventDefault()}>
-          <RxText
-            size="25px"
-            color="green"
-            style={{
-              width: "100%",
-            }}
-          />
-        </span>
+        <Tooltip placement="leftTop" title="text">
+          <span onClick={(e) => e.preventDefault()}>
+            <RxText
+              size="25px"
+              color="black"
+              style={{
+                width: "100%",
+              }}
+            />
+          </span>
+        </Tooltip>
       </Dropdown>
     </li>
   );

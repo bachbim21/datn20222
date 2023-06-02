@@ -5,17 +5,63 @@ import jwt_decode from "jwt-decode";
 import PopupProfile from "./popup-profile";
 import { NavLink, useLocation } from "react-router-dom";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useSelector, useDispatch } from "react-redux";
 import { path } from "../../../redux/selector";
+import { Dropdown, Space, message } from "antd";
+import { CiSaveUp1 } from "react-icons/ci";
+import { BsCodeSquare, BsFillShareFill } from "react-icons/bs";
+import { node } from "../../../redux/selector";
+import NodeService from "../../../Service/node.sevice";
+import { SetNode } from "../../../Pages/Project/node.slice";
 
-export default function Header(params) {
+export default function Header() {
   const token = localStorage.getItem("token");
   const decodedToken = decoded ? decoded : token ? jwt_decode(token) : null;
+  const dispatch = useDispatch();
   const [showModal, setShow] = useState(false);
   const nodePath = useSelector(path);
+  const currentNode = useSelector(node);
   const location = useLocation();
+  const items = [
+    {
+      key: "save",
+      label: <span onClick={handleSave}>Lưu</span>,
+      icon: <CiSaveUp1 size="20px" />,
+    },
+    {
+      key: "share",
+      label: <span>Chia sẻ</span>,
+      icon: <BsFillShareFill size="15px" />,
+    },
+    {
+      key: "code",
+      label: <span>Xem code</span>,
+      icon: <BsCodeSquare size="15px" />,
+    },
+  ];
+  function handleSave() {
+    let currentDom = document.getElementById("root-page");
+    if (currentDom != null) {
+      var stringCode = currentDom.outerHTML.toString();
+
+      let finalCode = stringCode
+        .replaceAll("hover-dashed", "")
+        .replaceAll("click-border", "");
+      let update = {
+        ...currentNode,
+        code: finalCode,
+      };
+      NodeService()
+        .update(update, update.id)
+        .then((res) => {
+          message.success("Lưu thành công");
+          dispatch(SetNode(res));
+        })
+        .catch((e) => message.error("Lưu không thành công!"));
+    }
+  }
   return (
-    <header className="bg-custom fixed w-screen flex flex-row items-center justify-between h-14 z-10 top-0 shadow-md">
+    <header className="bg-custom fixed w-screen flex flex-row items-center justify-between h-14 top-0 shadow-md z-50">
       <div className="flex items-center mx-5">
         <NavLink to="/">
           <img src={logo} alt="" className="h-12 object-cover w-20" />
@@ -23,10 +69,18 @@ export default function Header(params) {
 
         <span className="italic font-sans"></span>
       </div>
-      {location.pathname.includes("/project") && (
-        <span className="px-4 border border-gray-300 bg-slate-200 rounded">
-          {nodePath}
-        </span>
+      {location.pathname.includes("/project") && location != null && (
+        <div className="px-4 cursor-pointer border bg-white rounded">
+          <Dropdown
+            placement="bottom"
+            menu={{
+              items,
+            }}>
+            <a onClick={(e) => e.preventDefault()}>
+              <Space>{nodePath}</Space>
+            </a>
+          </Dropdown>
+        </div>
       )}
       {decodedToken ? (
         <div

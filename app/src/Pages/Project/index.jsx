@@ -3,95 +3,80 @@ import { useSelector, useDispatch } from "react-redux";
 import design1 from "../../assets/images/design.jpg";
 import design3 from "../../assets/images/design3.jpg";
 import design_size from "../../assets/images/bg-size.jpg";
-import { sizeWindown } from "../../redux/selector";
 import {
-  dragLeaveCopy,
-  dragOverCopy,
-  dropCopy,
+  dragLeave,
+  dragOver,
+  handleDrop,
+  handleClick,
+  handleMouseLeave,
+  handleMouseOver,
+  dragEnter,
 } from "../../utils/app.function";
-import { Form, Input, Button, Card } from "antd";
+import { Form, Input, Button, Card, message } from "antd";
 import NavbarElement from "../../Components/Navbar/navbar";
-import { element, domId, file } from "../../redux/selector";
-import { SetRoot } from "../../Components/Navbar/element.slice";
+import { node } from "../../redux/selector";
 import Property from "../../Components/Property";
-import { SetDomId } from "../../Components/Navbar/element.slice";
-import { styleC } from "../../redux/selector";
+import { UpdateNode, SetScale } from "./node.slice";
+import { SetDomId, SetHover } from "../../Components/Navbar/element.slice";
+import NodeService from "../../Service/node.sevice";
 const { Meta } = Card;
 export default function Project() {
-  const size = useSelector(sizeWindown);
-  const currentDomId = useSelector(domId);
-  const currentNode = useSelector(file);
-  const [style, setStyle] = useState({
-    width: "1920px",
-    height: "1080px",
-    transition: "width 0.5s ease-in-out, height 0.5s ease-in-out",
-  });
-  var styleRedux = useSelector(styleC);
-  useEffect(() => {
-    if (
-      currentDomId == "rootPage" &&
-      styleRedux.width != null &&
-      styleRedux.height != null
-    ) {
-      setStyle({
-        width: styleRedux.width,
-        height: styleRedux.height,
-        transition: "width 0.5s ease-in-out, height 0.5s ease-in-out",
-      });
-    }
-  }, [styleRedux.width, styleRedux.height]);
+  const currentNode = useSelector(node);
   const dispatch = useDispatch();
-  const dataElement = useSelector(element);
-  var index = 0;
   const wrapper = useRef(null);
-  useEffect(() => {
-    // dispatch(SetRoot("rootPage"));
-    const rootPage = document.getElementById("rootPage");
-    if (!rootPage) return;
-    rootPage.addEventListener("click", (e) => handleClick(e, rootPage));
-    rootPage.addEventListener("mouseover", (e) => handleMouseOver(e, rootPage));
-    rootPage.addEventListener("mouseleave", (e) =>
-      handleMouseLeave(e, rootPage)
-    );
-    rootPage.addEventListener("dragleave", (e) => dragLeaveCopy(e));
-    rootPage.addEventListener("drop", (e) =>
-      dropCopy(e, dataElement, dispatch)
-    );
-    rootPage.addEventListener("dragover", (e) => dragOverCopy(e));
-    return () => {
-      rootPage.removeEventListener("click", handleClick);
-      rootPage.removeEventListener("mouseover", handleMouseOver);
-      rootPage.removeEventListener("mouseleave", handleMouseLeave);
-      rootPage.removeEventListener("dragleave", dragLeaveCopy);
-      rootPage.removeEventListener("drop", dropCopy);
-      rootPage.removeEventListener("dragover", dragOverCopy);
-    };
-  }, [index]);
 
-  const handleClick = (e, rootPage) => {
-    e.preventDefault();
-    e.stopPropagation();
-    dispatch(SetDomId(e.target.id));
+  useEffect(() => {
+    if (currentNode != null && currentNode.code != null) {
+      wrapper.current.innerHTML = "";
+      wrapper.current.innerHTML = currentNode.code;
+      let root = document.getElementById("root-page");
+      const scale = parseFloat(root.style.transform.match(/scale\((.+?)\)/)[1]);
+      dispatch(SetScale(scale));
+      addEvent(root);
+    }
+    var children = document.querySelectorAll(".node");
+    children.forEach((child) => {
+      child.addEventListener("click", (e) => handleClick(e, dispatch));
+      child.addEventListener("mouseover", (e) => handleMouseOver(e, dispatch));
+      child.addEventListener("mouseleave", (e) => handleMouseLeave(e));
+      child.setAttribute("draggable", "true");
+    });
+  }, [currentNode?.code, currentNode?.id]);
+  useEffect(() => {
+    window.addEventListener("resize", function () {
+      handleScale();
+    });
+  }, [window.innerWidth, window.innerHeight]);
+  const handleClickRoot = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dispatch(SetDomId(event.target.id));
   };
-  const handleMouseLeave = (event, rootPage) => {
+  const handleMouseLeaveRoot = (event) => {
+    event.preventDefault();
     event.stopPropagation();
     event.target.classList.remove("hover-dashed");
   };
-
-  const handleMouseOver = (event, rootPage) => {
-    event.stopPropagation();
-    if (event.target === rootPage) {
-      rootPage.classList.add("hover-dashed");
-      let currentDomHover = document.getElementById(currentDomId);
-      currentDomHover?.classList.remove("hover-dashed");
+  function handleScale() {
+    let rate = 1;
+    let rootDom = document.getElementById("root-page");
+    if (!rootDom) return;
+    if (parseInt(rootDom.style.width) > window.innerWidth - 200) {
+      rate = (window.innerWidth - 200) / parseInt(rootDom.style.width);
     } else {
-      rootPage.classList.remove("hover-dashed");
+      rate = parseInt(rootDom.style.width) / (window.innerWidth - 200);
     }
+    rootDom.style.transform = `scale(${rate})`;
+    dispatch(SetScale(rate));
+  }
+  const handleMouseOverRoot = (event) => {
+    event.preventDefault();
+    event.stopPropagation();
+    dispatch(SetHover(event.target.id));
   };
   const onFinish = (values) => {
     let root = document.createElement("div");
-    root.id = "rootPage";
-    root.classList.add("hover-dashed");
+    root.id = "root-page";
     root.classList.add("bg-gray-300");
     root.style.width = values.width + "px";
     root.style.height = values.height + "px";
@@ -99,21 +84,39 @@ export default function Project() {
     root.style.transition = "width 0.5s ease-in-out, height 0.5s ease-in-out";
     root.style.transformOrigin = "top left";
     let rate = 1;
-    if (values.width > size.width - 200) {
-      rate = (size.width - 200) / values.width;
+    if (values.width > window.innerWidth - 200) {
+      rate = (window.innerWidth - 200) / values.width;
     } else {
-      rate = values.width / (size.width - 200);
+      rate = values.width / (window.innerWidth - 200);
     }
     root.style.transform = `scale(${rate})`;
     wrapper.current.appendChild(root);
-    root.addEventListener("click", (e) => handleClick(e, root));
-    root.addEventListener("mouseover", (e) => handleMouseOver(e, root));
-    root.addEventListener("mouseleave", (e) => handleMouseLeave(e, root));
-    root.addEventListener("dragleave", (e) => dragLeaveCopy(e));
-    root.addEventListener("drop", (e) => dropCopy(e, dataElement, dispatch));
-    root.addEventListener("dragover", (e) => dragOverCopy(e));
-    index++;
+    addEvent(root);
+    let update = {
+      ...currentNode,
+      code: root.outerHTML,
+    };
+    updateNode(update);
   };
+  function addEvent(root) {
+    root.addEventListener("click", handleClickRoot);
+    root.addEventListener("mouseover", handleMouseOverRoot);
+    root.addEventListener("mouseleave", handleMouseLeaveRoot);
+    root.addEventListener("dragleave", dragLeave);
+    root.addEventListener("drop", (e) => handleDrop(e, dispatch));
+    root.addEventListener("dragover", (e) => dragOver(e));
+    root.addEventListener("dragenter", (e) => dragEnter(e, dispatch));
+  }
+  function updateNode(update) {
+    NodeService()
+      .update(update, update.id)
+      .then((response) => {
+        dispatch(UpdateNode(response));
+      })
+      .catch((e) => {
+        message.error("Không thành công!");
+      });
+  }
   const validatePositiveNumber = (_, value) => {
     if (value <= 0) {
       return Promise.reject("Vui lòng nhập một số lớn hơn 0");
@@ -124,31 +127,27 @@ export default function Project() {
     <div id="page-content" className="bg-default ml-40 relative">
       <NavbarElement />
       <div
-        ref={wrapper}
-        className="block p-4 overflow-scroll bottom-0"
+        className="block overflow-scroll p-4 bottom-0"
         style={{
-          width: `calc(${size.width}px - 160px)`,
-          height: `calc(${size.height}px - 56px)`,
+          width: `calc(${window.innerWidth}px - 160px)`,
+          height: `calc(${window.innerHeight}px - 56px)`,
         }}>
-        {/* {currentNode?.code && (
-          <div
-            id="rootPage"
-            // ref={elementRoot}
-            style={style}
-            className="h-screen"
-            onDragLeave={(e) => dragLeaveCopy(e)}
-            onDrop={(e) => dropCopy(e, dataElement, dispatch)}
-            onDragOver={(e) => dragOverCopy(e)}></div>
-        )} */}
+        <div ref={wrapper} className="top-0 block"></div>
         {currentNode == null && (
-          <div className="h-full py-5 flex justify-center items-center gap-x-8 ">
-            <Card hoverable cover={<img src={design3} alt="" />}>
+          <div className="flex justify-center items-center gap-x-8 gap-y-6 flex-col md:flex-row">
+            <Card
+              hoverable
+              className="md:w-1/3 w-4/5"
+              cover={<img src={design3} alt="" />}>
               <Meta
                 title="Thiết kế trang web chỉ bằng kéo thả"
                 description="Có thể chỉnh sửa thuộc tính"
               />
             </Card>
-            <Card hoverable cover={<img src={design1} alt="" />}>
+            <Card
+              hoverable
+              className="md:w-1/3 w-4/5"
+              cover={<img src={design1} alt="" />}>
               <Meta
                 title="Quản lý thư mục dễ dàng"
                 description="Tạo 1 file để bắt đầu"

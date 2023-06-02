@@ -1,5 +1,5 @@
 import { sizeWindown } from "../../redux/selector";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import ElementService from "../../Service/element.service";
 import imageE from "../../assets/images/elements.png";
@@ -7,12 +7,10 @@ import { dragStartCopy } from "../../utils/app.function";
 import { Input } from "antd";
 import TreeFolder from "../TreeFolder";
 import ElementDefault from "./element-default";
-import { SetDataElement } from "./element.slice";
 
 export default function NavbarElement({ project }) {
   const [elements, setElements] = useState([]);
   const size = useSelector(sizeWindown);
-  const dispatch = useDispatch();
   function getListElement(param) {
     ElementService()
       .getAll(`query=${param}&page=0&size=1000`)
@@ -40,7 +38,10 @@ export default function NavbarElement({ project }) {
   return (
     <div
       id="element"
-      className="fixed w-40 bg-custom  shadow-xl shadow-yellow-950 top-14 left-0 bottom-0">
+      className="fixed w-40 bg-custom  shadow-xl shadow-yellow-950 top-14 left-0 bottom-0"
+      style={{
+        zIndex: 5,
+      }}>
       <div className="relative h-full">
         <div className="flex flex-row items-center">
           <img
@@ -59,7 +60,7 @@ export default function NavbarElement({ project }) {
           style={{
             height: `calc(${size.height}px - 204px)`,
           }}
-          className={`ml-6 flex flex-col items-center gap-y-2 overflow-y-scroll`}>
+          className="ml-6 flex flex-col items-center gap-y-2 overflow-y-scroll">
           {elements.length > 0 &&
             elements.map((e) => {
               return (
@@ -67,9 +68,7 @@ export default function NavbarElement({ project }) {
                   key={e.id}
                   data={e}
                   draggable="true"
-                  onDragStart={(e) =>
-                    dragStartCopy(e, dispatch, SetDataElement)
-                  }
+                  onDragStart={(e) => dragStartCopy(e)}
                 />
               );
             })}

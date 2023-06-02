@@ -10,8 +10,7 @@ import {
 } from "antd";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
-import { user } from "../../redux/selector";
-import { log } from "../../utils/app.constants";
+import { user, node } from "../../redux/selector";
 import { useParams } from "react-router";
 import {
   FileAddOutlined,
@@ -20,6 +19,7 @@ import {
   EditOutlined,
   SaveOutlined,
 } from "@ant-design/icons";
+import { setLocal } from "../../utils/app.function";
 import NodeService from "../../Service/node.sevice";
 import { SetNode } from "../../Pages/Project/node.slice";
 const { DirectoryTree } = Tree;
@@ -48,7 +48,10 @@ export default function TreeFolder() {
   const findFilePath = (fileKey, folders, path) => {
     for (const folder of folders) {
       if (folder.keyTree == fileKey) {
-        return `${path}/${folder.name}`;
+        return {
+          path: `${path}/${folder.name}`,
+          key: fileKey,
+        };
       }
       if (folder.children.length > 0) {
         const foundFile = findFilePath(
@@ -63,12 +66,14 @@ export default function TreeFolder() {
     }
     return null;
   };
+
   const onSelect = (selectedKeys, info) => {
     const selectedFileKey = selectedKeys[0];
     setSelected(info.node);
-    let path = findFilePath(selectedFileKey, treeData, "");
+    let pathKey = findFilePath(selectedFileKey, treeData, "");
     if (info.selected == true && info.selectedNodes[0].file == true) {
-      dispatch(SetNode({ file: info.selectedNodes[0], path: path }));
+      setLocal(pathKey, treeData[0].id);
+      dispatch(SetNode({ node: info.selectedNodes[0], path: pathKey.path }));
     }
   };
 
@@ -134,7 +139,7 @@ export default function TreeFolder() {
             newLoadings[index] = false;
             return newLoadings;
           });
-          message.error("Tên đã tồnt tại!");
+          message.error("Tên đã tồn tại!");
         });
     }
   }
@@ -147,7 +152,7 @@ export default function TreeFolder() {
     if (newNode.old?.length > 0) {
       let oldNode = { ...rightSelected, name: newNode.old };
       NodeService()
-        .create(oldNode)
+        .update(oldNode)
         .then((res) => {
           getProject();
           setOpen(false);
