@@ -6,13 +6,17 @@
   outline-width: 2px;
   outline-style: dashed;
   outline-offset: 2px;
+  cursor: move;
+  z-index: 10;
 }
 
 .click-border {
   outline-color: #c56322;
   outline-width: 2px;
   outline-style: dashed;
+  cursor: move;
   outline-offset: 2px;
+  z-index: 5;
 }
 .over {
   position: relative;

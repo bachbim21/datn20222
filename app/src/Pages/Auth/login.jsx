@@ -28,9 +28,7 @@ function Login() {
     AuthService()
       .login(values)
       .then((response) => {
-        console.log(response);
         localStorage.setItem("token", response.token);
-        decode(response.token);
         dispatch(
           LoadingService({
             text: "",

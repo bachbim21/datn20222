@@ -1,3 +1,5 @@
+import { decode } from "./utils/app.function";
+import { message } from "antd";
 export default function http() {
   const baseUrl = process.env.REACT_APP_BASE_URL; // địa chỉ cơ sở của API
   const token = localStorage.getItem("token")
@@ -7,6 +9,7 @@ export default function http() {
     "Content-Type": "application/json",
     Authorization: token ? "Bearer " + token : null,
   };
+  const publicUrlPost = ['/auth/login', '/auth/singup','/auth/forget-password']
 
   var service = {
     get: get,
@@ -17,6 +20,10 @@ export default function http() {
 
   return service;
   async function get(url) {
+    if(!decode(token)) {
+      message.error("Hết thời gian truy cập vui lòng đăng nhập lại")
+      return
+    }
     const response = await fetch(`${baseUrl}${url}`, {
       method: "GET",
       headers: headers,
@@ -30,6 +37,10 @@ export default function http() {
   }
 
   async function post(url, data) {
+    if(!decode(token) && !publicUrlPost.includes(url)) {
+      message.error("Hết thời gian truy cập vui lòng đăng nhập lại")
+      return
+    }
     const response = await fetch(`${baseUrl}${url}`, {
       method: "POST",
       headers: headers,
@@ -38,13 +49,17 @@ export default function http() {
 
     if (!response.ok) {
       console.log(response);
-      throw new Error("dada"); // xử lý lỗi
+      throw new Error("Something went wrong"); // xử lý lỗi
     }
 
     return response.json(); // trả về dữ liệu từ response
   }
 
   async function put(url, data) {
+    if(!decode(token)) {
+      message.error("Hết thời gian truy cập vui lòng đăng nhập lại")
+      return
+    }
     const response = await fetch(`${baseUrl}${url}`, {
       method: "PUT",
       headers: headers,
@@ -59,6 +74,10 @@ export default function http() {
   }
 
   async function deleteOne(url) {
+    if(!decode(token)) {
+      message.error("Hết thời gian truy cập vui lòng đăng nhập lại")
+      return
+    }
     const response = await fetch(`${baseUrl}${url}`, {
       method: "DELETE",
       headers: headers,

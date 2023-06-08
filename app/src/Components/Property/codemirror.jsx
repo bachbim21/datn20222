@@ -1,5 +1,6 @@
 import React, { useRef, useEffect, useState } from "react";
 import { SlSizeFullscreen } from "react-icons/sl";
+import { BsCodeSquare } from "react-icons/bs";
 import { Controlled as CodeMirror } from "react-codemirror2";
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/htmlmixed/htmlmixed";
@@ -36,7 +37,7 @@ export default function Codemirror({ dom }) {
       <li className="relative flex items-center justify-center list-none cursor-pointer border rounded m-1 hover:border-blue-600 aspect-square hover:bg-blue-200 bg-gray-200">
         <Tooltip placement="leftTop" title="text">
           <span onClick={showModal}>
-            <SlSizeFullscreen
+            <BsCodeSquare
               size="20px"
               color="black"
               style={{

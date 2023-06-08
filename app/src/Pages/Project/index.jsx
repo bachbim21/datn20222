@@ -1,45 +1,44 @@
-import { useState, useEffect, useRef } from "react";
+import { useEffect, useRef } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import design1 from "../../assets/images/design.jpg";
 import design3 from "../../assets/images/design3.jpg";
 import design_size from "../../assets/images/bg-size.jpg";
 import {
-  dragLeave,
-  dragOver,
-  handleDrop,
   handleClick,
   handleMouseLeave,
   handleMouseOver,
-  dragEnter,
+  handleMouseDown,
 } from "../../utils/app.function";
 import { Form, Input, Button, Card, message } from "antd";
 import NavbarElement from "../../Components/Navbar/navbar";
 import { node } from "../../redux/selector";
 import Property from "../../Components/Property";
-import { UpdateNode, SetScale } from "./node.slice";
-import { SetDomId, SetHover } from "../../Components/Navbar/element.slice";
+import { UpdateNode } from "./node.slice";
 import NodeService from "../../Service/node.sevice";
 const { Meta } = Card;
 export default function Project() {
   const currentNode = useSelector(node);
   const dispatch = useDispatch();
   const wrapper = useRef(null);
-
+  let rateScale = null;
   useEffect(() => {
     if (currentNode != null && currentNode.code != null) {
       wrapper.current.innerHTML = "";
       wrapper.current.innerHTML = currentNode.code;
       let root = document.getElementById("root-page");
       const scale = parseFloat(root.style.transform.match(/scale\((.+?)\)/)[1]);
-      dispatch(SetScale(scale));
+      rateScale = scale;
       addEvent(root);
     }
     var children = document.querySelectorAll(".node");
+    if (children == null || children.length == 0) return;
+
     children.forEach((child) => {
-      child.addEventListener("click", (e) => handleClick(e, dispatch));
-      child.addEventListener("mouseover", (e) => handleMouseOver(e, dispatch));
-      child.addEventListener("mouseleave", (e) => handleMouseLeave(e));
-      child.setAttribute("draggable", "true");
+      child.addEventListener("click",handleClick);
+      child.addEventListener("mouseover", handleMouseOver);
+      child.addEventListener("mouseleave", handleMouseLeave);
+      child.addEventListener("mousedown", handleMouseDown);
+      // child.setAttribute("draggable", "true");
     });
   }, [currentNode?.code, currentNode?.id]);
   useEffect(() => {
@@ -47,33 +46,16 @@ export default function Project() {
       handleScale();
     });
   }, [window.innerWidth, window.innerHeight]);
-  const handleClickRoot = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    dispatch(SetDomId(event.target.id));
-  };
-  const handleMouseLeaveRoot = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    event.target.classList.remove("hover-dashed");
-  };
+
   function handleScale() {
     let rate = 1;
     let rootDom = document.getElementById("root-page");
     if (!rootDom) return;
-    if (parseInt(rootDom.style.width) > window.innerWidth - 200) {
-      rate = (window.innerWidth - 200) / parseInt(rootDom.style.width);
-    } else {
-      rate = parseInt(rootDom.style.width) / (window.innerWidth - 200);
-    }
-    rootDom.style.transform = `scale(${rate})`;
-    dispatch(SetScale(rate));
+    rate = (window.innerWidth - 220) / parseInt(rootDom.style.width);
+    rootDom.style.transform = `scale(${rate.toFixed(2)})`;
+    rateScale = rate.toFixed(2);
   }
-  const handleMouseOverRoot = (event) => {
-    event.preventDefault();
-    event.stopPropagation();
-    dispatch(SetHover(event.target.id));
-  };
+
   const onFinish = (values) => {
     let root = document.createElement("div");
     root.id = "root-page";
@@ -84,10 +66,10 @@ export default function Project() {
     root.style.transition = "width 0.5s ease-in-out, height 0.5s ease-in-out";
     root.style.transformOrigin = "top left";
     let rate = 1;
-    if (values.width > window.innerWidth - 200) {
-      rate = (window.innerWidth - 200) / values.width;
+    if (values.width > window.innerWidth - 220) {
+      rate = (window.innerWidth - 220) / values.width;
     } else {
-      rate = values.width / (window.innerWidth - 200);
+      rate = values.width / (window.innerWidth - 220);
     }
     root.style.transform = `scale(${rate})`;
     wrapper.current.appendChild(root);
@@ -99,13 +81,9 @@ export default function Project() {
     updateNode(update);
   };
   function addEvent(root) {
-    root.addEventListener("click", handleClickRoot);
-    root.addEventListener("mouseover", handleMouseOverRoot);
-    root.addEventListener("mouseleave", handleMouseLeaveRoot);
-    root.addEventListener("dragleave", dragLeave);
-    root.addEventListener("drop", (e) => handleDrop(e, dispatch));
-    root.addEventListener("dragover", (e) => dragOver(e));
-    root.addEventListener("dragenter", (e) => dragEnter(e, dispatch));
+    root.addEventListener("click", handleClick);
+    root.addEventListener("mouseover", handleMouseOver);
+    root.addEventListener("mouseleave", handleMouseLeave);
   }
   function updateNode(update) {
     NodeService()
@@ -134,10 +112,10 @@ export default function Project() {
         }}>
         <div ref={wrapper} className="top-0 block"></div>
         {currentNode == null && (
-          <div className="flex justify-center items-center gap-x-8 gap-y-6 flex-col md:flex-row">
+          <div className="">
             <Card
               hoverable
-              className="md:w-1/3 w-4/5"
+              className=" inline-block"
               cover={<img src={design3} alt="" />}>
               <Meta
                 title="Thiết kế trang web chỉ bằng kéo thả"
@@ -146,7 +124,7 @@ export default function Project() {
             </Card>
             <Card
               hoverable
-              className="md:w-1/3 w-4/5"
+              className=" inline-block"
               cover={<img src={design1} alt="" />}>
               <Meta
                 title="Quản lý thư mục dễ dàng"

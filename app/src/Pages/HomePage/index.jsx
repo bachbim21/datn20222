@@ -1,4 +1,3 @@
-import { user } from "../../redux/selector";
 import { useEffect, useState, useRef } from "react";
 import NodeService from "../../Service/node.sevice";
 import { NavLink, useNavigate } from "react-router-dom";
@@ -6,13 +5,14 @@ import { Form, Input, Button, Checkbox, Spin, message, Modal } from "antd";
 import { log } from "../../utils/app.constants";
 import { useDispatch, useSelector } from "react-redux";
 import { LoadingService } from "../../Components/Layout/layout.slice";
+import { decode } from "../../utils/app.function";
 
 export default function Home() {
   const [listNode, setListNode] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const navigate = useNavigate();
   const dispatch = useDispatch();
-  const currentUser = useSelector(user);
+  const decoded = decode();
   const [messageApi, contextHolder] = message.useMessage();
   const form = useRef();
   const map = new Map();
@@ -23,14 +23,13 @@ export default function Home() {
   map.set("bootstrap", "tailwind");
 
   useEffect(() => {
-    if (currentUser.id) {
+    if(!decoded) return
       NodeService()
-        .getAll(currentUser.id)
+        .getAll(decoded.user_id)
         .then((res) => {
           setListNode(res);
         });
-    }
-  }, [currentUser.id]);
+  }, [decoded?.user_id]);
   const showModal = () => {
     setIsModalOpen(true);
   };
@@ -42,6 +41,7 @@ export default function Home() {
   };
 
   const onFinish = (values) => {
+    if(!decoded) return
     let data = {
       parentId: 0,
       name: values.name,
@@ -54,7 +54,7 @@ export default function Home() {
           : "tailwind",
       },
       file: false,
-      user: { id: currentUser.id },
+      user: { id: decoded.user_id },
     };
     dispatch(
       LoadingService({
@@ -147,7 +147,7 @@ export default function Home() {
             </NavLink>
           </div>
         </div>
-        {currentUser?.id && (
+        {decoded?.user_id && (
           <div className="lg:col-span-2 bg-white rounded-md py-3 px-5 shadow-lg">
             <h3 className="text-base font-medium mb-3">Dự án gần đây</h3>
             <ul className="px-3 grid md:grid-cols-2 gap-3  sm:gap-x-6">

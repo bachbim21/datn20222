@@ -5,7 +5,6 @@ const NodeSlice = createSlice({
   initialState: {
     node: null,
     path: null,
-    scale: null,
   },
   reducers: {
     SetNode: (state, actions) => {
@@ -15,10 +14,7 @@ const NodeSlice = createSlice({
     UpdateNode: (state, actions) => {
       state.node = actions.payload;
     },
-    SetScale: (state, actions) => {
-      state.scale = actions.payload;
-    },
   },
 });
-export const { SetNode, UpdateNode, SetScale } = NodeSlice.actions;
+export const { SetNode, UpdateNode } = NodeSlice.actions;
 export default NodeSlice.reducer;

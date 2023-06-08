@@ -5,19 +5,31 @@ import {
   SetOver,
 } from "../Components/Navbar/element.slice";
 import PointDom from "./class";
-function decode(token) {
-  let thisToken = token ? token : localStorage.getItem("token");
+function decode() {
+  let thisToken = localStorage.getItem("token");
   try {
-    if (thisToken != null) {
-      return jwt_decode(thisToken);
+    if (thisToken != null && thisToken != undefined && thisToken.length > 0) {
+      let now = new Date();
+      let de = jwt_decode(thisToken);
+      if(now.getTime() > de.exp*1000) {
+        localStorage.removeItem("token");
+        return null
+      }
+      return de
     } else return null;
   } catch (e) {
     localStorage.removeItem("token");
     return null;
   }
 }
-let decoded = decode(null);
+let dispatch = null;
+let rateScale = null;
 
+let dragged;
+var arrChildren = [];
+function setDispatch(useDispatch) {
+  dispatch = useDispatch
+}
 const paserly = (parsely, value) => {
   let validate = true;
   switch (parsely.name) {
@@ -94,32 +106,93 @@ const generateUniqueId = () => {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
 };
 // drap
+
+function getScale() {
+  let root = document.getElementById("root-page");
+  if (root == null) return;
+  return parseFloat(root.style.transform.match(/scale\((.+?)\)/)[1]);
+}
 function dragStartCopy(e) {
   // Add different types of drag data
-  // e.dataTransfer.dropEffect = "copy";
-  e.dataTransfer.setData(
-    "application/json",
-    JSON.stringify({ tag: e.target.tagName, text: e.target.innerText })
-  );
+  let root = document.getElementById("root-page");
+  if (root == null) return;
+  rateScale = getScale();
+  root.addEventListener("dragleave", dragLeave);
+  root.addEventListener("drop", handleDrop);
+  root.addEventListener("dragover", dragOver);
+  root.addEventListener("dragenter", dragEnter);
+  if (e.target.id.includes("root")) {
+    dragged = { tag: e.target.tagName, text: e.target.innerText };
+  } else {
+    dragged = e.target;
+  }
+  console.log(dragged);
 }
-function dragStart(e) {
-  // e.dataTransfer.dropEffect = "move";
-  e.dataTransfer.setData(
-    "application/json",
-    JSON.stringify({ html: e.target.outerHTML })
-  );
-  e.target.style.opacity = "0.5";
-  e.target.style.border = "2px dashed red";
+var initialMouseX = null;
+var initialMouseY = null;
+var oldTranslateX = null;
+var oldTranslateY = null;
+function handleMouseDown(event) {
+  initialMouseX = event.clientX;
+  initialMouseY = event.clientY;
+  oldTranslateX = Number(event.target.getAttribute("data-x"));
+  oldTranslateY = Number(event.target.getAttribute("data-y"));
+  rateScale = getScale();
+  event.target.addEventListener("mousemove", moveHandler);
+  event.target.addEventListener("mouseup", upHandler);
+  // event.target.addEventListener("dragstart", (e)=> dragStartCopy(e));
+  // event.target.setAttribute("draggable", "true");
+  event.target.addEventListener('drop', function(event) {
+    event.stopPropagation();
+  });
+  // add event drag and drop
+  let root = document.getElementById('root-page')
+  root.addEventListener("dragleave", dragLeave);
+  root.addEventListener("drop", handleDrop);
+  root.addEventListener("dragover", dragOver);
+  root.addEventListener("dragenter", dragEnter);
+
 }
+function moveHandler(e) {
+  var deltaX = e.clientX - initialMouseX;
+  var deltaY = e.clientY - initialMouseY;
+
+  let newX = oldTranslateX + deltaX / rateScale;
+  let newY = oldTranslateY + deltaY / rateScale;
+  e.target.style.transform = `translate(${newX.toFixed(4)}px,${newY.toFixed(
+    4
+  )}px)`;
+  e.target.setAttribute("data-x", oldTranslateX + deltaX / rateScale);
+  e.target.setAttribute("data-y", oldTranslateY + deltaY / rateScale);
+}
+function upHandler(event) {
+  event.target.removeEventListener("mousemove", moveHandler);
+  event.target.removeEventListener("mouseup", upHandler);
+  // remove event drag and drop
+  let root = document.getElementById('root-page')
+  root.addEventListener("dragleave", dragLeave);
+  root.addEventListener("drop", handleDrop);
+  root.addEventListener("dragover", dragOver);
+  root.addEventListener("dragenter", dragEnter);
+  root.setAttribute("draggable", "false");
+}
+
+let mouse = {
+  x: null,
+  y: null,
+};
 function dragOver(e) {
   e.preventDefault();
   e.stopPropagation();
-  // e.dataTransfer.dropEffect = "move";
-  // dispatch(SetOver(e.target.id));
 }
-function dragEnter(e, dispatch) {
+
+function dragEnter(e) {
   e.preventDefault();
   e.stopPropagation();
+  let children = e.target.querySelectorAll(".node");
+  arrChildren = Array.from(children).map((child) => {
+    return new PointDom(child);
+  });
   dispatch(SetOver(e.target.id));
 }
 
@@ -128,7 +201,7 @@ function dragLeave(e) {
   e.stopPropagation();
   e.target.classList.remove("over");
 }
-const handleClick = (e, dispatch) => {
+const handleClick = (e) => {
   e.preventDefault();
   e.stopPropagation();
   dispatch(SetDomId(e.target.id));
@@ -139,24 +212,42 @@ const handleMouseLeave = (event) => {
   event.target.classList.remove("hover-dashed");
 };
 
-const handleMouseOver = (event, dispatch) => {
+const handleMouseOver = (event) => {
   event.preventDefault();
   event.stopPropagation();
   dispatch(SetHover(event.target.id));
 };
 
-function handleDrop(e, dispatch) {
+function handleDrop(e) {
   e.preventDefault();
+  let root = document.getElementById("root-page");
+  if (root == null) return;
+  rateScale = parseFloat(root.style.transform.match(/scale\((.+?)\)/)[1]);
+  mouse = {
+    x: e.clientX,
+    y: e.clientY,
+  };
   e.target.classList.remove("over");
-  var data = JSON.parse(e.dataTransfer.getData("application/json"));
   const id = generateUniqueId();
+
   // set event
-  let element = SetDataElement(id, data);
+  let element = SetDataElement(id, dragged);
+  console.log(element);
+  if (element.id == e.target.id) return;
+  setLocation(element, e, rateScale);
   e.target.appendChild(element);
-  element.addEventListener("click", (e) => handleClick(e, dispatch));
-  element.addEventListener("mouseover", handleMouseOver(e, dispatch));
-  element.addEventListener("mouseleave", handleMouseLeave(e));
-  element.addEventListener("dragstart", dragStart);
+  element.addEventListener("click", handleClick);
+  element.addEventListener("mouseover", (e) => handleMouseOver(e, dispatch));
+  element.addEventListener("mouseleave", handleMouseLeave);
+  // element.addEventListener("dragstart", dragStart);
+  element.addEventListener("mousedown", handleMouseDown);
+  // element.setAttribute("draggable", "true");
+  dragged = null;
+  arrChildren = [];
+  e.target.removeEventListener("dragleave", dragLeave);
+  e.target.removeEventListener("drop", handleDrop);
+  e.target.removeEventListener("dragover", dragOver);
+  e.target.removeEventListener("dragenter", dragEnter);
 }
 
 function SetDataElement(id, data) {
@@ -170,17 +261,23 @@ function SetDataElement(id, data) {
     element.style.minHeight = size[1];
     element.style.display = size[2];
     element.style.boxSizing = "border-box";
-    element.setAttribute("draggable", "true");
     element.textContent = data.tag == "input" ? null : data.text;
     element.style.transition =
       "min-width 0.5s ease-in-out, min-height 0.5s ease-in-out";
   } else {
-    let d = document.createElement("div");
-    d.innerHTML = data.html;
-    element = d.firstChild;
-    element.id = id;
+    element = dragged;
   }
   return element;
+}
+
+function setLocation(element, event, rateScale) {
+  var rect = event.target.getBoundingClientRect();
+  element.style.transform = `translate(${(
+    (mouse.x - rect.left) /
+    rateScale
+  ).toFixed(4)}px,${((mouse.y - rect.top) / rateScale).toFixed(4)}px)`;
+  element.setAttribute("data-x", (mouse.x - rect.left) / rateScale);
+  element.setAttribute("data-y", (mouse.y - rect.top) / rateScale);
 }
 
 function setSize(tag) {
@@ -255,13 +352,13 @@ function getClass(dom, listClass) {
 }
 
 export {
+  handleMouseDown,
   paserly,
   handleValidate,
   dragOver,
   dragStartCopy,
   handleDrop,
   dragLeave,
-  decoded,
   decode,
   setLocal,
   getLocal,
@@ -271,4 +368,5 @@ export {
   handleMouseLeave,
   handleMouseOver,
   dragEnter,
+  setDispatch
 };

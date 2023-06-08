@@ -1,29 +1,31 @@
 import React from "react";
-// import { useDispatch } from "react-redux";
-// import { ReSize } from "./Components/Layout/layout.slice";
+import { useDispatch } from "react-redux";
+import { ReSize } from "./Components/Layout/layout.slice";
 import { RouterProvider } from "react-router";
 import router from "./router/app.router";
 import { useEffect } from "react";
+import { setDispatch } from "./utils/app.function";
 const App = () => {
-  // const dispatch = useDispatch();
-  // dispatch(
-  //   ReSize({
-  //     width: window.innerWidth,
-  //     height: window.innerHeight,
-  //     scale: null,
-  //   })
-  // );
-  // useEffect(() => {
-  //   window.addEventListener("resize", function () {
-  //     dispatch(
-  //       ReSize({
-  //         width: window.innerWidth,
-  //         height: window.innerHeight,
-  //         scale: null,
-  //       })
-  //     );
-  //   });
-  // }, [window.innerWidth, window.innerHeight]);
+  const dispatch = useDispatch();
+  dispatch(
+    ReSize({
+      width: window.innerWidth,
+      height: window.innerHeight,
+    })
+  );
+  useEffect(()=> {
+    setDispatch(dispatch)
+  },[])
+  useEffect(() => {
+    window.addEventListener("resize", function () {
+      dispatch(
+        ReSize({
+          width: window.innerWidth,
+          height: window.innerHeight,
+        })
+      );
+    });
+  }, [window.innerWidth, window.innerHeight]);
 
   window.addEventListener("error", (e) => {
     if (e.message === "ResizeObserver loop limit exceeded") {

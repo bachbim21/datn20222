@@ -22,12 +22,8 @@ export default function Property() {
   function handleScale() {
     let rate = 1;
     let rootDom = document.getElementById("root-page");
-    if (parseInt(rootDom.style.width) > window.innerWidth - 200) {
-      rate = (window.innerWidth - 200) / parseInt(rootDom.style.width);
-    } else {
-      rate = parseInt(rootDom.style.width) / (window.innerWidth - 200);
-    }
-    rootDom.style.transform = `scale(${rate})`;
+    rate = (window.innerWidth - 220) / parseInt(rootDom.style.width);
+    rootDom.style.transform = `scale(${rate.toFixed(2)})`;
   }
   if (idDom != null || idDom != undefined) {
     return (

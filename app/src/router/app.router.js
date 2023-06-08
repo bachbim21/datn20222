@@ -14,10 +14,6 @@ const router = createBrowserRouter([
   {
     path: "/",
     element: <DefaultLayout />,
-    loader: () => {
-      let decoded = decode(null);
-      return decoded;
-    },
     children: [
       {
         path: "",
@@ -27,20 +23,19 @@ const router = createBrowserRouter([
           return null;
         },
       },
-      {
-        path: "design",
-        element: <AnonymousProject />,
-        loader: () => {
-          document.title = "Thiết kế";
-          return null;
-        },
-      },
+      // {
+      //   path: "design",
+      //   element: <AnonymousProject />,
+      //   loader: () => {
+      //     document.title = "Thiết kế";
+      //     return null;
+      //   },
+      // },
       {
         path: "",
         element: <Private />,
         loader: () => {
-          const token = localStorage.getItem("token");
-          if (!token) return redirect("/login");
+          if (!decode()) return redirect("/login");
           return null;
         },
         children: [

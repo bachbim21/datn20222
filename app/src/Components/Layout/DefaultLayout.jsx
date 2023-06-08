@@ -1,22 +1,13 @@
 import Header from "./Header";
 import { Outlet } from "react-router";
-import { useLoaderData } from "react-router-dom";
-import { useSelector, useDispatch } from "react-redux";
+import { useSelector } from "react-redux";
 import { loading } from "../../redux/selector";
-import { UserToken, LoadingService } from "./layout.slice";
 import { LoadingOutlined } from "@ant-design/icons";
-import { Spin, Modal, Button } from "antd";
-import { useEffect } from "react";
+import { Spin } from "antd";
 export default function DefaultLayout() {
-  const dispatch = useDispatch();
-  const decoded = useLoaderData();
   const loadingContext = useSelector(loading);
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
-  useEffect(() => {
-    if (decoded) {
-      dispatch(UserToken(decoded));
-    }
-  }, []);
+
 
   return (
     <>

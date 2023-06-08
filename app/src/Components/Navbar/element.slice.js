@@ -28,7 +28,6 @@ const ElementSlice = createSlice({
       }
     },
     SetOver: (state, actions) => {
-      if (state.idOver == actions.payload) return;
       state.idOver = actions.payload;
       let currentElement = document.getElementById(state.idOver);
       currentElement?.classList.add("over");

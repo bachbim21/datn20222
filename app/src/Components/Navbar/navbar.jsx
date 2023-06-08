@@ -3,10 +3,10 @@ import { useSelector } from "react-redux";
 import { useState, useEffect } from "react";
 import ElementService from "../../Service/element.service";
 import imageE from "../../assets/images/elements.png";
-import { dragStartCopy } from "../../utils/app.function";
 import { Input } from "antd";
 import TreeFolder from "../TreeFolder";
 import ElementDefault from "./element-default";
+import { message } from "antd";
 
 export default function NavbarElement({ project }) {
   const [elements, setElements] = useState([]);
@@ -20,7 +20,7 @@ export default function NavbarElement({ project }) {
         }
       })
       .catch((err) => {
-        alert("Khong co quyen truy cap");
+        message.error("Không có quyền truy cập!");
       });
   }
   useEffect(() => {
@@ -58,7 +58,7 @@ export default function NavbarElement({ project }) {
         </div>
         <nav
           style={{
-            height: `calc(${size.height}px - 204px)`,
+            height: `calc(${size.height}px - 210px)`,
           }}
           className="ml-6 flex flex-col items-center gap-y-2 overflow-y-scroll">
           {elements.length > 0 &&
@@ -67,8 +67,6 @@ export default function NavbarElement({ project }) {
                 <ElementDefault
                   key={e.id}
                   data={e}
-                  draggable="true"
-                  onDragStart={(e) => dragStartCopy(e)}
                 />
               );
             })}
