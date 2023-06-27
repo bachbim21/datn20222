@@ -1,4 +1,4 @@
-import { dragStartCopy } from "../../utils/app.function";
+import { dragStartCopy } from "../../utils/drag";
 export default function ElementDefault({ data }) {
   const Tag = data.tag;
   if (Tag == "img") {

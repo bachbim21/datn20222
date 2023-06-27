@@ -1,5 +1,5 @@
 import { NavLink, useNavigate } from "react-router-dom";
-import { log } from "../../utils/app.constants";
+import { log } from "../../utils/log";
 import { useDispatch, useSelector } from "react-redux";
 import logo from "../../assets/images/go.png";
 import { loading } from "../../redux/selector";
@@ -16,7 +16,7 @@ export default function Signup() {
   const antIcon = <LoadingOutlined style={{ fontSize: 34 }} spin />;
   const loadingContext = useSelector(loading);
   const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
-
+  const authService = new AuthService()
   const onFinish = (values) => {
     dispatch(
       LoadingService({
@@ -24,8 +24,7 @@ export default function Signup() {
         status: true,
       })
     );
-    AuthService()
-      .signup({
+    authService.signup({
         email: values.email,
         name: values.name,
         password: values.password,
@@ -40,7 +39,7 @@ export default function Signup() {
         );
         messageApi.open({
           type: "success",
-          content: log.signup_success,
+          content: log.success.signup,
           duration: 3,
         });
         setTimeout(() => {
@@ -54,11 +53,6 @@ export default function Signup() {
             status: false,
           })
         );
-        messageApi.open({
-          type: "error",
-          content: log.email_exits,
-          duration: 3,
-        });
       });
   };
   return (
@@ -87,10 +81,10 @@ export default function Signup() {
               label="Email"
               name="email"
               rules={[
-                { required: true, message: message.log_required },
+                { required: true, message: log.error.required },
                 {
                   type: "email",
-                  message: message.log_email,
+                  message: log.error.invalidEmail,
                 },
               ]}>
               <Input placeholder="user@gmail.com" />
@@ -99,9 +93,9 @@ export default function Signup() {
               label="Mật khẩu"
               name="password"
               rules={[
-                { required: true, message: message.log_required },
-                { max: 20, message: message.log_maxLength20 },
-                { min: 6, message: message.log_minLength6 },
+                { required: true, message: log.error.required },
+                { max: 20, message: log.error.maxLength20 },
+                { min: 6, message: log.error.minLength6 },
               ]}>
               <Input.Password />
             </Form.Item>
@@ -110,9 +104,9 @@ export default function Signup() {
               name="confirm_password"
               dependencies={["password"]}
               rules={[
-                { required: true, message: message.log_required },
-                { max: 20, message: message.log_maxLength20 },
-                { min: 6, message: message.log_minLength6 },
+                { required: true, message: log.error.required },
+                { max: 20, message: log.error.maxLength20 },
+                { min: 6, message: log.error.minLength6 },
                 ({ getFieldValue }) => ({
                   validator(_, value) {
                     if (!value || getFieldValue("password") === value) {

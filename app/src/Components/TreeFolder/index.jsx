@@ -6,7 +6,7 @@ import {
   Input,
   Space,
   Popconfirm,
-  message,
+  message
 } from "antd";
 import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
@@ -17,32 +17,47 @@ import {
   FolderAddOutlined,
   DeleteOutlined,
   EditOutlined,
-  SaveOutlined,
+  SaveOutlined
 } from "@ant-design/icons";
-import { setLocal } from "../../utils/app.function";
-import NodeService from "../../Service/node.sevice";
-import { SetNode } from "../../Pages/Project/node.slice";
+import { setLocal } from "../../utils/class";
+import NodeService from "../../Service/node.service";
+import { SetNode, SetProjectId } from "../../Pages/Project/node.slice";
+import { decode } from "../../utils/token";
+
 const { DirectoryTree } = Tree;
-export default function TreeFolder() {
+export default function TreeFolder({ data, view }) {
   const { id } = useParams();
   const [treeData, setTreeData] = useState([]);
-  const currentUser = useSelector(user);
+  const currentUser = decode();
   const dispatch = useDispatch();
   const [loadings, setLoadings] = useState([]);
   const [selected, setSelected] = useState([]);
   const [rightSelected, setRightSelected] = useState([]);
+  const nodeService = new NodeService();
   const [newNode, setNewNode] = useState({
     new: null,
-    old: null,
+    old: null
   });
+
   function getProject() {
-    NodeService()
-      .getOne(id)
+    let pId = null;
+    if (id) {
+      pId = id;
+    } else {
+      pId = data.id;
+    }
+    nodeService.getOne(pId)
       .then((response) => {
         setTreeData([response]);
+        dispatch(SetProjectId(id));
       });
   }
+
   useEffect(() => {
+    if (data) {
+      setTreeData([data]);
+      return;
+    }
     getProject();
   }, [id]);
   const findFilePath = (fileKey, folders, path) => {
@@ -50,7 +65,7 @@ export default function TreeFolder() {
       if (folder.keyTree == fileKey) {
         return {
           path: `${path}/${folder.name}`,
-          key: fileKey,
+          key: fileKey
         };
       }
       if (folder.children.length > 0) {
@@ -92,21 +107,24 @@ export default function TreeFolder() {
 
   const [selectedMenu, setSelectedMenu] = useState({
     selected: null,
-    menuItem: null,
+    menuItem: null
   });
 
   const handleMenuClick = ({ domEvent, key }) => {
     domEvent.preventDefault();
     setSelectedMenu({ ...selectedMenu, selected: key });
   };
+
   function handleEditNew(e) {
     e.preventDefault();
     setNewNode({ ...newNode, new: e.target.value });
   }
+
   function handleEditOld(e) {
     e.preventDefault();
     setNewNode({ ...newNode, old: e.target.value });
   }
+
   function handleSubmitNew(file, index) {
     setLoadings((prevLoadings) => {
       const newLoadings = [...prevLoadings];
@@ -119,10 +137,9 @@ export default function TreeFolder() {
         name: newNode.new,
         file: file,
         tech: null,
-        user: { id: currentUser.id },
+        user: { id: currentUser.user_id }
       };
-      NodeService()
-        .create(node)
+      nodeService.create(node)
         .then((res) => {
           getProject();
           setOpen(false);
@@ -143,6 +160,7 @@ export default function TreeFolder() {
         });
     }
   }
+
   function handleSubmitOld(file, index) {
     setLoadings((prevLoadings) => {
       const newLoadings = [...prevLoadings];
@@ -151,8 +169,8 @@ export default function TreeFolder() {
     });
     if (newNode.old?.length > 0) {
       let oldNode = { ...rightSelected, name: newNode.old };
-      NodeService()
-        .update(oldNode)
+      nodeService
+        .update(oldNode, oldNode?.id)
         .then((res) => {
           getProject();
           setOpen(false);
@@ -169,17 +187,18 @@ export default function TreeFolder() {
             newLoadings[index] = false;
             return newLoadings;
           });
-          message.error("Tên đã tồnt tại!");
+          message.error("Tên đã tồn tại!");
         });
     }
   }
+
   function handleDelete(index) {
     setLoadings((prevLoadings) => {
       const newLoadings = [...prevLoadings];
       newLoadings[index] = true;
       return newLoadings;
     });
-    NodeService()
+    nodeService
       .deleteOne(rightSelected.id)
       .then(() => {
         getProject();
@@ -194,6 +213,7 @@ export default function TreeFolder() {
         message.error("Không thành công!");
       });
   }
+
   const renderMenuItem = (menuItem) => {
     if (selectedMenu.selected == menuItem.key) {
       switch (menuItem.key) {
@@ -311,25 +331,33 @@ export default function TreeFolder() {
   );
   return (
     <div
-      className=" absolute bottom-0 max-h-80 overflow-scroll min-w-full"
+      className={data ? "max-h-80 min-w-full" : " absolute bottom-0 max-h-80 overflow-scroll min-w-full"}
       style={{ maxWidth: "350px" }}>
-      <Dropdown
-        overlay={widgetMenu}
-        onOpenChange={handleOpenChange}
-        open={open}
-        placement="topRight"
-        trigger={["contextMenu"]}
-        arrow={{
-          pointAtCenter: true,
-        }}>
-        <DirectoryTree
+      {view ? <DirectoryTree
           showLine={true}
           onSelect={onSelect}
           // onExpand={onExpand}
           onRightClick={handleRightClick}>
           {renderTreeNodes(treeData)}
-        </DirectoryTree>
-      </Dropdown>
+        </DirectoryTree> :
+        <Dropdown
+          overlay={widgetMenu}
+          onOpenChange={handleOpenChange}
+          open={open}
+          placement="topRight"
+          trigger={["contextMenu"]}
+          arrow={{
+            pointAtCenter: true
+          }}>
+          <DirectoryTree
+            showLine={true}
+            onSelect={onSelect}
+            // onExpand={onExpand}
+            onRightClick={handleRightClick}>
+            {renderTreeNodes(treeData)}
+          </DirectoryTree>
+        </Dropdown>
+      }
     </div>
   );
 }

@@ -1,34 +1,17 @@
-import http from "../app.service";
+import BaseApi from "../base.service";
 
-export default function ShareService() {
-  var service = {
-    getAll: getAll,
-    getOne: getOne,
-    create: create,
-    // update: update,
-    // deleteOne: deleteOne,
-  };
+export default class ShareService extends BaseApi {
 
-  return service;
-  function create(userId, nodeId, list) {
-    return http()
+   create(userId, nodeId, list) {
+    return this
       .post(`/share/${userId}/${nodeId}`, list)
-      .then(function (response) {
-        return response;
-      });
   }
-  function getAll(param) {
-    return http()
+   getAll(param) {
+    return this
       .get("/share/search?" + param)
-      .then(function (response) {
-        return response;
-      });
   }
-  function getOne(id) {
-    return http()
+   getOne(id) {
+    return this
       .get("/share/" + id)
-      .then(function (response) {
-        return response;
-      });
   }
 }

@@ -1,32 +1,14 @@
-import http from "../app.service";
+import BaseApi from "../base.service";
 
-export default function AuthService() {
-  var service = {
-    login: login,
-    signup: signup,
-    // update: update,
-    // deleteOne: deleteOne,
-  };
-
-  return service;
-
-  function login(data) {
-    return http()
-      .post("/auth/login", data)
-      .then(function (response) {
-        return response;
-      });
+export default class AuthService extends BaseApi {
+  forget(email) {
+    return this.get(`/user/forget-password?email=${email}`);
   }
-  function signup(data) {
-    return http()
-      .post("/auth/signup", data)
-      .then(function (response) {
-        return response;
-      });
-  }
-  // async getUserInfo() {
-  //   const response = await this.get("/user");
 
-  //   return response;
-  // }
+  login(data) {
+    return this.post('/user/login', data);
+  }
+  signup(data) {
+    return this.post('/user/signup', data);
+  }
 }

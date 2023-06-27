@@ -8,20 +8,18 @@ import TreeFolder from "../TreeFolder";
 import ElementDefault from "./element-default";
 import { message } from "antd";
 
-export default function NavbarElement({ project }) {
+export default function NavbarElement() {
   const [elements, setElements] = useState([]);
   const size = useSelector(sizeWindown);
+  const elementService = new ElementService()
   function getListElement(param) {
-    ElementService()
+    elementService
       .getAll(`query=${param}&page=0&size=1000`)
       .then((response) => {
         if (response.length > 0) {
           setElements(response);
         }
       })
-      .catch((err) => {
-        message.error("Không có quyền truy cập!");
-      });
   }
   useEffect(() => {
     getListElement("");
@@ -38,7 +36,7 @@ export default function NavbarElement({ project }) {
   return (
     <div
       id="element"
-      className="fixed w-40 bg-custom  shadow-xl shadow-yellow-950 top-14 left-0 bottom-0"
+      className="fixed w-40 bg-white border-r border-r-gray-300 top-14 left-0 bottom-0"
       style={{
         zIndex: 5,
       }}>

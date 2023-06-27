@@ -2,7 +2,7 @@ import { Dropdown, Radio, Space, Select, Tooltip, Input, Button } from "antd";
 import { useEffect, useState } from "react";
 import CssService from "../../Service/css.service";
 import { RxText } from "react-icons/rx";
-import { handleCheckClass, getClass } from "../../utils/app.function";
+import { handleCheckClass, getClass } from "../../utils/class";
 import { SaveOutlined } from "@ant-design/icons";
 export default function Text({ dom }) {
   const [open, setOpen] = useState(false);
@@ -11,6 +11,7 @@ export default function Text({ dom }) {
   const [textWeight, setTextWeight] = useState([]);
   const [textAlign, setTextAlign] = useState([]);
   const [textContent, setTextContent] = useState(dom?.innerText);
+  const cssService = new CssService()
   const handleOpenChange = (flag) => {
     setOpen(flag);
   };
@@ -20,25 +21,25 @@ export default function Text({ dom }) {
   }, [dom?.id]);
   useEffect(() => {
     var param1 = "query=name==text-color;library==tailwind&page=0&size=1000";
-    CssService()
+    cssService
       .getAll(param1)
       .then((res) => {
         setTextColor(res);
       });
     var param2 = "query=name==text-size;library==tailwind&page=0&size=1000";
-    CssService()
+    cssService
       .getAll(param2)
       .then((res) => {
         setTextSize(res);
       });
     var param3 = "query=name==text-weight;library==tailwind&page=0&size=1000";
-    CssService()
+    cssService
       .getAll(param3)
       .then((res) => {
         setTextWeight(res);
       });
     var param4 = "query=name==text-align;library==tailwind&page=0&size=1000";
-    CssService()
+    cssService
       .getAll(param4)
       .then((res) => {
         setTextAlign(res);

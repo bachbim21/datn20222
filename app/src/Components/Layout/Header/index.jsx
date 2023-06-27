@@ -1,35 +1,69 @@
 import logo from "../../../assets/images/go.png";
 import avatar from "../../../assets/images/avatar.png";
-import { decode } from "../../../utils/app.function";
-import { UserOutlined } from '@ant-design/icons';
+import { decode } from "../../../utils/token";
+import { MailOutlined } from '@ant-design/icons';
 import { NavLink, useLocation } from "react-router-dom";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import { path } from "../../../redux/selector";
 import { Dropdown, Space, message, Modal, Button, Input } from "antd";
 import { CiSaveUp1 } from "react-icons/ci";
 import { BsFillShareFill } from "react-icons/bs";
-import { node } from "../../../redux/selector";
-import NodeService from "../../../Service/node.sevice";
-import { SetNode } from "../../../Pages/Project/node.slice";
+import { node, projectIdSelector, showModelShare } from "../../../redux/selector";
+import NodeService from "../../../Service/node.service";
+import { SetNode, SetProjectId, SetShowShare } from "../../../Pages/Project/node.slice";
 import { FaWindowClose } from "react-icons/fa"
 import ShareService from "../../../Service/share.service";
-
+import { flagUpdated } from "../../../redux/selector";
+import UserService from "../../../Service/user.service";
+import LoadingDetail from "../../Loading&Popup/LoadingDetail";
 export default function Header() {
   const decodedToken = decode();
   const dispatch = useDispatch();
+  const  flagUser = useSelector(flagUpdated);
+  const  showMShare = useSelector(showModelShare);
   const [emails, setEmails] = useState([]);
   const [email, setEmail] = useState('');
+  const [user, setUser] = useState(null);
   const nodePath = useSelector(path);
   const currentNode = useSelector(node);
   const location = useLocation();
-  const [isModalOpen, setIsModalOpen] = useState(false);
-
+  const userService = new UserService()
+  const [isModalOpen, setIsModalOpen] = useState({
+    open: false,
+    loading: false
+  });
+  const projectId = useSelector(projectIdSelector);
+  useEffect(()=>{
+    if(!decodedToken?.user_id) return
+    userService.getOne(decodedToken.user_id).then(res => {
+      setUser(res)
+    }).catch((e) => {
+      message.error("Không có quyền truy cập thông tin")
+    });
+  }, [flagUser])
+  useEffect(()=>{
+    if(showMShare) {
+      showModal();
+    }
+  }, [showMShare])
   const showModal = () => {
-    setIsModalOpen(true);
+    setIsModalOpen({
+      open: true,
+      loading: true
+    });
+    if(!projectId) return
+    UserService().getShareEmail(decodedToken.user_id, projectId).then((response) => {
+      setEmails(response)
+    }).catch(e => message.error("Lỗi máy chủ, vui lòng thử lại"))
+    setIsModalOpen({
+      open: true,
+      loading: false
+    });
   };
   const handleOk = () => {
-    ShareService().create(decodedToken.user_id, currentNode.id, emails).then((res)=>{
+    if(emails.length == 0) return message.warning("Danh sách hiện tại đang trống")
+    ShareService().create(decodedToken.user_id, projectId, emails).then((res)=>{
       message.success('Thành công')
     }).catch(e => {
       message.error('Thất bại!')
@@ -37,7 +71,11 @@ export default function Header() {
     setIsModalOpen(false);
   };
   const handleCancel = () => {
-    setIsModalOpen(false);
+    setIsModalOpen({
+      open: false,
+      loading: false
+    });
+    dispatch(SetShowShare(false))
   };
   const items = [
     {
@@ -54,26 +92,26 @@ export default function Header() {
 
   var itemsPopup = [
     {
-      label: (<span><NavLink
+      label: <NavLink className="text-center"
         to={`/profile/${decodedToken?.user_id}`}
       >
         Hồ sơ
-      </NavLink></span>),
+      </NavLink>,
       key: '1',
     },
     {
-      label: (<span><NavLink >
+      label: <NavLink className="text-center" to={`/profile/${decodedToken?.user_id}/list-project`}>
         Dự án
-      </NavLink></span>),
+      </NavLink>,
       key: '2',
     },
     {
-      label: (<span><NavLink
+      label: <NavLink className="text-center"
         to="/login"
         onClick={() => localStorage.removeItem("token")}
       >
         Đăng xuất
-      </NavLink></span>),
+      </NavLink>,
       key: '3',
     },
   ];
@@ -110,7 +148,7 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-custom fixed w-screen flex flex-row items-center justify-between h-14 top-0 shadow-md z-50">
+    <header className="bg-white fixed w-screen flex flex-row items-center justify-between h-14 top-0 drop-shadow-lg shadow-md z-50">
       <div className="flex items-center mx-5">
         <NavLink to="/">
           <img src={logo} alt="" className="h-12 object-cover w-20" />
@@ -134,11 +172,11 @@ export default function Header() {
       {decodedToken ? (
           <Dropdown
             menu={{
-              itemsPopup,
+              items: itemsPopup,
             }}
             trigger={['click']}
           >
-            <div className="flex items-center mx-5 cursor-pointer" onClick={(e)=> e.preventDefault()}><img src={avatar} alt="image avatar" className="h-10"/></div>
+            <div className="flex items-center mx-8 cursor-pointer" ><img src={user?.avatar ? user.avatar :avatar} alt="image avatar" className="h-10 aspect-square border-blue-600 border-2 rounded-full hover:border-blue-400"/></div>
             </Dropdown>
       ) : (
         <NavLink
@@ -147,12 +185,12 @@ export default function Header() {
           Đăng nhập
         </NavLink>
       )}
-      <Modal title="Chia sẻ dự án" open={isModalOpen} onCancel={handleCancel}
+      <Modal title="Chia sẻ dự án" open={isModalOpen.open} onCancel={handleCancel}
              footer={[
                <Button key="back" onClick={handleCancel}>
                  Huỷ
                </Button>,
-               <Button key="submit" type="primary"  onClick={handleOk}>
+               <Button  key="submit" type="primary"  onClick={handleOk}>
                  Xác nhận
                </Button>,
              ]}>
@@ -160,14 +198,15 @@ export default function Header() {
           <Space><h3>Nhập email người được chia sẻ</h3></Space>
 
         <Space.Compact style={{ width: '100%' }} >
-          <Input className="h-10" value={email} onChange={(e)=> setEmail(e.target.value.trim())} size="large" placeholder="email" prefix={<UserOutlined />} />
+          <Input className="h-10" value={email} onChange={(e)=> setEmail(e.target.value.trim())} size="large" placeholder="email" prefix={<MailOutlined />} />
           <Button type="primary" className="h-10" onClick={addEmail}>Thêm</Button>
         </Space.Compact>
-        <Space>
+        <div className="w-full">
+          {isModalOpen.loading ? <LoadingDetail/> :
           <ul className="mx-4">
             {
               emails.map((e)=> {
-                return <div key={e} className=" flex flex-row items-center"><li  className="list-disc my-2 font-semibold border text-base px-4 rounded">{e}</li><FaWindowClose className="ml-4 cursor-pointer" onClick={()=>{
+                return <div key={e} className=" flex flex-row items-center"><li  className="list-disc my-2 border text-base px-4 rounded">{e}</li><FaWindowClose className="ml-4 cursor-pointer text-yellow-400" onClick={()=>{
                   const newEmails = emails.filter((element) => element !== e);
                   setEmails([...newEmails])
                 }
@@ -175,7 +214,8 @@ export default function Header() {
               })
             }
           </ul>
-        </Space>
+          }
+        </div>
       </Space>
       </Modal>
     </header>

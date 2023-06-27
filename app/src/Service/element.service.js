@@ -1,28 +1,13 @@
-import http from "../app.service";
+import BaseApi from "../base.service";
 
-export default function ElementService() {
-  var service = {
-    getAll: getAll,
-    getOne: getOne,
-    // create: create,
-    // update: update,
-    // deleteOne: deleteOne,
-  };
-
-  return service;
-
-  function getAll(param) {
-    return http()
-      .get("/element/search?" + param)
-      .then(function (response) {
-        return response;
-      });
+export default class ElementService extends BaseApi {
+  getAll(param) {
+    return this
+      .get("/element/search?" + param);
   }
-  function getOne(id) {
-    return http()
-      .get("/element/" + id)
-      .then(function (response) {
-        return response;
-      });
+
+  getOne(id) {
+    return this
+      .get("/element/" + id);
   }
 }

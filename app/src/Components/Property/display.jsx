@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { BsTextareaResize } from "react-icons/bs";
 import CssService from "../../Service/css.service";
 import { SaveOutlined } from "@ant-design/icons";
-import { handleCheckClass, getClass } from "../../utils/app.function";
+import { handleCheckClass, getClass } from "../../utils/class";
 
 export default function Display({ dom }) {
   const [open, setOpen] = useState(false);
@@ -16,13 +16,14 @@ export default function Display({ dom }) {
     height: dom?.offsetHeight,
     display: dom?.style.display,
   });
+  const cssService = new CssService()
   const handleOpenChange = (flag) => {
     setOpen(flag);
   };
   useEffect(() => {
     var param =
       "query=name==background-color;library==tailwind&page=0&size=1000";
-    CssService()
+    cssService
       .getAll(param)
       .then((res) => {
         setBgColor(res);

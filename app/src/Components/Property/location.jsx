@@ -2,7 +2,7 @@ import { Dropdown, Space, Select, Tooltip } from "antd";
 import { useEffect, useState } from "react";
 import { MdMyLocation } from "react-icons/md";
 import CssService from "../../Service/css.service";
-import { getClass, handleCheckClass } from "../../utils/app.function";
+import { getClass, handleCheckClass } from "../../utils/class";
 
 export default function Location({ dom }) {
   const [open, setOpen] = useState(false);
@@ -10,6 +10,7 @@ export default function Location({ dom }) {
   const [marginBottom, setMarginBottom] = useState([]);
   const [marginLeft, setMarginLeft] = useState([]);
   const [marginRight, setMarginRight] = useState([]);
+  const cssService = new CssService()
   const [defaultValue, setDefault] = useState({
     top: [],
     left: [],
@@ -34,25 +35,25 @@ export default function Location({ dom }) {
   }, [dom?.id]);
   useEffect(() => {
     var param1 = "query=name==margin-top;library==tailwind&page=0&size=1000";
-    CssService()
+    cssService
       .getAll(param1)
       .then((res) => {
         setMarginTop(res);
       });
     var param2 = "query=name==margin-bottom;library==tailwind&page=0&size=1000";
-    CssService()
+    cssService
       .getAll(param2)
       .then((res) => {
         setMarginBottom(res);
       });
     var param3 = "query=name==margin-left;library==tailwind&page=0&size=1000";
-    CssService()
+    cssService
       .getAll(param3)
       .then((res) => {
         setMarginLeft(res);
       });
     var param3 = "query=name==margin-right;library==tailwind&page=0&size=1000";
-    CssService()
+    cssService
       .getAll(param3)
       .then((res) => {
         setMarginRight(res);

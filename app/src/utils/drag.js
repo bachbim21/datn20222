@@ -1,153 +1,128 @@
-import jwt_decode from "jwt-decode";
+import { makeResizable } from "./resize";
 import {
   SetDomId,
   SetHover,
   SetOver,
   SetMove
 } from "../Components/Navbar/element.slice";
-import PointDom from "./class";
-let resizeDom
-let elementResize = document.createElement('div')
-elementResize.id = 'resize'
-elementResize.style.position = 'absolute'
-elementResize.style.width = '10px'
-elementResize.style.height = '10px'
-elementResize.style.bottom = '0'
-elementResize.style.right = '0'
-elementResize.style.backgroundColor = 'black'
-elementResize.style.border = '1px solid white'
-elementResize.style.borderRadius = "50%"
-elementResize.style.cursor = 'nwse-resize'
-elementResize.addEventListener('mouseover', function(event) {
-  event.preventDefault()
-  event.stopPropagation()
-  return false
-})
-elementResize.addEventListener('mousedown', function(event) {
-  event.preventDefault()
-  event.stopPropagation()
-  initialMouseX = event.clientX;
-  initialMouseY = event.clientY;
-  elementResize.addEventListener("mousemove", resizeMove)
-  elementResize.addEventListener("mouseup", resizeUp)
-})
-function resizeMove(event) {
-  event.preventDefault();
-  var deltaSizeX = event.clientX - initialMouseX;
-  var deltaSizeY = event.clientY - initialMouseY;
-  if(deltaSizeX < 0 || deltaSizeY < 0) return
-  var width = resizeDom.offsetWidth;
-  var height = resizeDom.offsetHeight;
+import PointDom from "./matrixClass";
 
-  let newWith = width + deltaSizeX / rateScale;
-  let newHeight= height + deltaSizeY / rateScale;
-  resizeDom.style.minWidth = `${newWith.toFixed(4)}px`;
-  resizeDom.style.minHeight = `${newHeight.toFixed(4)}px`;
+var size = 15;
+const top = document.createElement("div");
+top.classList.add("resize");
+top.style.width = "100%";
+top.style.height = size + "px";
+top.style.backgroundColor = "transparent";
+top.style.position = "absolute";
+top.style.top = -(size / 2) + "px";
+top.style.left = "0px";
+top.style.cursor = "n-resize";
+const bottom = document.createElement("div");
+bottom.classList.add("resize");
+bottom.style.width = "100%";
+bottom.style.height = size + "px";
+bottom.style.backgroundColor = "transparent";
+bottom.style.position = "absolute";
+bottom.style.bottom = -(size / 2) + "px";
+bottom.style.left = "0px";
+bottom.style.cursor = "n-resize";
+const left = document.createElement("div");
+left.classList.add("resize");
+left.style.width = size + "px";
+left.style.height = "100%";
+left.style.backgroundColor = "transparent";
+left.style.position = "absolute";
+left.style.top = "0px";
+left.style.left = -(size / 2) + "px";
+left.style.cursor = "e-resize";
+const right = document.createElement("div");
+right.classList.add("resize");
+right.style.width = size + "px";
+right.style.height = "100%";
+right.style.backgroundColor = "transparent";
+right.style.position = "absolute";
+right.style.top = "0px";
+right.style.right = -(size / 2) + "px";
+right.style.cursor = "e-resize";
+const corner1 = document.createElement("div");
+corner1.classList.add("resize");
+corner1.style.width = size + "px";
+corner1.style.height = size + "px";
+corner1.style.backgroundColor = "transparent";
+corner1.style.position = "absolute";
+corner1.style.top = -(size / 2) + "px";
+corner1.style.left = -(size / 2) + "px";
+corner1.style.cursor = "nw-resize";
+const corner2 = document.createElement("div");
+corner2.classList.add("resize");
+corner2.style.width = size + "px";
+corner2.style.height = size + "px";
+corner2.style.backgroundColor = "transparent";
+corner2.style.position = "absolute";
+corner2.style.top = -(size / 2) + "px";
+corner2.style.right = -(size / 2) + "px";
+corner2.style.cursor = "ne-resize";
+const corner3 = document.createElement("div");
+corner3.classList.add("resize");
+corner3.style.width = size + "px";
+corner3.style.height = size + "px";
+corner3.style.backgroundColor = "transparent";
+corner3.style.position = "absolute";
+corner3.style.bottom = -(size / 2) + "px";
+corner3.style.left = -(size / 2) + "px";
+corner3.style.cursor = "sw-resize";
+const corner4 = document.createElement("div");
+corner4.classList.add("resize");
+corner4.style.width = size + "px";
+corner4.style.height = size + "px";
+corner4.style.backgroundColor = "transparent";
+corner4.style.position = "absolute";
+corner4.style.bottom = -(size / 2) + "px";
+corner4.style.right = -(size / 2) + "px";
+corner4.style.cursor = "se-resize";
+
+function clickResize(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  return false;
 }
-function resizeUp(event) {
-  event.target.removeEventListener("mousemove", resizeMove);
-  event.target.removeEventListener("mouseup", resizeUp);
+
+function hoverResize(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  return false;
 }
-function decode() {
-  let thisToken = localStorage.getItem("token");
-  try {
-    if (thisToken != null && thisToken != undefined && thisToken.length > 0) {
-      let now = new Date();
-      let de = jwt_decode(thisToken);
-      if(now.getTime() > de.exp*1000) {
-        localStorage.removeItem("token");
-        return null
-      }
-      return de
-    } else return null;
-  } catch (e) {
-    localStorage.removeItem("token");
-    return null;
-  }
-}
+
+top.addEventListener("click", clickResize);
+left.addEventListener("click", clickResize);
+bottom.addEventListener("click", clickResize);
+right.addEventListener("click", clickResize);
+corner1.addEventListener("click", clickResize);
+corner2.addEventListener("click", clickResize);
+corner3.addEventListener("click", clickResize);
+corner4.addEventListener("click", clickResize);
+top.addEventListener("mouseover", hoverResize);
+left.addEventListener("mouseover", hoverResize);
+bottom.addEventListener("mouseover", hoverResize);
+right.addEventListener("mouseover", hoverResize);
+corner1.addEventListener("mouseover", hoverResize);
+corner2.addEventListener("mouseover", hoverResize);
+corner3.addEventListener("mouseover", hoverResize);
+corner4.addEventListener("mouseover", hoverResize);
+
 let dispatch = null;
 let rateScale = null;
-
 let dragged;
 var arrChildren = [];
-function setDispatch(useDispatch) {
-  dispatch = useDispatch
-}
-const paserly = (parsely, value) => {
-  let validate = true;
-  switch (parsely.name) {
-    case "required":
-      function validateRequired() {
-        if (value.trim().length <= 0) {
-          validate = false;
-        }
-      }
-      validateRequired();
-      break;
-    case "pattern":
-      function validateP() {
-        const reg = new RegExp(parsely.required);
-        if (!reg.test(value)) {
-          validate = false;
-        }
-      }
-      validateP();
-      break;
-    case "maxLength":
-      function validateML() {
-        if (Number(value.length) > Number(parsely.required)) {
-          validate = false;
-        }
-      }
-      validateML();
-      break;
-    case "minLength":
-      function validatemL() {
-        if (value.length < Number(parsely.required)) {
-          validate = false;
-        }
-      }
-      validatemL();
-      break;
-    case "whitespace":
-      function validateTrim() {
-        if (value.trim().length == 0) {
-          validate = false;
-        }
-      }
-      validateTrim();
-      break;
-    case "phone":
-      function validatePhone() {
-        const reg = new RegExp(parsely.required, "g");
-        if (!reg.test(value)) {
-          validate = false;
-        }
-      }
-      validatePhone();
-      break;
-    default:
-      console.log("No options!!");
-  }
-  return validate;
-};
 
-// function check all required validate input
-function handleValidate(arrValue, listConfig) {
-  var result;
-  for (var i = 0; i < listConfig.length; i++) {
-    for (var check of listConfig[i].dataCheck) {
-      let validate = paserly(check, arrValue[i].value);
-      result = validate;
-      if (!validate) break;
-    }
-    if (!result) break;
-  }
-  return result;
+function setDispatch(useDispatch) {
+  dispatch = useDispatch;
 }
+
 const generateUniqueId = () => {
   return Math.random().toString(36).substring(2) + Date.now().toString(36);
 };
+
 // drap
 
 function getScale() {
@@ -155,6 +130,7 @@ function getScale() {
   if (root == null) return;
   return parseFloat(root.style.transform.match(/scale\((.+?)\)/)[1]);
 }
+
 function dragStartCopy(e) {
   // Add different types of drag data
   let root = document.getElementById("root-page");
@@ -171,37 +147,33 @@ function dragStartCopy(e) {
   }
   console.log(dragged);
 }
+
 var initialMouseX = null;
 var initialMouseY = null;
 var oldTranslateX = null;
 var oldTranslateY = null;
+
 function handleMouseDown(event) {
+  event.preventDefault();
+  event.stopPropagation();
   initialMouseX = event.clientX;
   initialMouseY = event.clientY;
   oldTranslateX = Number(event.target.getAttribute("data-x"));
   oldTranslateY = Number(event.target.getAttribute("data-y"));
   rateScale = getScale();
-  event.target.classList.add("move")
+  event.target.classList.add("move");
   event.target.addEventListener("mousemove", moveHandler);
   event.target.addEventListener("mouseup", upHandler);
-  // event.target.addEventListener("dragstart", (e)=> dragStartCopy(e));
-  // event.target.setAttribute("draggable", "true");
-  event.target.addEventListener('drop', function(event) {
-    event.stopPropagation();
-  });
-  // add event drag and drop
-  let root = document.getElementById('root-page')
-  root.addEventListener("dragleave", dragLeave);
-  root.addEventListener("drop", handleDrop);
-  root.addEventListener("dragover", dragOver);
-  root.addEventListener("dragenter", dragEnter);
-
 }
+
 function moveHandler(event) {
   event.preventDefault();
+  event.stopPropagation();
   var deltaX = event.clientX - initialMouseX;
   var deltaY = event.clientY - initialMouseY;
-  if(deltaX > 0 || deltaY > 0)  {dispatch(SetMove(event.target.id))}
+  if (deltaX > 0 || deltaY > 0) {
+    dispatch(SetMove(event.target.id));
+  }
   let newX = oldTranslateX + deltaX / rateScale;
   let newY = oldTranslateY + deltaY / rateScale;
   event.target.style.left = `${newX.toFixed(4)}px`;
@@ -209,23 +181,20 @@ function moveHandler(event) {
   event.target.setAttribute("data-x", newX);
   event.target.setAttribute("data-y", newY);
 }
+
 function upHandler(event) {
+  event.preventDefault();
+  event.stopPropagation();
   event.target.removeEventListener("mousemove", moveHandler);
   event.target.removeEventListener("mouseup", upHandler);
-  // remove event drag and drop
-  let root = document.getElementById('root-page')
-  root.addEventListener("dragleave", dragLeave);
-  root.addEventListener("drop", handleDrop);
-  root.addEventListener("dragover", dragOver);
-  root.addEventListener("dragenter", dragEnter);
-  root.setAttribute("draggable", "false");
-  event.target.classList.remove("move")
+  event.target.classList.remove("move");
 }
 
 let mouse = {
   x: null,
-  y: null,
+  y: null
 };
+
 function dragOver(event) {
   event.preventDefault();
   event.stopPropagation();
@@ -246,6 +215,7 @@ function dragLeave(event) {
   event.stopPropagation();
   event.target.classList.remove("over");
 }
+
 const handleClick = (event) => {
   event.preventDefault();
   event.stopPropagation();
@@ -254,18 +224,24 @@ const handleClick = (event) => {
 const handleMouseLeave = (event) => {
   event.preventDefault();
   event.stopPropagation();
-  event.target.removeChild(elementResize)
   event.target.classList.remove("hover-dashed");
+  removeEvent(event.target);
 };
+
+function removeEvent(dom) {
+  var resizeElements = dom.querySelectorAll(".resize");
+  resizeElements.forEach(function(element) {
+    element.remove();
+  });
+}
 
 const handleMouseOver = (event) => {
   event.preventDefault();
   event.stopPropagation();
-  resizeDom = event.target
-  event.target.appendChild(elementResize)
-  console.log(event.target);
-  elementResize.removeEventListener('mouseover', handleMouseOver)
   dispatch(SetHover(event.target.id));
+  removeEvent(event.target.parentNode)
+  removeEvent(event.target);
+  makeResizable(event.target, parseFloat(event.target.style.minWidth), parseFloat(event.target.style.minHeight), top, left, bottom, right, corner1, corner2, corner3, corner4);
 };
 
 function handleDrop(event) {
@@ -275,7 +251,7 @@ function handleDrop(event) {
   rateScale = parseFloat(root.style.transform.match(/scale\((.+?)\)/)[1]);
   mouse = {
     x: event.clientX,
-    y: event.clientY,
+    y: event.clientY
   };
   event.target.classList.remove("over");
   const id = generateUniqueId();
@@ -286,7 +262,7 @@ function handleDrop(event) {
   setLocation(element, event, rateScale);
   event.target.appendChild(element);
   element.addEventListener("click", handleClick);
-  element.addEventListener("mouseover", (e) => handleMouseOver(e, dispatch));
+  element.addEventListener("mouseover", handleMouseOver);
   element.addEventListener("mouseleave", handleMouseLeave);
   // element.addEventListener("dragstart", dragStart);
   element.addEventListener("mousedown", handleMouseDown);
@@ -300,14 +276,16 @@ function handleDrop(event) {
 }
 
 function SetDataElement(id, data) {
-  let element
+  let element;
   if (data?.tag) {
     var size = setSize(data.tag);
     element = document.createElement(`${data.tag}`);
     element.id = id;
-    element.classList.add("bg-black", "text-white", "node");
-    element.style.minWidth = size[0];
-    element.style.minHeight = size[1];
+    element.classList.add("bg-blue-600", "text-white", "node");
+    element.style.width = size[0];
+    element.style.height = size[1];
+    element.style.minWidth = "5px";
+    element.style.minHeight = "5px";
     element.style.display = size[2];
     element.style.boxSizing = "border-box";
     element.style.position = "absolute";
@@ -357,70 +335,18 @@ function setSize(tag) {
   }
 }
 
-function setLocal(o, id) {
-  let present = localStorage.getItem("projects");
-  if (present != null && present != undefined) {
-    let array = JSON.parse(present);
-    for (var value of array) {
-      if (value.id == id) {
-        value.path = o.path;
-        value.key = o.key;
-      }
-    }
-    localStorage.setItem("projects", JSON.stringify(array));
-  } else {
-    localStorage.setItem("projects", JSON.stringify([{ ...o, id: id }]));
-  }
-}
-function getLocal(id) {
-  let present = localStorage.getItem("projects");
-  if (present == null || present == undefined) {
-    return null;
-  } else {
-    let array = JSON.parse(present);
-    for (var value of array) {
-      if (value.id == id) return value;
-    }
-  }
-}
-
-function handleCheckClass(dom, listClass) {
-  var arrClass = listClass.map((object) => {
-    return object.classCustom;
-  });
-  if (dom == null) return;
-  const containsClass = Array.from(dom.classList).filter((className) => {
-    if (arrClass.includes(className)) return className;
-  });
-  dom?.classList.remove(containsClass[0]);
-}
-function getClass(dom, listClass) {
-  var arrClass = listClass.map((object) => {
-    return object.classCustom;
-  });
-  if (dom == null) return;
-  const currentClass = Array.from(dom.classList).filter((className) => {
-    if (arrClass.includes(className)) return className;
-  });
-  return currentClass;
-}
 
 export {
   handleMouseDown,
-  paserly,
-  handleValidate,
   dragOver,
   dragStartCopy,
   handleDrop,
   dragLeave,
-  decode,
-  setLocal,
-  getLocal,
-  handleCheckClass,
-  getClass,
   handleClick,
   handleMouseLeave,
   handleMouseOver,
   dragEnter,
-  setDispatch
+  setDispatch,
+  getScale,
+  removeEvent
 };

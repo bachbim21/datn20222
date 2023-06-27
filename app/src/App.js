@@ -4,7 +4,7 @@ import { ReSize } from "./Components/Layout/layout.slice";
 import { RouterProvider } from "react-router";
 import router from "./router/app.router";
 import { useEffect } from "react";
-import { setDispatch } from "./utils/app.function";
+import { setDispatch } from "./utils/drag";
 const App = () => {
   const dispatch = useDispatch();
   dispatch(

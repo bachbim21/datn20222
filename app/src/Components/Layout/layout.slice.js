@@ -10,6 +10,10 @@ const DefaultSlice = createSlice({
       width: null,
       height: null,
     },
+    user: {
+      flagUpdated: 0,
+    }
+
   },
   reducers: {
     LoadingService: (state, actions) => {
@@ -19,7 +23,10 @@ const DefaultSlice = createSlice({
     ReSize: (state, actions) => {
       state.size = actions.payload;
     },
+    SetUserUpdated: (state) => {
+      state.user.flagUpdated ++
+    }
   },
 });
-export const { LoadingService, ReSize } = DefaultSlice.actions;
+export const { LoadingService, ReSize, SetUserUpdated } = DefaultSlice.actions;
 export default DefaultSlice.reducer;

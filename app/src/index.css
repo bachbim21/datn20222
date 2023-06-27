@@ -1,7 +1,15 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+/*tr:nth-child(even) {*/
+/*  background-color: lightgray;*/
+/*}*/
+
+/*tr:nth-child(odd) {*/
+/*  background-color: white;*/
+/*}*/
 .hover-dashed {
+  position: relative;
   outline-color: #22c55e;
   outline-width: 2px;
   outline-style: dashed;
@@ -11,12 +19,16 @@
 }
 
 .click-border {
+  position: relative;
   outline-color: #c56322;
   outline-width: 2px;
   outline-style: dashed;
-  cursor: move;
   outline-offset: 2px;
   z-index: 5;
+}
+.move {
+  cursor: move;
+  z-index: 20;
 }
 .over {
   position: relative;
@@ -89,3 +101,47 @@
   font-size: 14px;
   line-height: 22px;
 }
+
+@keyframes translateAndReset {
+  0% {
+    transform: translate(30px,-30px);
+  }
+  50% {
+    transform: translate(30px,-20px);
+  }
+  100% {
+    transform: translate(30px,-30px);
+  }
+}
+
+.ani-translate {
+  animation: translateAndReset 2s 7s infinite ease-in-out;
+  /*transform-origin: center center;*/
+}
+
+@keyframes translateAndRotate {
+  0% {
+    transform: translate(0px,0);
+  }
+  15% {
+    transform: translate(15px,0px);
+  }
+  45% {
+    transform: translate(-15px,0px);
+  }
+  60% {
+    transform: translate(0px,0px);
+  }
+  80% {
+    transform: rotateY(360deg);
+  }
+  100% {
+    transform: rotateY(0);
+  }
+}
+
+.ani-tranrote {
+  animation: translateAndRotate 4s 7s infinite ease-in-out;
+  transform-origin: center center;
+}
+

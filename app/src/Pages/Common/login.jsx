@@ -1,14 +1,12 @@
 import { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import AuthService from "../../Service/auth.service";
-import { log, status } from "../../utils/app.constants";
-import { decode } from "../../utils/drag";
+import { log } from "../../utils/log";
 import logo from "../../assets/images/go.png";
 import { Form, Input, Button, Checkbox, Spin, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { LoadingService } from "../../Components/Layout/layout.slice";
 import { loading } from "../../redux/selector";
-import { LoadingOutlined } from "@ant-design/icons";
 import Loading from "../../Components/Loading&Popup/loading";
 
 function Login() {
@@ -17,7 +15,7 @@ function Login() {
   const [remember, setRemember] = useState();
   const [messageApi, contextHolder] = message.useMessage();
   const loadingContext = useSelector(loading);
-
+  const authService = new AuthService()
   const onFinish = (values) => {
     dispatch(
       LoadingService({
@@ -25,8 +23,7 @@ function Login() {
         status: true,
       })
     );
-    AuthService()
-      .login(values)
+    authService.login(values)
       .then((response) => {
         localStorage.setItem("token", response.token);
         dispatch(
@@ -38,18 +35,12 @@ function Login() {
         navigate("/", { replace: true });
       })
       .catch((e) => {
-        console.log(e);
         dispatch(
           LoadingService({
             text: null,
             status: false,
           })
         );
-        messageApi.open({
-          type: "error",
-          content: log.wrong_login,
-          duration: 3,
-        });
       });
   };
 
@@ -75,10 +66,10 @@ function Login() {
               label="Email"
               name="email"
               rules={[
-                { required: true, message: log.log_required },
+                { required: true, message: log.error.required },
                 {
                   type: "email",
-                  message: message.log_email,
+                  message: log.error.invalidEmail,
                 },
               ]}>
               <Input placeholder="user@gmail.com" />
@@ -88,9 +79,9 @@ function Login() {
               label="Password"
               name="password"
               rules={[
-                { required: true, message: log.log_required },
-                { max: 20, message: log.log_maxLength20 },
-                { min: 6, message: log.log_minLength6 },
+                { required: true, message: log.error.required },
+                { max: 20, message: log.error.maxLength20 },
+                { min: 6, message: log.error.minLength6 },
               ]}>
               <Input.Password />
             </Form.Item>

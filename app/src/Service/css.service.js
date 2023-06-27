@@ -1,17 +1,8 @@
-import http from "../app.service";
+import BaseApi from "../base.service";
 
-export default function CssService() {
-  var service = {
-    getAll: getAll,
-  };
+export default class CssService extends BaseApi {
+   getAll(param) {
+    return this.get("/css/search?" + param)
 
-  return service;
-
-  function getAll(param) {
-    return http()
-      .get("/css/search?" + param)
-      .then(function (response) {
-        return response;
-      });
   }
 }

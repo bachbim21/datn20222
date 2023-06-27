@@ -1,20 +1,16 @@
-import http from "../app.service";
+import BaseApi from "../base.service";
 
-export default function UserService() {
-  var service = {
-    getOne: getOne,
-    // create: create,
-    // update: update,
-    // deleteOne: deleteOne,
-  };
+export default class UserService extends BaseApi {
 
-  return service;
+  getOne(id) {
+    return this.get("/user/" + id);
+  }
 
-  function getOne(id) {
-    return http()
-      .get("/user/" + id)
-      .then(function (response) {
-        return response;
-      });
+  update(id, data) {
+    return this.put("/user/" + id, data);
+  }
+
+  getShareEmail(userId, nodeId) {
+    return this.get("/user/share?userId=" + userId + "&nodeId=" + nodeId);
   }
 }

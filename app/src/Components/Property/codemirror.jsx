@@ -7,10 +7,14 @@ import "codemirror/mode/htmlmixed/htmlmixed";
 import prettier from "prettier/standalone";
 import parserHtml from "prettier/parser-html";
 import { Button, Modal, Tooltip } from "antd";
+import { removeEvent } from "../../utils/drag";
 export default function Codemirror({ dom }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [stringCode, setStringCode] = useState();
   useEffect(() => {
+    if(dom)  {
+      removeEvent(dom)
+    }
     const formattedCode = prettier.format(
       dom?.id ? dom.outerHTML.toString() : "",
       {
@@ -30,7 +34,7 @@ export default function Codemirror({ dom }) {
     setIsModalOpen(false);
   };
   const handleEdit = (editor, data, value) => {
-    editor.refresh();
+    setStringCode(value);
   };
   return (
     <>
@@ -71,7 +75,7 @@ export default function Codemirror({ dom }) {
             className="inline-block mb-0 mx-4"
             key="back"
             onClick={handleCancel}>
-            Huỷ
+            Đóng
           </Button>
 
           <Button
@@ -79,7 +83,7 @@ export default function Codemirror({ dom }) {
             htmlType="submit"
             className="bg-blue-500 inline-block mb-0"
             onClick={handleOk}>
-            Lưu
+            Copy
           </Button>
         </div>
       </Modal>

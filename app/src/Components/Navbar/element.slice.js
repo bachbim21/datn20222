@@ -3,6 +3,7 @@ const ElementSlice = createSlice({
   name: "element",
   initialState: {
     domId: null,
+    moveId: null,
     previousId: null,
     idOver: null,
     previousIdOver: null,
@@ -23,6 +24,7 @@ const ElementSlice = createSlice({
       } else {
         let currentElement = document.getElementById(state.domId);
         currentElement.classList.remove("click-border");
+        currentElement.classList.add("hover-dashed");
         state.domId = null;
         state.previousId = null;
       }
@@ -40,7 +42,11 @@ const ElementSlice = createSlice({
       let currentElement = document.getElementById(state.idHover);
       currentElement?.classList.add("hover-dashed");
     },
+    SetMove: (state, actions) => {
+      if(state.moveId == actions.payload) return
+      state.moveId = actions.payload
+    }
   },
 });
-export const { SetDomId, SetOver, SetHover } = ElementSlice.actions;
+export const { SetDomId, SetOver, SetHover, SetMove } = ElementSlice.actions;
 export default ElementSlice.reducer;

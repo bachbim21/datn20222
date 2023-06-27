@@ -1,58 +1,34 @@
-import http from "../app.service";
 
-export default function NodeService() {
-  var service = {
-    getAll: getAll,
-    getOne: getOne,
-    create: create,
-    update: update,
-    deleteOne: deleteOne,
-    getList: getList
-  };
+import BaseApi from "../base.service";
 
-  return service;
+export default class NodeService extends BaseApi {
 
-  function getAll(userId) {
-    const params = "id=" + userId;
-    return http()
-      .get("/node/project?" + params)
-      .then(function (response) {
-        return response;
-      });
+  getAll(userId) {
+    return this.get("/node/project/" + userId);
   }
-  function getList(userId) {
-    return http()
-      .get("/node/project/" + userId)
-      .then(function (response) {
-        return response;
-      });
+
+  getList(param) {
+    return this.get("/node/project?" + param);
   }
-  function getOne(id) {
-    return http()
-      .get("/node/" + id)
-      .then(function (response) {
-        return response;
-      });
+
+  getShare(param) {
+    return this.get("/node/share?" + param);
+
   }
-  function create(data) {
-    return http()
-      .post("/node", data)
-      .then(function (response) {
-        return response;
-      });
+
+  getOne(id) {
+    return this.get("/node/" + id);
   }
-  function update(data, id) {
-    return http()
-      .put("/node/" + id, data)
-      .then(function (response) {
-        return response;
-      });
+
+  create(data) {
+    return this.post("/node", data);
   }
-  function deleteOne(id) {
-    return http()
-      .deleteOne("/node/" + id)
-      .then(function (response) {
-        return response;
-      });
+
+  update(data, id) {
+    return this.put("/node/" + id, data);
+  }
+
+  deleteOne(id) {
+    return this.deleteOne("/node/" + id);
   }
 }
