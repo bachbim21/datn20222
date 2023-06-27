@@ -17,6 +17,7 @@ public class Constants  {
     public static final String JWT_SECRET = "secrethust";
     public static final Long ONE_DAY = 86400000L;
     public static final Long ONE_MONTH_30 = 86400000L * 30;
+    public static final Long TIME_FORGET_PASSWORD = 18000L;
     public static final Integer PRIVATE_PROJECT = 0;
-    public static final Integer PUPLICH_PROJECT = 1;
+    public static final Integer PUPLIC_PROJECT = 1;
 }

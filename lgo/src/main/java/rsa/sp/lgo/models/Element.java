@@ -14,10 +14,9 @@ public class Element extends IdEntity {
     private String text;
     private String classes;
     private String configId;
-    private String style;
     private String type;
     private String  code;
-    private Boolean def;
+    private Boolean system;
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -54,13 +53,6 @@ public class Element extends IdEntity {
         this.configId = configId;
     }
 
-    public String getStyle() {
-        return style;
-    }
-
-    public void setStyle(String style) {
-        this.style = style;
-    }
 
     public String getType() {
         return type;
@@ -78,12 +70,12 @@ public class Element extends IdEntity {
         this.code = code;
     }
 
-    public Boolean getDef() {
-        return def;
+    public Boolean getSystem() {
+        return system;
     }
 
-    public void setDef(Boolean def) {
-        this.def = def;
+    public void setSystem(Boolean system) {
+        this.system = system;
     }
 
     public User getUser() {

@@ -1,5 +1,6 @@
 package rsa.sp.lgo.core;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -37,4 +38,15 @@ public class SecurityUtils {
         return id;
     }
 
+    public static boolean hasAnyAuthority(String auth) {
+        SecurityContext securityContext = SecurityContextHolder.getContext();
+        Authentication authentication = securityContext.getAuthentication();
+        Boolean hasAuthority = false;
+        if(authentication == null) return hasAuthority;
+
+        if(authentication.getAuthorities().stream().anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals(auth))){
+            hasAuthority = true;
+        }
+        return hasAuthority;
+    }
 }

@@ -3,8 +3,51 @@ import {
   SetDomId,
   SetHover,
   SetOver,
+  SetMove
 } from "../Components/Navbar/element.slice";
 import PointDom from "./class";
+let resizeDom
+let elementResize = document.createElement('div')
+elementResize.id = 'resize'
+elementResize.style.position = 'absolute'
+elementResize.style.width = '10px'
+elementResize.style.height = '10px'
+elementResize.style.bottom = '0'
+elementResize.style.right = '0'
+elementResize.style.backgroundColor = 'black'
+elementResize.style.border = '1px solid white'
+elementResize.style.borderRadius = "50%"
+elementResize.style.cursor = 'nwse-resize'
+elementResize.addEventListener('mouseover', function(event) {
+  event.preventDefault()
+  event.stopPropagation()
+  return false
+})
+elementResize.addEventListener('mousedown', function(event) {
+  event.preventDefault()
+  event.stopPropagation()
+  initialMouseX = event.clientX;
+  initialMouseY = event.clientY;
+  elementResize.addEventListener("mousemove", resizeMove)
+  elementResize.addEventListener("mouseup", resizeUp)
+})
+function resizeMove(event) {
+  event.preventDefault();
+  var deltaSizeX = event.clientX - initialMouseX;
+  var deltaSizeY = event.clientY - initialMouseY;
+  if(deltaSizeX < 0 || deltaSizeY < 0) return
+  var width = resizeDom.offsetWidth;
+  var height = resizeDom.offsetHeight;
+
+  let newWith = width + deltaSizeX / rateScale;
+  let newHeight= height + deltaSizeY / rateScale;
+  resizeDom.style.minWidth = `${newWith.toFixed(4)}px`;
+  resizeDom.style.minHeight = `${newHeight.toFixed(4)}px`;
+}
+function resizeUp(event) {
+  event.target.removeEventListener("mousemove", resizeMove);
+  event.target.removeEventListener("mouseup", resizeUp);
+}
 function decode() {
   let thisToken = localStorage.getItem("token");
   try {
@@ -138,6 +181,7 @@ function handleMouseDown(event) {
   oldTranslateX = Number(event.target.getAttribute("data-x"));
   oldTranslateY = Number(event.target.getAttribute("data-y"));
   rateScale = getScale();
+  event.target.classList.add("move")
   event.target.addEventListener("mousemove", moveHandler);
   event.target.addEventListener("mouseup", upHandler);
   // event.target.addEventListener("dragstart", (e)=> dragStartCopy(e));
@@ -153,17 +197,17 @@ function handleMouseDown(event) {
   root.addEventListener("dragenter", dragEnter);
 
 }
-function moveHandler(e) {
-  var deltaX = e.clientX - initialMouseX;
-  var deltaY = e.clientY - initialMouseY;
-
+function moveHandler(event) {
+  event.preventDefault();
+  var deltaX = event.clientX - initialMouseX;
+  var deltaY = event.clientY - initialMouseY;
+  if(deltaX > 0 || deltaY > 0)  {dispatch(SetMove(event.target.id))}
   let newX = oldTranslateX + deltaX / rateScale;
   let newY = oldTranslateY + deltaY / rateScale;
-  e.target.style.transform = `translate(${newX.toFixed(4)}px,${newY.toFixed(
-    4
-  )}px)`;
-  e.target.setAttribute("data-x", oldTranslateX + deltaX / rateScale);
-  e.target.setAttribute("data-y", oldTranslateY + deltaY / rateScale);
+  event.target.style.left = `${newX.toFixed(4)}px`;
+  event.target.style.top = `${newY.toFixed(4)}px`;
+  event.target.setAttribute("data-x", newX);
+  event.target.setAttribute("data-y", newY);
 }
 function upHandler(event) {
   event.target.removeEventListener("mousemove", moveHandler);
@@ -175,67 +219,72 @@ function upHandler(event) {
   root.addEventListener("dragover", dragOver);
   root.addEventListener("dragenter", dragEnter);
   root.setAttribute("draggable", "false");
+  event.target.classList.remove("move")
 }
 
 let mouse = {
   x: null,
   y: null,
 };
-function dragOver(e) {
-  e.preventDefault();
-  e.stopPropagation();
+function dragOver(event) {
+  event.preventDefault();
+  event.stopPropagation();
 }
 
-function dragEnter(e) {
-  e.preventDefault();
-  e.stopPropagation();
-  let children = e.target.querySelectorAll(".node");
+function dragEnter(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  let children = event.target.querySelectorAll(".node");
   arrChildren = Array.from(children).map((child) => {
     return new PointDom(child);
   });
-  dispatch(SetOver(e.target.id));
+  dispatch(SetOver(event.target.id));
 }
 
-function dragLeave(e) {
-  e.preventDefault();
-  e.stopPropagation();
-  e.target.classList.remove("over");
+function dragLeave(event) {
+  event.preventDefault();
+  event.stopPropagation();
+  event.target.classList.remove("over");
 }
-const handleClick = (e) => {
-  e.preventDefault();
-  e.stopPropagation();
-  dispatch(SetDomId(e.target.id));
+const handleClick = (event) => {
+  event.preventDefault();
+  event.stopPropagation();
+  dispatch(SetDomId(event.target.id));
 };
 const handleMouseLeave = (event) => {
   event.preventDefault();
   event.stopPropagation();
+  event.target.removeChild(elementResize)
   event.target.classList.remove("hover-dashed");
 };
 
 const handleMouseOver = (event) => {
   event.preventDefault();
   event.stopPropagation();
+  resizeDom = event.target
+  event.target.appendChild(elementResize)
+  console.log(event.target);
+  elementResize.removeEventListener('mouseover', handleMouseOver)
   dispatch(SetHover(event.target.id));
 };
 
-function handleDrop(e) {
-  e.preventDefault();
+function handleDrop(event) {
+  event.preventDefault();
   let root = document.getElementById("root-page");
   if (root == null) return;
   rateScale = parseFloat(root.style.transform.match(/scale\((.+?)\)/)[1]);
   mouse = {
-    x: e.clientX,
-    y: e.clientY,
+    x: event.clientX,
+    y: event.clientY,
   };
-  e.target.classList.remove("over");
+  event.target.classList.remove("over");
   const id = generateUniqueId();
 
   // set event
   let element = SetDataElement(id, dragged);
-  console.log(element);
-  if (element.id == e.target.id) return;
-  setLocation(element, e, rateScale);
-  e.target.appendChild(element);
+  if (element.id == event.target.id) return;
+  setLocation(element, event, rateScale);
+  event.target.appendChild(element);
   element.addEventListener("click", handleClick);
   element.addEventListener("mouseover", (e) => handleMouseOver(e, dispatch));
   element.addEventListener("mouseleave", handleMouseLeave);
@@ -244,14 +293,14 @@ function handleDrop(e) {
   // element.setAttribute("draggable", "true");
   dragged = null;
   arrChildren = [];
-  e.target.removeEventListener("dragleave", dragLeave);
-  e.target.removeEventListener("drop", handleDrop);
-  e.target.removeEventListener("dragover", dragOver);
-  e.target.removeEventListener("dragenter", dragEnter);
+  event.target.removeEventListener("dragleave", dragLeave);
+  event.target.removeEventListener("drop", handleDrop);
+  event.target.removeEventListener("dragover", dragOver);
+  event.target.removeEventListener("dragenter", dragEnter);
 }
 
 function SetDataElement(id, data) {
-  let element = null;
+  let element
   if (data?.tag) {
     var size = setSize(data.tag);
     element = document.createElement(`${data.tag}`);
@@ -261,6 +310,7 @@ function SetDataElement(id, data) {
     element.style.minHeight = size[1];
     element.style.display = size[2];
     element.style.boxSizing = "border-box";
+    element.style.position = "absolute";
     element.textContent = data.tag == "input" ? null : data.text;
     element.style.transition =
       "min-width 0.5s ease-in-out, min-height 0.5s ease-in-out";
@@ -272,10 +322,14 @@ function SetDataElement(id, data) {
 
 function setLocation(element, event, rateScale) {
   var rect = event.target.getBoundingClientRect();
-  element.style.transform = `translate(${(
+  element.style.left = `${(
     (mouse.x - rect.left) /
     rateScale
-  ).toFixed(4)}px,${((mouse.y - rect.top) / rateScale).toFixed(4)}px)`;
+  ).toFixed(4)}px`;
+  element.style.top = `${(
+    (mouse.y - rect.top) /
+    rateScale
+  ).toFixed(4)}px`;
   element.setAttribute("data-x", (mouse.x - rect.left) / rateScale);
   element.setAttribute("data-y", (mouse.y - rect.top) / rateScale);
 }
@@ -283,7 +337,7 @@ function setLocation(element, event, rateScale) {
 function setSize(tag) {
   switch (tag) {
     case "div":
-      return ["100%", "50px", "block"];
+      return ["100%", "50px", "inline-block"];
     case "h1":
       return ["200px", "50px", "inline-block"];
     case "h2":

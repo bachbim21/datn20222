@@ -16,7 +16,23 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL8Dialect
         format_sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: lgo.tech.app@gmail.com
+    password: suddouhvekiadzmo
+    protocol: smtp
+    properties:
+        mail:
+          smtp:
+            auth: true
+            starttls.enable: true
+
 lgo:
+  url: http://localhost:3000
   app:
     jwtSecret: lgohust
     jwtExpirationMs: 86400000
+
+

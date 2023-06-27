@@ -7,6 +7,7 @@ export default function NodeService() {
     create: create,
     update: update,
     deleteOne: deleteOne,
+    getList: getList
   };
 
   return service;
@@ -15,6 +16,13 @@ export default function NodeService() {
     const params = "id=" + userId;
     return http()
       .get("/node/project?" + params)
+      .then(function (response) {
+        return response;
+      });
+  }
+  function getList(userId) {
+    return http()
+      .get("/node/project/" + userId)
       .then(function (response) {
         return response;
       });

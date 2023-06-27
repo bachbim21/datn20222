@@ -7,6 +7,7 @@ import { LoadingService } from "../../Components/Layout/layout.slice";
 import AuthService from "../../Service/auth.service";
 import { LoadingOutlined } from "@ant-design/icons";
 import moment from "moment";
+import Loading from "../../Components/Loading&Popup/loading";
 import { Form, Input, Button, DatePicker, Spin, message } from "antd";
 export default function Signup() {
   const dispatch = useDispatch();
@@ -63,6 +64,7 @@ export default function Signup() {
   return (
     <div className=" flex justify-center items-center min-h-screen overflow-hidde bg-blue-900">
       {contextHolder}
+      {loadingContext.status && <Loading text = {loadingContext.text}/>}
       <Spin
         className="bg-white/30 rounded-lg"
         tip={loadingContext.text}

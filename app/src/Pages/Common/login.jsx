@@ -2,26 +2,26 @@ import { useState } from "react";
 import { useNavigate, NavLink } from "react-router-dom";
 import AuthService from "../../Service/auth.service";
 import { log, status } from "../../utils/app.constants";
-import { decode } from "../../utils/app.function";
+import { decode } from "../../utils/drag";
 import logo from "../../assets/images/go.png";
 import { Form, Input, Button, Checkbox, Spin, message } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { LoadingService } from "../../Components/Layout/layout.slice";
 import { loading } from "../../redux/selector";
 import { LoadingOutlined } from "@ant-design/icons";
+import Loading from "../../Components/Loading&Popup/loading";
 
 function Login() {
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const [remember, setRemember] = useState();
   const [messageApi, contextHolder] = message.useMessage();
-  const antIcon = <LoadingOutlined style={{ fontSize: 34 }} spin />;
   const loadingContext = useSelector(loading);
 
   const onFinish = (values) => {
     dispatch(
       LoadingService({
-        text: "Đang xử lý",
+        text: null,
         status: true,
       })
     );
@@ -31,7 +31,7 @@ function Login() {
         localStorage.setItem("token", response.token);
         dispatch(
           LoadingService({
-            text: "",
+            text: null,
             status: false,
           })
         );
@@ -41,7 +41,7 @@ function Login() {
         console.log(e);
         dispatch(
           LoadingService({
-            text: "",
+            text: null,
             status: false,
           })
         );
@@ -60,12 +60,7 @@ function Login() {
   return (
     <div className=" flex justify-center items-center min-h-screen overflow-hidde bg-blue-900">
       {contextHolder}
-      <Spin
-        className="bg-white/30 rounded-lg"
-        tip={loadingContext.text}
-        size="large"
-        indicator={antIcon}
-        spinning={loadingContext.status}>
+      {loadingContext.status && <Loading text = {loadingContext.text}/>}
         <div className="mx-4 sm:mx-0 mobile:w-96 p-6 h-full bg-white rounded-md shadow-md shadow-yellow-300 border-2 max-w-md">
           <img src={logo} alt="logo" className="w-20 h-20 mx-auto" />
           <Form
@@ -130,7 +125,6 @@ function Login() {
             </NavLink>
           </p>
         </div>
-      </Spin>
     </div>
   );
 }

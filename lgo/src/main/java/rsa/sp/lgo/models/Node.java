@@ -4,7 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import rsa.sp.lgo.core.IdEntity;
 
 import javax.persistence.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "nodes")
@@ -20,6 +22,9 @@ public class Node extends IdEntity {
     @Transient
     @JsonProperty(access = JsonProperty.Access.READ_WRITE)
     private List<Node> children;
+    @Transient
+    @JsonProperty(access = JsonProperty.Access.READ_WRITE)
+    private Set<String> emailShare = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "user_id")
@@ -115,5 +120,13 @@ public class Node extends IdEntity {
 
     public void setTech(Tech tech) {
         this.tech = tech;
+    }
+
+    public Set<String> getEmailShare() {
+        return emailShare;
+    }
+
+    public void setEmailShare(Set<String> emailShare) {
+        this.emailShare = emailShare;
     }
 }

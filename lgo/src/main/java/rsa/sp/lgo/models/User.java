@@ -28,8 +28,10 @@ public class User extends IdEntity {
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String jwtToken;
     @Column(name="forgot_password_token")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String forgotPasswordToken;
     @Column(name="forgot_password_token_created")
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private Long forgotPasswordTokenCreated;
     @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JoinTable(name = "user_role", joinColumns = {

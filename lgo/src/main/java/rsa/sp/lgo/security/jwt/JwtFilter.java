@@ -76,7 +76,7 @@ public class JwtFilter extends GenericFilterBean {
         return new UsernamePasswordAuthenticationToken(principal, token, authorities);
     }
 
-    private boolean validateToken(String authToken) {
+    public boolean validateToken(String authToken) {
         try {
             Jwts.parser().setSigningKey(Constants.JWT_SECRET).parseClaimsJws(authToken);
             return true;
@@ -87,8 +87,8 @@ public class JwtFilter extends GenericFilterBean {
             logger.info("Invalid JWT token.");
             logger.trace("Invalid JWT token trace: {}", e);
         } catch (ExpiredJwtException e) {
-//            log.info("Expired JWT token.");
-//            log.trace("Expired JWT token trace: {}", e);
+            logger.info("Expired JWT token.");
+            logger.trace("Expired JWT token trace: {}", e);
         } catch (UnsupportedJwtException e) {
             logger.info("Unsupported JWT token.");
             logger.trace("Unsupported JWT token trace: {}", e);

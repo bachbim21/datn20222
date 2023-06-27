@@ -32,12 +32,14 @@ public class CrudService <T extends AbstractEntity, ID extends Serializable> {
 
     public ResponseEntity get(ID id) {
         T t = repository.findById(id).orElse(null);
-        if(!checkGet(t))
+        if(!checkGet(t)) {
+            logger.error("error.notAllow");
             return ResponseEntity.badRequest()
-                .body(new ResponseObject("Bạn không có quyền truy cập tài nguyên", 405));
+                    .body("error.notAllow");
+        }
         return ResponseEntity.ok().body(t);
     }
-    public Boolean checkGet(T t) {
+    protected Boolean checkGet(T t) {
         return true;
     }
 
@@ -113,7 +115,7 @@ public class CrudService <T extends AbstractEntity, ID extends Serializable> {
         if(entity.getCreated() == null) entity.setCreated(old.getCreated());
         if(entity.getCreatedBy() == null) entity.setCreatedBy(old.getCreatedBy());
         if(old == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(entity);
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("error.notFound");
         }
         repository.save(entity);
         afterUpdate(old,entity);
