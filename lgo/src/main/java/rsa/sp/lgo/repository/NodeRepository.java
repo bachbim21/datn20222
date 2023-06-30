@@ -7,6 +7,7 @@ import org.springframework.stereotype.Repository;
 import rsa.sp.lgo.core.CustomJpaRepository;
 import rsa.sp.lgo.models.Node;
 import rsa.sp.lgo.models.User;
+import rsa.sp.lgo.models.chart.Sql;
 
 import java.util.List;
 import java.util.Optional;
@@ -20,4 +21,6 @@ public interface NodeRepository extends CustomJpaRepository<Node, Long> {
     Boolean existsByNameAndUserAndParentId(String name, User user, Long id);
     List<Node> findAllByParentId(Long id);
     Page<Node> findAllByIdIn(Set<Long> ids, Pageable pageable);
+    @Query(nativeQuery = true, value = Sql.CHART_NODE_PIE)
+    Object  getPie();
 }

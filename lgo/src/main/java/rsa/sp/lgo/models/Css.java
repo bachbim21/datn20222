@@ -13,8 +13,7 @@ public class Css extends IdEntity {
     private String classCustom;
     private String name;
     private String library;
-    private String styleName;
-    private String valueStyle;
+
     @ManyToOne
     @JoinColumn(name = "user_id")
     private User user;
@@ -43,19 +42,4 @@ public class Css extends IdEntity {
         this.library = library;
     }
 
-    public String getStyleName() {
-        return styleName;
-    }
-
-    public void setStyleName(String styleName) {
-        this.styleName = styleName;
-    }
-
-    public String getValueStyle() {
-        return valueStyle;
-    }
-
-    public void setValueStyle(String valueStyle) {
-        this.valueStyle = valueStyle;
-    }
 }

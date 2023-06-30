@@ -5,7 +5,10 @@ import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import rsa.sp.lgo.models.User;
 import rsa.sp.lgo.core.CustomJpaRepository;
+import rsa.sp.lgo.models.chart.ChartPieUser;
+import rsa.sp.lgo.models.chart.Sql;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Set;
 
@@ -20,4 +23,8 @@ public interface UserRepository extends CustomJpaRepository<User, Long> {
     @Query(nativeQuery = true, value = "SELECT email FROM users WHERE id IN :ids")
     Set<String> getEmailByIds(@Param("ids") Set<Long> ids);
     User findByEmailAndForgotPasswordToken(String email, String token);
+    @Query(nativeQuery = true, value = Sql.CHART_PIE)
+    Object getChartPie();
+    @Query(nativeQuery = true, value = Sql.CHART_BAR)
+    BigDecimal getChartBar(@Param("first") Long first, @Param("last") Long last);
 }
