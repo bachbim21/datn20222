@@ -15,6 +15,7 @@ export default function Profile() {
     title: null,
     sub: null
   })
+  const userService = new UserService()
   const showDrawer = () => {
     setOpen(true);
   };
@@ -23,11 +24,9 @@ export default function Profile() {
   };
   useEffect(() => {
     if (!param.userId) return;
-    UserService().getOne(param.userId).then(res => {
+    userService.getOne(param.userId).then(res => {
       setUser(res);
-    }).catch((e) => {
-      console.log(e);
-    });
+    })
   }, []);
   const [keyActive, setKeyActive] = useState([]);
   const [openKeys, setOpenKeys] = useState([]);

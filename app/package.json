@@ -11,6 +11,7 @@
     "antd": "^5.5.1",
     "codemirror": "^5.65.13",
     "dragula": "^3.7.3",
+    "gh-pages": "^5.0.0",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.4",
     "momentjs": "^2.0.0",
@@ -24,11 +25,13 @@
     "react-router-dom": "^6.10.0",
     "react-scripts": "5.0.1",
     "tailwindcss": "^3.3.2",
-    "web-vitals": "^2.1.4"
+    "web-vitals": "^2.1.4",
+    "zingchart": "^2.9.11-1",
+    "zingchart-react": "^3.1.4"
   },
   "scripts": {
     "start": "react-scripts start",
-    "build": "react-scripts build",
+    "build": "react-scripts build && npx tailwindcss -i ./src/index.css -o ./dist/output.css --watch",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

@@ -17,7 +17,22 @@ function decode() {
     return null;
   }
 }
-
+function isAdmin() {
+  let thisToken = localStorage.getItem("token");
+  try {
+    if (thisToken != null && thisToken != undefined && thisToken.length > 0) {
+      let now = new Date();
+      let de = jwt_decode(thisToken);
+      if(now.getTime() > de.exp*1000) {
+        localStorage.removeItem("token");
+        return false
+      }
+      return de.roles.includes("ROLE_ADMIN")
+    } else return false;
+  } catch (e) {
+    return false;
+  }
+}
 const paserly = (parsely, value) => {
   let validate = true;
   switch (parsely.name) {
@@ -95,5 +110,6 @@ function handleValidate(arrValue, listConfig) {
 export {
   paserly,
   handleValidate,
-  decode
+  decode,
+  isAdmin
 }

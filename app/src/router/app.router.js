@@ -1,6 +1,6 @@
 import * as React from "react";
 import { createBrowserRouter, redirect } from "react-router-dom";
-import { decode } from "../utils/token";
+import { decode, isAdmin } from "../utils/token";
 import Home from "../Pages/HomePage";
 import Login from "../Pages/Common/login";
 import Signup from "../Pages/Common/signup";
@@ -14,6 +14,12 @@ import EditProfile from "../Pages/Profile/edit-profile";
 import ListProject from "../Pages/Profile/list-project";
 import ShareProject from "../Pages/Profile/share";
 import ForgetPass from "../Pages/Common/forget-pass";
+import Admin from "../Pages/Admin";
+import ChartUser from "../Pages/Admin/charts/chart.user";
+import ChartProject from "../Pages/Admin/charts/chart.project";
+import ResourceElement from "../Pages/Admin/resources/resource.element";
+import ResourceCss from "../Pages/Admin/resources/resource.css";
+import ListUser from "../Pages/Admin/users/list.user";
 
 const router = createBrowserRouter([
   {
@@ -95,6 +101,37 @@ const router = createBrowserRouter([
     path: "/forget-password",
     element: <ForgetPass />,
   },
+  {
+    path: "/admin",
+    element: <Admin/>,
+    loader: () => {
+      if (!isAdmin()) return redirect("/login");
+      return null;
+    },
+    children: [
+      {
+        path: 'chart-user',
+        index: true,
+        element: <ChartUser/>,
+      },
+      {
+        path: 'chart-project',
+        element: <ChartProject/>,
+      },
+      {
+        path: 'resources-html',
+        element: <ResourceElement/>,
+      },
+      {
+        path: 'resources-css',
+        element: <ResourceCss/>,
+      },
+      {
+        path: 'list-user',
+        element: <ListUser/>,
+      },
+    ]
+  }
 ]);
 
 export default router;

@@ -16,6 +16,7 @@ export default function ListProject() {
     currentPage: 0,
     totalElements: null,
   })
+  const nodeService = new NodeService()
   const [projects, setProject] = useState([]);
   useEffect(() => {
     setKeyActive(["list-project"]);
@@ -26,7 +27,7 @@ export default function ListProject() {
     })
     if (!user) return;
     let param = `userId=${user?.id}&page=${tableConfig.currentPage}&size=10`
-    NodeService().getList(param).then(res => {
+    nodeService.getList(param).then(res => {
       setProject(res.content);
       SetTableConfig({
         currentPage: res.number,
@@ -39,7 +40,7 @@ export default function ListProject() {
 
   function getPage(page, pageSize) {
     let param = `userId=${user?.id}&page=${page}&size=10`
-    NodeService().getList(param).then(res => {
+    nodeService.getList(param).then(res => {
       setProject(res.content);
       SetTableConfig({
         currentPage: res.number,
@@ -76,7 +77,6 @@ export default function ListProject() {
       <tbody>
       {
         projects && projects.length > 0 && projects.map((p) => {
-          console.log(p);
           return <tr key={p.id}  className="border-b border-gray-300">
             <td><TreeFolder data={p} view={false} /></td>
             <td className="text-center hidden mobile:table-cell">{convertMillisecondsToDate(p?.created)}</td>

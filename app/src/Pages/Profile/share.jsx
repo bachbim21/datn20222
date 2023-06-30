@@ -16,6 +16,7 @@ export default function ShareProject() {
     currentPage: 0,
     totalElements: null,
   })
+  const nodeService = new NodeService()
   useEffect(() => {
     setKeyActive(["share-project"]);
     setOpenKeys(["project"]);
@@ -25,7 +26,7 @@ export default function ShareProject() {
     })
     if (!user) return;
     let param = `userId=${user?.id}&page=${tableConfig.currentPage}&size=10`
-    NodeService().getShare(param).then(res => {
+    nodeService.getShare(param).then(res => {
       setProject(res.content);
       SetTableConfig({
         currentPage: res.number,
@@ -37,7 +38,7 @@ export default function ShareProject() {
   }, [user]);
 function getPage(page, pageSize) {
   let param = `userId=${user?.id}&page=${page}&size=10`
-  NodeService().getShare(param).then(res => {
+  nodeService.getShare(param).then(res => {
     setProject(res.content);
     SetTableConfig({
       currentPage: res.number,
@@ -63,8 +64,8 @@ function getPage(page, pageSize) {
     <table className="w-full my-2">
       <thead className="text-white bg-yellow-400 h-10">
       <tr className="">
-        <th className="">Dự án</th>
-        <th className="w-36 hidden mobile:table-cell">Chủ sở hữu</th>
+        <th className="text-left pl-16">Dự án</th>
+        <th className="w-36  hidden mobile:table-cell">Chủ sở hữu</th>
         <th className="w-36 hidden mobile:table-cell">Ngày cập nhật</th>
         <th className="" style={{ width: "70px" }}>Thao tác</th>
       </tr>
@@ -74,7 +75,7 @@ function getPage(page, pageSize) {
         projects && projects.length > 0 && projects.map((p) => {
           return <tr key={p.id} className="border-b border-gray-300">
             <td><TreeFolder data={p} view={true}/></td>
-            <td className="text-center hidden mobile:table-cell">{p?.user.email}</td>
+            <td className="hidden mobile:table-cell">{p?.user.email}</td>
             <td className="text-center hidden mobile:table-cell">{convertMillisecondsToDate(p?.updated)}</td>
             <td className="text-center">
               <Tooltip placement="top" title="xem">
