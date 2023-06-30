@@ -874,10 +874,6 @@ video {
   height: 1rem;
 }
 
-.h-56 {
-  height: 14rem;
-}
-
 .h-64 {
   height: 16rem;
 }
@@ -11567,7 +11563,6 @@ video {
   outline-width: 2px;
   outline-style: dashed;
   outline-offset: 2px;
-  background-image: url("data:image/svg+xml,%3csvg width='100%25' height='100%25' xmlns='http://www.w3.org/2000/svg'%3e%3crect width='100%25' height='100%25' fill='none' stroke='lime' stroke-width='3' stroke-dasharray='1%2c 7 stroke-dashoffset='30' stroke-linecap='square'/%3e%3c/svg%3e");
   background-color: #b3ffb3;
   opacity: 0.5;
   z-index: 10;

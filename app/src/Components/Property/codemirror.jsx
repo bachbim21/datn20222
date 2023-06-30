@@ -1,7 +1,6 @@
-import React, { useRef, useEffect, useState } from "react";
-import { SlSizeFullscreen } from "react-icons/sl";
+import React, { useEffect, useState } from "react";
 import { BsCodeSquare } from "react-icons/bs";
-import { Controlled as CodeMirror } from "react-codemirror2";
+import CodeMirror from '@uiw/react-codemirror';
 import "codemirror/lib/codemirror.css";
 import "codemirror/mode/htmlmixed/htmlmixed";
 import prettier from "prettier/standalone";

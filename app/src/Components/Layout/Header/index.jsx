@@ -25,6 +25,7 @@ export default function Header() {
   const nodePath = useSelector(path);
   const currentNode = useSelector(node);
   const location = useLocation();
+  const nodeService = new NodeService()
   const [isModalOpen, setIsModalOpen] = useState({
     open: false,
     loading: false
@@ -92,7 +93,7 @@ export default function Header() {
         ...currentNode,
         code: finalCode,
       };
-      NodeService()
+      nodeService
         .update(update, update.id)
         .then((res) => {
           message.success("Lưu thành công");
