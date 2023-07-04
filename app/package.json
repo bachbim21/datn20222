@@ -1,7 +1,6 @@
 {
   "name": "lgo-app",
   "version": "0.1.0",
-  "homepage": "https://hoduccuong1608.github.io/lgo/",
   "private": true,
   "dependencies": {
     "@ant-design/icons": "^5.0.1",
@@ -31,8 +30,6 @@
   },
   "scripts": {
     "predeploy": "npm run build",
-    "deploy": "gh-pages -d build",
-    "start": "react-scripts start",
     "build": "react-scripts build && npx tailwindcss -i ./src/index.css -o ./src/assets/output.css",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
