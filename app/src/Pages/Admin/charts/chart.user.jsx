@@ -62,7 +62,9 @@ export default function ChartUser() {
       text: "Biểu đồ tăng trưởng người dùng",
       fontSize: 16,
       fontWeight: 400,
-      fontFamily: "Roboto, sans-serif"
+      fontFamily: "Roboto, sans-serif",
+      marginBottom: 20,
+      paddingBottom: 40
     },
     legend: {
       verticalAlign: "bottom",
@@ -119,7 +121,7 @@ export default function ChartUser() {
       ];
       zingchart.render({
         id: "chart-user-pie",
-        width: 600,
+        // width: 600,
         height: 400,
         data: config
       });
@@ -137,15 +139,19 @@ export default function ChartUser() {
       ];
       zingchart.render({
         id: "chart-user-bar",
-        width: 600,
-        height: 400,
+        // width: 600,
+        height: 380,
         data: configChartRec
       });
     });
 
   }, []);
   return <div className="bg-white flex flex-row rounded shadow-2xl">
-    <div id="chart-user-pie"></div>
-    <div id="chart-user-bar"></div>
+    <div id="chart-user-pie" className="mt-5" style={{
+      width: "500px"
+    }}></div>
+    <div id="chart-user-bar"  className="mt-5" style={{
+      width: "500px"
+    }}></div>
   </div>;
 }

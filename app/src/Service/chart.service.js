@@ -2,12 +2,15 @@ import BaseApi from "../base.service";
 
 export default class ChartService extends BaseApi {
   getChartUser() {
-    return this.get("/chart/pie-user")
+    return this.get("/admin/chart/pie-user")
   }
   getChartBarUser() {
-    return this.get("/chart/bar-user")
+    return this.get("/admin/chart/bar-user")
   }
   getPieProject() {
-    return this.get("/chart/pie-project")
+    return this.get("/admin/chart/pie-project")
+  }
+  getChartBarProject() {
+    return this.get("/admin/chart/bar-project")
   }
 }

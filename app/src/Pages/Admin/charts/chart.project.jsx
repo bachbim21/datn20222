@@ -54,6 +54,50 @@ export default function ChartProject() {
       }
     ]
   };
+  let configChartRec = {
+    type: "bar",
+    title: {
+      text: "Biểu đồ tăng trưởng người dùng",
+      fontSize: 16,
+      fontWeight: 400,
+      fontFamily: "Roboto, sans-serif",
+      marginBottom: 20,
+      paddingBottom: 40
+    },
+    legend: {
+      verticalAlign: "bottom",
+      align: "center"
+    },
+    scaleX: {
+      label: { text: "Thời gian" },
+      labels: []
+    },
+    scaleY: {
+      label: { text: "Số lượng" }
+    },
+    plotarea: {
+      margin: "dynamic"
+    },
+    plot: {
+      stacked: true,
+      valueBox: {
+        text: "%stack-total",
+        rules: [
+          {
+            rule: "%stack-top == 0",
+            visible: 0
+          }
+        ]
+      }
+    },
+    series: [
+      {
+        values: [],
+        text: "Số lượng kích hoạt tài khoản",
+        "background-color": "#85CDFD"
+      }
+    ]
+  };
   const chartService = new ChartService()
   var title = "Biểu đồ thống kê dự án | Tổng số: "
   const [chartConfig, setChartConfig] = useState(config);
@@ -78,13 +122,36 @@ export default function ChartProject() {
         ]
       zingchart.render({
         id : "chart-pie-product",
-        width: 600,
+        // width: 600,
         height:  400,
         data : config
       })
     })
+
+    chartService.getChartBarProject().then(res => {
+      configChartRec.scaleX.labels = res.labels;
+
+      configChartRec.series = [
+        {
+          values: res.quantity,
+          text: "Số lượng dự án",
+          "background-color": "#85CDFD"
+        }
+      ];
+      zingchart.render({
+        id: "chart-bar-project",
+        // width: 600,
+        height: 380,
+        data: configChartRec
+      });
+    });
   },[])
   return  <div className="bg-white flex flex-row rounded shadow-2xl">
-        <div id="chart-pie-product"></div>
+        <div id="chart-pie-product" className="mt-5" style={{
+          width: "500px"
+        }}></div>
+    <div id="chart-bar-project"  className="mt-5" style={{
+      width: "500px"
+    }}></div>
   </div>
 }

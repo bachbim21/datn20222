@@ -43,7 +43,7 @@ export default function Admin() {
     </Menu>
   );
   return <>
-    <nav onMouseEnter={showDrawer} className="bg-custom w-16 h-screen shadow-2xl border-r-2 float-left left-0 top-o ">
+    <nav onMouseEnter={showDrawer} className="bg-custom fixed top-0 w-16 h-screen shadow-2xl border-r-2 float-left left-0 top-o ">
       <img src={logo} alt="logo" className="w-14 h-14 ml-1"/>
       <ul className="flex flex-col justify-center gap-y-4">
         <li><AreaChartOutlined className={openKeys.includes("chart") ? "block text-blue-600" : "block"}/></li>
@@ -53,11 +53,11 @@ export default function Admin() {
       </ul>
     </nav>
     <div className="pl-16">
-    <header className="h-14 z-10 flex flex-row justify-between items-center shadow-xl drop-shadow-md">
+    <header className="h-14 fixed top-0 bg-custom min-w-[calc(100%_-_3.5rem)] z-10 flex flex-row justify-between items-center shadow-xl drop-shadow-md">
       <h1 className="text-lg font-base ml-5">{header}</h1>
-   <DropDownProfile/>
+      <DropDownProfile/>
     </header>
-    <article className="min-h-[calc(100%_-_3.5rem)] bg-custom p-3">
+    <article className="min-h-[calc(100%_-_3.5rem)] bg-custom p-3 mt-14">
       <Outlet context={[setKeyActive, setOpenKeys, setHeader]}  />
     </article>
     </div>
