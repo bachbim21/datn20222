@@ -31,4 +31,7 @@ export default class NodeService extends BaseApi {
   deleteOne(id) {
     return this.deleteOne("/node/" + id);
   }
+  createZip(id) {
+    return this.get("/node/create-zip/" + id);
+  }
 }

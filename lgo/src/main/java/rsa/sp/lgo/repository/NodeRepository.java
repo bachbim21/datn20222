@@ -3,12 +3,14 @@ package rsa.sp.lgo.repository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 import rsa.sp.lgo.core.CustomJpaRepository;
 import rsa.sp.lgo.models.Node;
 import rsa.sp.lgo.models.User;
 import rsa.sp.lgo.models.chart.Sql;
 
+import java.math.BigDecimal;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -23,4 +25,6 @@ public interface NodeRepository extends CustomJpaRepository<Node, Long> {
     Page<Node> findAllByIdIn(Set<Long> ids, Pageable pageable);
     @Query(nativeQuery = true, value = Sql.CHART_NODE_PIE)
     Object  getPie();
+    @Query(nativeQuery = true, value = Sql.CHART_NODE_BAR)
+    BigDecimal getChartBar(@Param("first") Long first, @Param("last") Long last);
 }

@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +12,6 @@ import rsa.sp.lgo.core.SecurityUtils;
 import rsa.sp.lgo.core.error.BadRequestException;
 import rsa.sp.lgo.core.error.DuplicateFiledException;
 import rsa.sp.lgo.core.utils.GeneralEntity;
-import rsa.sp.lgo.core.utils.ZipUtils;
 import rsa.sp.lgo.models.Node;
 import rsa.sp.lgo.models.Share;
 import rsa.sp.lgo.models.Tech;
@@ -27,7 +25,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -113,7 +110,7 @@ public class NodeService extends CrudService<Node, Long> {
         return super.get(aLong);
     }
 
-    private void setReference(Node node){
+    public void setReference(Node node){
         if(node.getNumberChild() > 0) {
             node.setChildren(nodeRepository.findAllByParentId(node.getId()));
             for (Node child: node.getChildren()) {
@@ -168,45 +165,5 @@ public class NodeService extends CrudService<Node, Long> {
             setReference(item);
         }
         return result;
-    }
-
-    public GeneralEntity exportDirectoryAsZip(Node rootNode) throws IOException {
-        if (rootNode == null) {
-            return null;
-        }
-        String directoryName = "export/project/" + rootNode.getName() + System.currentTimeMillis();
-        String zipFileName = directoryName + ".zip";
-        String zipFilePath = System.getProperty("user.dir") + "/" + zipFileName;
-        zipFilePath = zipFilePath.replaceAll("\\\\", "/");
-
-        // Tạo thư mục tạm thời để chứa cây thư mục
-        Path tempDirectory = Files.createTempDirectory("temp");
-
-        // Tạo cây thư mục trong thư mục tạm thời
-        createDirectoryStructure(rootNode, tempDirectory);
-
-        // Di chuyển cây thư mục vào thư mục đích
-        Path destinationDirectory = tempDirectory.resolve(directoryName);
-        Files.move(tempDirectory, destinationDirectory);
-
-        // Nén thư mục đích thành tệp tin zip
-        ZipUtils.createZipFile(destinationDirectory, zipFilePath);
-
-        return new GeneralEntity(zipFileName, zipFilePath);
-    }
-
-    private void createDirectoryStructure(Node node, Path parentDirectory) throws IOException {
-        Path currentDirectory = Files.createDirectory(parentDirectory.resolve(node.getName()));
-
-        for (Node child : node.getChildren()) {
-            if (child.getFile()) {
-                // Tạo tệp tin HTML
-                Path filePath = currentDirectory.resolve(child.getName() + ".html");
-                Files.write(filePath, child.getCode().getBytes());
-            } else {
-                // Đệ quy tạo thư mục cho các node con
-                createDirectoryStructure(child, currentDirectory);
-            }
-        }
     }
 }

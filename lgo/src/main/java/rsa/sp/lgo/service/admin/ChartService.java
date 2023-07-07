@@ -51,4 +51,26 @@ public class ChartService {
         Object item =  nodeRepository.getPie();
         return ResponseEntity.ok(new ChartPieNode(item));
     }
+    public ResponseEntity getBarProject() {
+        ChartBarUser result = new ChartBarUser();
+        LocalDate currentDate = LocalDate.now();
+        Long firstDayOfMonth;
+        Long lastDayOfMonth;
+        LocalDate firstTime;
+        LocalDate lastTime;
+
+        long step = 4;
+
+        for (int i = 0; i < 5; i++) {
+            firstTime = currentDate.minusMonths(step);
+            lastTime = currentDate.minusMonths((step -1));
+            firstDayOfMonth = firstTime.withDayOfMonth(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            lastDayOfMonth = lastTime.withDayOfMonth(1).atStartOfDay().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            BigDecimal count = nodeRepository.getChartBar(firstDayOfMonth, lastDayOfMonth);
+            result.setLabels("Tháng "  + String.valueOf(firstTime.getMonthValue()));
+            result.setQuantity(count);
+            step --;
+        }
+        return ResponseEntity.ok(result);
+    }
 }

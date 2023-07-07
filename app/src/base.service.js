@@ -5,9 +5,10 @@ import { log, status } from "./utils/log";
 
 const publicUrlPost = ['/user/login', '/user/singup','/user/forget-password?email']
 const publicUrlGet = ['/user/forget-password?email']
+export const urlApi = process.env.REACT_APP_BASE_URL
 export default class BaseApi {
   constructor() {
-    this.baseUrl = process.env.REACT_APP_BASE_URL;
+    this.baseUrl = urlApi;
     this.token = localStorage.getItem("token")
       ? localStorage.getItem("token")
       : null;

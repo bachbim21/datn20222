@@ -7,7 +7,7 @@ import TreeFolder from "../../Components/TreeFolder";
 import { DeleteOutlined, DownloadOutlined, EditOutlined, ShareAltOutlined } from "@ant-design/icons";
 import { useDispatch } from "react-redux";
 import { SetProjectId, SetShowShare } from "../Project/node.slice";
-
+import { urlApi } from "../../base.service";
 
 export default function ListProject() {
   const dispatch = useDispatch();
@@ -63,6 +63,16 @@ export default function ListProject() {
 
     return `${formattedDay}/${formattedMonth}/${year}`;
   }
+  function download(id) {
+    nodeService.createZip(id).then(res => {
+      console.log(res);
+      const a = document.createElement('a');
+      a.href = urlApi + "/download?filePath=" + res.url;
+      a.download = "download";
+      a.click()
+    })
+  }
+
 
   return <>
     <table className="w-full my-2">
@@ -94,14 +104,15 @@ export default function ListProject() {
               </Tooltip>
 
               <Tooltip placement="top" title="tải xuống">
-                <NavLink to={`/project/${p.id}`}>
+                <span onClick={()=>download(p.id)}>
                   <DownloadOutlined className="hover:cursor-pointer hover:bg-blue-200 hover:rounded-full" style={{
                     color: "gray",
                     fontSize: "18px",
                     width: "30px",
                     height: "30px"
-                  }} />
-                </NavLink>
+                  }}
+                  />
+                  </span>
               </Tooltip>
               <Tooltip placement="top" title="chia sẻ">
                   <ShareAltOutlined className="hover:cursor-pointer hover:bg-blue-200 hover:rounded-full" style={{

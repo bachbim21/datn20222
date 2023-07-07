@@ -12,4 +12,5 @@ public class Sql {
             " union " +
             " select '' as tailwind, 0 as quantity1, 'Bootstrap' as boot,  count(id) as quantity2 from nodes n where n.tech_id in (2,4) )  a"
             ;
+    public static final String CHART_NODE_BAR = "select count(n.id) from nodes n where n.created >= :first and  n.created < :last and n.parent_id = 0";
  }

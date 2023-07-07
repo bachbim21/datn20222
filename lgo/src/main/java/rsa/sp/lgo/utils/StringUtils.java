@@ -1,5 +1,6 @@
 package rsa.sp.lgo.utils;
 
+import java.text.Normalizer;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
@@ -54,5 +55,9 @@ public class StringUtils {
         Pattern p = Pattern.compile("[^a-z0-9]", 2);
         Matcher m = p.matcher(text);
         return m.find();
+    }
+    public static String normalize(String string) {
+        String nameWithoutAccent = Normalizer.normalize(string, Normalizer.Form.NFD).replaceAll("\\p{InCombiningDiacriticalMarks}+", "").replaceAll("Đ", "D").replaceAll("đ", "d").replace("\\s+", "").replaceAll("[^a-zA-Z0-9]", "");
+        return nameWithoutAccent;
     }
 }
