@@ -71,7 +71,7 @@ export default function Home() {
         status: true,
       })
     );
-    NodeService()
+  nodeService
       .create(data)
       .then((res) => {
         navigate(`/project/${res.id}`);

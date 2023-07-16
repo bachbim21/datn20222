@@ -4,7 +4,7 @@ import { redirect } from "react-router-dom";
 import { log, status } from "./utils/log";
 
 const publicUrlPost = ['/user/login', '/user/singup','/user/forget-password?email']
-const publicUrlGet = ['/user/forget-password?email']
+const publicUrlGet = ['/user/forget-password?email','/css', '/element']
 export const urlApi = process.env.REACT_APP_BASE_URL
 export default class BaseApi {
   constructor() {
@@ -60,7 +60,7 @@ export default class BaseApi {
     return this.handleResponse(response);
   }
 
-  async delete(url, options = {}) {
+  async deleteOne(url, options = {}) {
     if(!decode(this.token)) {
       message.error("Hết thời gian truy cập vui lòng đăng nhập lại")
       return redirect("/login")
@@ -78,14 +78,17 @@ export default class BaseApi {
       const errorText = await response.text();
       var keys = errorText.split(".");
       var errorLog = log[keys[0]][keys[1]];
-      message.error(errorLog)
-      console.log(errorText);
+      if(log[keys[0]][keys[1]]) {
+        message.error(errorLog)
+      }else {
+        message.error(errorText)
+      }
       throw new Error(`Request failed with status ${response.status}: ${errorText}`);
     }
 
     // const contentType = response.headers.get('content-type');
     // if (contentType && contentType.includes('application/json')) {
-      return response.json();
+      return response ? response.json() : null;
     // }
     //
     // return response.text();

@@ -1,15 +1,17 @@
 import React, { useEffect, useState } from "react";
 import { BsCodeSquare } from "react-icons/bs";
 import CodeMirror from '@uiw/react-codemirror';
-import "codemirror/lib/codemirror.css";
-import "codemirror/mode/htmlmixed/htmlmixed";
+import { html } from '@codemirror/lang-html';
 import prettier from "prettier/standalone";
 import parserHtml from "prettier/parser-html";
-import { Button, Modal, Tooltip } from "antd";
+import { Button, message, Modal, Tooltip } from "antd";
 import { removeEvent } from "../../utils/drag";
+import { decode } from "../../utils/token";
+
 export default function Codemirror({ dom }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [stringCode, setStringCode] = useState();
+  const decodedToken = decode();
   useEffect(() => {
     if(dom)  {
       removeEvent(dom)
@@ -35,6 +37,17 @@ export default function Codemirror({ dom }) {
   const handleEdit = (editor, data, value) => {
     setStringCode(value);
   };
+  const handleCopy = () => {
+
+    navigator.clipboard.writeText(stringCode)
+      .then(function() {
+        console.log('copy!');
+        message.success("Copy thành công")
+      })
+      .catch(function(error) {
+        console.error("Failed to copy text to clipboard:", error);
+      });
+  }
   return (
     <>
       <li className="relative flex items-center justify-center list-none cursor-pointer border rounded m-1 hover:border-blue-600 aspect-square hover:bg-blue-200 bg-gray-200">
@@ -61,29 +74,35 @@ export default function Codemirror({ dom }) {
         <CodeMirror
           value={stringCode}
           options={{
-            mode: "htmlmixed",
+            mode: html(),
             theme: "default",
             lineNumbers: true,
             indentUnit: 8,
+            readOnly: decodedToken ? true : false
           }}
           clickThrough={true}
           onBeforeChange={handleEdit}
         />
         <div className="ant-modal-footer">
           <Button
-            className="inline-block mb-0 mx-4"
+            className="inline-block mb-0 mx-2"
             key="back"
             onClick={handleCancel}>
             Đóng
           </Button>
 
           <Button
-            type="primary"
-            htmlType="submit"
-            className="bg-blue-500 inline-block mb-0"
-            onClick={handleOk}>
+            type="success"
+            className="bg-green-500 inline-block mb-2"
+            onClick={handleCopy}>
             Copy
           </Button>
+          {decodedToken ?  <Button
+            type="primary"
+            className="bg-blue-500 inline-block mb-0"
+            onClick={handleOk}>
+            Lưu
+          </Button> : null}
         </div>
       </Modal>
     </>

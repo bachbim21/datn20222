@@ -7,11 +7,11 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import rsa.sp.lgo.core.Constants;
 import rsa.sp.lgo.core.CrudService;
 import rsa.sp.lgo.core.SecurityUtils;
 import rsa.sp.lgo.core.error.BadRequestException;
 import rsa.sp.lgo.core.error.DuplicateFiledException;
-import rsa.sp.lgo.core.utils.GeneralEntity;
 import rsa.sp.lgo.models.Node;
 import rsa.sp.lgo.models.Share;
 import rsa.sp.lgo.models.Tech;
@@ -21,9 +21,9 @@ import rsa.sp.lgo.repository.ShareRepository;
 import rsa.sp.lgo.repository.TechRepository;
 import rsa.sp.lgo.repository.UserRepository;
 
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
+import org.jsoup.nodes.Element;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -84,13 +84,46 @@ public class NodeService extends CrudService<Node, Long> {
             Node parent = nodeRepository.findById(created.getParentId()).get();
             parent.setNumberIndex(parent.getNumberIndex() + 1);
             parent.setNumberChild(parent.getNumberChild() + 1);
-            super.update(parent.getId(),parent);
+            nodeRepository.save(parent);
         }
     }
     @Override
     protected void beforeUpdate(Node node) {
         if(node.getUser().getId() != SecurityUtils.getCurrentUserId()) throw new BadRequestException("Not privileges");
+        if(!node.getFile()) {
+            super.beforeUpdate(node);
+            return;
+        }
+        Document doc = Jsoup.parse(node.getCode());
+        Element container = doc.getElementById(Constants.ROOT_ID);
+        String style = container.attr("style");
+        String updatedStyle = updateStyleAttribute(style, "transform", "scale(1)");
+        container.attr("style", updatedStyle);
+        node.setCode(container.outerHtml());
         super.beforeUpdate(node);
+    }
+    public static String updateStyleAttribute(String style, String attributeName, String attributeValue) {
+        StringBuilder sb = new StringBuilder();
+        String[] attributes = style.split(";");
+
+        boolean attributeUpdated = false;
+
+        for (String attribute : attributes) {
+            String trimmedAttribute = attribute.trim();
+
+            if (trimmedAttribute.startsWith(attributeName + ":")) {
+                sb.append(attributeName).append(":").append(attributeValue).append(";");
+                attributeUpdated = true;
+            } else {
+                sb.append(trimmedAttribute).append(";");
+            }
+        }
+
+        if (!attributeUpdated) {
+            sb.append(attributeName).append(":").append(attributeValue).append(";");
+        }
+
+        return sb.toString();
     }
 
     @Override
@@ -165,5 +198,13 @@ public class NodeService extends CrudService<Node, Long> {
             setReference(item);
         }
         return result;
+    }
+    public ResponseEntity getInforRootNode(Long id) {
+        Node root = simpleGet(id);
+        if(checkGet(root)) {
+            return ResponseEntity.ok(root);
+        }else {
+            return ResponseEntity.badRequest().body("error.notAllow");
+        }
     }
 }

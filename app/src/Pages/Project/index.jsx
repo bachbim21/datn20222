@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useSelector, useDispatch } from "react-redux";
 import design1 from "../../assets/images/design.jpg";
 import design3 from "../../assets/images/design3.jpg";
@@ -16,16 +16,28 @@ import Property from "../../Components/Property";
 import { UpdateNode } from "./node.slice";
 import { LoadingService } from "../../Components/Layout/layout.slice";
 import NodeService from "../../Service/node.service";
+import "../../assets/output.css"
+import { useParams } from "react-router";
+import DesignBootstrap from "./design.bootstrap";
+import DesignTailwind from "./design.tailwind";
 
 const { Meta } = Card;
 export default function Project() {
   const currentNode = useSelector(node);
+  const {id} = useParams()
   const currentDomId = useSelector(domId);
   const domIdHover = useSelector(hoverId);
   const dispatch = useDispatch();
   const wrapper = useRef(null);
+  const [root, setRoot] = useState(null)
   let rateScale = null;
-
+  const nodeService = new NodeService()
+  useEffect(()=> {
+    nodeService.getRoot(id).then(res => {
+      console.log(res);
+      setRoot(res)
+    })
+  },[id])
   function ctrlC(event) {
     if (event.ctrlKey && event.key === "c") {
       var elementToCopy = document.getElementById(currentDomId);
@@ -80,6 +92,7 @@ export default function Project() {
       let root = document.getElementById("root-page");
       const scale = parseFloat(root.style.transform.match(/scale\((.+?)\)/)[1]);
       rateScale = scale;
+      handleScale()
       addEvent(root);
     }
     var children = document.querySelectorAll(".node");
@@ -144,23 +157,16 @@ export default function Project() {
       status: true,
       text: null
     }))
-    NodeService()
+    nodeService
       .update(update, update.id)
       .then((response) => {
         dispatch(UpdateNode(response));
-        message.info("Thành công")
-        dispatch(LoadingService({
-          status: false,
-          text: null
-        }))
+        message.success("Thành công")
       })
-      .catch((e) => {
-        message.error("Không thành công!");
-        dispatch(LoadingService({
-          status: false,
-          text: null
-        }))
-      });
+    dispatch(LoadingService({
+      status: false,
+      text: null
+    }))
   }
 
   const validatePositiveNumber = (_, value) => {
@@ -178,6 +184,7 @@ export default function Project() {
           width: `calc(${window.innerWidth}px - 10rem)`,
           height: `calc(${window.innerHeight}px - 3.5rem)`
         }}>
+        { root?.tech?.id % 2 == 0 ? <DesignBootstrap ref={wrapper} /> : <DesignTailwind ref={wrapper} /> }
         <div ref={wrapper} className="top-0 block box-border"></div>
         {currentNode == null && (
           <div className=" flex flex-row justify-evenly">

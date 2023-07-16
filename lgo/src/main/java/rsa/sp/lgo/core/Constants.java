@@ -20,4 +20,6 @@ public class Constants  {
     public static final Long TIME_FORGET_PASSWORD = 18000L;
     public static final Integer PRIVATE_PROJECT = 0;
     public static final Integer PUPLIC_PROJECT = 1;
+    public static final String ROOT_ID = "root-page";
+
 }

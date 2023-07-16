@@ -6,22 +6,21 @@ import {
   Input,
   Space,
   Popconfirm,
-  message
+  message, Modal
 } from "antd";
 import { useEffect, useState } from "react";
-import { useSelector, useDispatch } from "react-redux";
-import { user, node } from "../../redux/selector";
+import {  useDispatch } from "react-redux";
 import { useParams } from "react-router";
 import {
   FileAddOutlined,
   FolderAddOutlined,
   DeleteOutlined,
   EditOutlined,
-  SaveOutlined
+  SaveOutlined, MailOutlined
 } from "@ant-design/icons";
 import { setLocal } from "../../utils/class";
 import NodeService from "../../Service/node.service";
-import { SetNode, SetProjectId } from "../../Pages/Project/node.slice";
+import { SetNode, SetProjectId, SetShowShare } from "../../Pages/Project/node.slice";
 import { decode } from "../../utils/token";
 
 const { DirectoryTree } = Tree;
@@ -38,7 +37,10 @@ export default function TreeFolder({ data, view }) {
     new: null,
     old: null
   });
-
+  const [isModalOpen, setIsModalOpen] = useState({
+    open: false,
+    loading: false
+  });
   function getProject() {
     let pId = null;
     if (id) {
@@ -199,7 +201,7 @@ export default function TreeFolder({ data, view }) {
       return newLoadings;
     });
     nodeService
-      .deleteOne(rightSelected.id)
+      .delete(rightSelected.id)
       .then(() => {
         getProject();
         setLoadings((prevLoadings) => {
@@ -209,9 +211,13 @@ export default function TreeFolder({ data, view }) {
         });
         message.success("Thành công!");
       })
-      .catch((e) => {
-        message.error("Không thành công!");
-      });
+      .catch(()=>{
+        setLoadings((prevLoadings) => {
+          const newLoadings = [...prevLoadings];
+          newLoadings[index] = false;
+          return newLoadings;
+        });
+      })
   }
 
   const renderMenuItem = (menuItem) => {
@@ -227,7 +233,7 @@ export default function TreeFolder({ data, view }) {
               />
               <Button
                 type="primary"
-                size="small"
+                // size="small"
                 style={{ backgroundColor: "#1677ff" }}
                 loading={loadings[0]}
                 icon={<SaveOutlined />}
@@ -245,7 +251,7 @@ export default function TreeFolder({ data, view }) {
               />
               <Button
                 type="primary"
-                size="small"
+                // size="small"
                 style={{ backgroundColor: "#1677ff" }}
                 loading={loadings[0]}
                 icon={<SaveOutlined />}
@@ -262,7 +268,7 @@ export default function TreeFolder({ data, view }) {
                 onChange={handleEditOld}
               />
               <Button
-                size="small"
+                // size="small"
                 type="primary"
                 style={{ backgroundColor: "#1677ff" }}
                 onClick={() => handleSubmitOld(null, 0)}
@@ -285,6 +291,18 @@ export default function TreeFolder({ data, view }) {
         {item.children.length > 0 && renderTreeNodes(item.children)}
       </Tree.TreeNode>
     ));
+  };
+  function handleOpenModal() {
+    setIsModalOpen({
+      open: true,
+      loading: false
+    })
+  }
+  const handleCancel = () => {
+    setIsModalOpen({
+      open: false,
+      loading: false
+    });
   };
   const widgetMenu = (
     <Menu>
@@ -311,21 +329,14 @@ export default function TreeFolder({ data, view }) {
         key="delete"
         className=" text-center"
         onClick={handleMenuClick}>
-        <Popconfirm
-          title="Xoá"
-          placement="rightBottom"
-          description="Bạn chắc chắn với hành động này?"
-          onConfirm={handleDelete}
-          okText="Đồng ý"
-          cancelText="Huỷ">
           <Button
             type="primary"
             size="small"
             style={{ width: "40px", paddingBottom: "3px" }}
             icon={<DeleteOutlined className="text-center" />}
             loading={loadings[0]}
+            onClick={handleOpenModal}
             danger></Button>
-        </Popconfirm>
       </Menu.Item>
     </Menu>
   );
@@ -358,6 +369,16 @@ export default function TreeFolder({ data, view }) {
           </DirectoryTree>
         </Dropdown>
       }
+      <Modal title="Xác nhận hành động xoá" open={isModalOpen.open} onCancel={handleCancel}
+             footer={[
+               <Button key="back" onClick={handleCancel}>
+                 Huỷ
+               </Button>,
+               <Button  key="submit" type="primary"  onClick={() => handleDelete(0)}>
+                 Xác nhận
+               </Button>,
+             ]}>
+      </Modal>
     </div>
   );
 }

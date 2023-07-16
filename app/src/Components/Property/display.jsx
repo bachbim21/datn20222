@@ -85,7 +85,7 @@ export default function Display({ dom }) {
           />
           <Button
             type="primary"
-            size="small"
+            // size="small"
             style={{ backgroundColor: "#1677ff" }}
             icon={<SaveOutlined />}
             onClick={() => {
@@ -107,7 +107,7 @@ export default function Display({ dom }) {
           />
           <Button
             type="primary"
-            size="small"
+            // size="small"
             style={{ backgroundColor: "#1677ff" }}
             icon={<SaveOutlined />}
             onClick={() => {

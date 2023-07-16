@@ -92,7 +92,7 @@ export default function Text({ dom }) {
           style={{
             width: "130px",
           }}
-          value={getClass(dom, textWeight)}
+          defaultValue={getClass(dom, textWeight)}
           placement="bottomLeft"
           placeholder="Select"
           onChange={handleChangeWeight}
@@ -108,7 +108,7 @@ export default function Text({ dom }) {
           style={{
             width: "130px",
           }}
-          value={getClass(dom, textSize)}
+          defaultValue={getClass(dom, textSize)}
           placement="bottomLeft"
           placeholder="Select"
           onChange={handleChangeTextSize}
@@ -125,7 +125,7 @@ export default function Text({ dom }) {
           style={{
             width: "130px",
           }}
-          value={getClass(dom, textColor)}
+          defaultValue={getClass(dom, textColor)}
           placement="bottomLeft"
           placeholder="Select"
           onChange={handleChangeColor}
@@ -141,7 +141,7 @@ export default function Text({ dom }) {
           style={{
             width: "130px",
           }}
-          value={getClass(dom, textAlign)}
+          defaultValue={getClass(dom, textAlign)}
           placement="bottomLeft"
           placeholder="Select"
           onChange={handleChangeAlign}
@@ -156,11 +156,11 @@ export default function Text({ dom }) {
         <Space.Compact>
           <Input
             onChange={(event) => setTextContent(event.target.value)}
-            value={textContent}
+            defaultValue={textContent}
           />
           <Button
             type="primary"
-            size="small"
+            // size="small"
             style={{ backgroundColor: "#1677ff" }}
             icon={<SaveOutlined />}
             onClick={() => {

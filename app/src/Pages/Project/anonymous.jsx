@@ -55,7 +55,6 @@ export default function AnonymousProject(params) {
   }
   useEffect(()=>{
   let root  = document.getElementById("root-page")
-    console.log(root);
     addEvent(root)
   },[])
   function addEvent(root) {

@@ -7,10 +7,12 @@ import { Input } from "antd";
 import TreeFolder from "../TreeFolder";
 import ElementDefault from "./element-default";
 import { message } from "antd";
+import { decode } from "../../utils/token";
 
 export default function NavbarElement() {
   const [elements, setElements] = useState([]);
   const size = useSelector(sizeWindown);
+  const decodedToken = decode();
   const elementService = new ElementService()
   function getListElement(param) {
     elementService
@@ -69,7 +71,7 @@ export default function NavbarElement() {
               );
             })}
         </nav>
-        <TreeFolder />
+        {decodedToken ? <TreeFolder /> : null}
       </div>
     </div>
   );

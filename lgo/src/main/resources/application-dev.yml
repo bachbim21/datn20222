@@ -4,8 +4,8 @@ server:
 spring:
   datasource:
     username: root
-    password: AZalagWnkXnJ3dgkfTqq
-    url: jdbc:mysql://containers-us-west-209.railway.app:7924/lgo_database?serverTimezone=UTC
+    password: manh2001
+    url: jdbc:mysql://localhost:3306/server_test?serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:

@@ -128,7 +128,13 @@ const generateUniqueId = () => {
 function getScale() {
   let root = document.getElementById("root-page");
   if (root == null) return;
-  return parseFloat(root.style.transform.match(/scale\((.+?)\)/)[1]);
+  const transformValue = root.style.transform;
+  const scaleRegex = /scale\((.+?)\)/;
+  const scaleMatch = transformValue.match(scaleRegex);
+
+  if (scaleMatch) {
+    return parseFloat(scaleMatch[1]);
+  }
 }
 
 function dragStartCopy(e) {
@@ -289,6 +295,7 @@ function SetDataElement(id, data) {
     element.style.display = size[2];
     element.style.boxSizing = "border-box";
     element.style.position = "absolute";
+    element.style.verticalAlign = "top";
     element.textContent = data.tag == "input" ? null : data.text;
     element.style.transition =
       "min-width 0.5s ease-in-out, min-height 0.5s ease-in-out";
