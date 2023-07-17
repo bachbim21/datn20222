@@ -1,0 +1,38 @@
+server:
+  port: 8086
+
+spring:
+  datasource:
+    username: ${PROD_DB_USERNAME}
+    password: ${PROD_DB_PASSWORD}
+    url: jdbc:mysql://${PROD_DB_HOST}:${PROD_DB_PORT}/${PROD_DB_NAME}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        format_sql: true
+
+  mail:
+    host: smtp.gmail.com
+    port: 587
+    username: lgo.tech.app@gmail.com
+    password: suddouhvekiadzmo
+    protocol: smtp
+    properties:
+        mail:
+          smtp:
+            auth: true
+            starttls.enable: true
+
+lgo:
+  url: ${PROD_URL_WEB}
+  app:
+    jwtSecret: ${PROD_JWT_SECRET}
+    jwtExpirationMs:  ${PROD_JWT_EXPIRED}
+
+

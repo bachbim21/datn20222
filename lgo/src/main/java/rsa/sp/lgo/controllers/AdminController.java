@@ -9,7 +9,7 @@ import rsa.sp.lgo.service.admin.ChartService;
 
 @RestController
 @RequestMapping("/api/admin")
-public class ChartController {
+public class AdminController {
     @Autowired
     private ChartService chartService;
 
@@ -17,7 +17,6 @@ public class ChartController {
     public ResponseEntity getChartPieUser() {
         return chartService.getPie();
     }
-
     @RequestMapping(path = "/chart/bar-user", method = RequestMethod.GET)
     public ResponseEntity getChartBarUser() {
         return chartService.getBar();
