@@ -5,8 +5,9 @@ import { useEffect, useState } from "react";
 import NodeService from "../../Service/node.service";
 import { message, Pagination, Tooltip } from "antd";
 import TreeFolder from "../../Components/TreeFolder";
-import {  EyeOutlined } from "@ant-design/icons";
+import { DownloadOutlined, EyeOutlined } from "@ant-design/icons";
 import { SetProjectId, SetShowShare } from "../Project/node.slice";
+import { urlApi } from "../../base.service";
 
 export default function ShareProject() {
   const dispatch = useDispatch();
@@ -48,6 +49,15 @@ function getPage(page, pageSize) {
     message.error("Không có quyền truy cập");
   });
 }
+  function download(id) {
+    nodeService.createZip(id).then(res => {
+      console.log(res);
+      const a = document.createElement('a');
+      a.href = urlApi + "/download?filePath=" + res.url;
+      a.download = "download";
+      a.click()
+    })
+  }
   function convertMillisecondsToDate(milliseconds) {
     if (milliseconds == null) return;
     const date = new Date(milliseconds);
@@ -79,6 +89,17 @@ function getPage(page, pageSize) {
             <td className="text-center hidden mobile:table-cell">{convertMillisecondsToDate(p?.updated)}</td>
             <td className="text-center">
               <Tooltip placement="top" title="xem">
+                <Tooltip placement="top" title="tải xuống">
+                <span onClick={()=>download(p.id)}>
+                  <DownloadOutlined className="hover:cursor-pointer hover:bg-blue-200 hover:rounded-full" style={{
+                    color: "gray",
+                    fontSize: "18px",
+                    width: "30px",
+                    height: "30px"
+                  }}
+                  />
+                  </span>
+                </Tooltip>
                 <NavLink to={`/project/${p.id}`}>
                   <EyeOutlined  className="hover:cursor-pointer hover:bg-blue-200 hover:rounded-full" style={{
                     color: "green",

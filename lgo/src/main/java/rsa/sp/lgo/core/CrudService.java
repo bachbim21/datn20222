@@ -7,7 +7,6 @@ import org.apache.commons.lang3.SerializationUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import org.springframework.core.convert.converter.Converter;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
@@ -16,7 +15,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
-import rsa.sp.lgo.core.error.Status;
+import rsa.sp.lgo.core.error.BadRequestException;
 import rsa.sp.lgo.core.rsql.CustomRsqlVisitor;
 
 import javax.persistence.EntityNotFoundException;
@@ -33,9 +32,7 @@ public class CrudService <T extends AbstractEntity, ID extends Serializable> {
     public ResponseEntity get(ID id) {
         T t = repository.findById(id).orElse(null);
         if(!checkGet(t)) {
-            logger.error("error.notAllow");
-            return ResponseEntity.badRequest()
-                    .body("error.notAllow");
+            new BadRequestException("Not Allow", "error","notAllow");
         }
         return ResponseEntity.ok().body(t);
     }
@@ -115,7 +112,7 @@ public class CrudService <T extends AbstractEntity, ID extends Serializable> {
         if(entity.getCreated() == null) entity.setCreated(old.getCreated());
         if(entity.getCreatedBy() == null) entity.setCreatedBy(old.getCreatedBy());
         if(old == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("error.notFound");
+            new BadRequestException("Not Found", "error","notFound");
         }
         repository.save(entity);
         afterUpdate(old,entity);

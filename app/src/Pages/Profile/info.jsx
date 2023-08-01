@@ -3,22 +3,25 @@ import UserService from "../../Service/user.service";
 import { NavLink } from "react-router-dom";
 import { Button, message } from "antd";
 import profile from "../../assets/images/avatar.png";
-import { UploadOutlined } from "@ant-design/icons"
+import { UploadOutlined } from "@ant-design/icons";
 import { SetUserUpdated } from "../../Components/Layout/layout.slice";
 import { useDispatch } from "react-redux";
 import { useOutletContext } from "react-router-dom";
+import { handleError } from "../../utils/error";
 export default function Infor() {
-  const dispatch = useDispatch()
-  const fileInputRef = useRef(null)
-  const [user, setUser, setKeyActive, setOpenKeys, setHeader] = useOutletContext()
-useEffect(()=>{
-  setOpenKeys(['profile'])
-  setKeyActive(['information'])
-  setHeader({
-    title: "Thông tin thông tin cá nhân",
-    sub: "Quản lý thông tin cá nhân"
-  })
-},[user])
+  const dispatch = useDispatch();
+  const fileInputRef = useRef(null);
+  const [user, setUser, setKeyActive, setOpenKeys, setHeader] =
+    useOutletContext();
+  const userService = new UserService();
+  useEffect(() => {
+    setOpenKeys(["profile"]);
+    setKeyActive(["information"]);
+    setHeader({
+      title: "Thông tin thông tin cá nhân",
+      sub: "Quản lý thông tin cá nhân",
+    });
+  }, [user]);
   function convertMillisecondsToDate(milliseconds) {
     if (milliseconds == null) return;
     const date = new Date(milliseconds);
@@ -40,28 +43,36 @@ useEffect(()=>{
     data.append("upload_preset", "lgo-image");
     data.append("cloud_name", "lgo-hust");
 
-    fetch(
-      "https://api.cloudinary.com/v1_1/lgo-hust/image/upload", {
-        method: "POST", body: data
-      }
-    ).then((res => res.json())).then((data) => {
-      updateImage(data.url)
-    }).catch(err => {
-      message.error("Không thành công!");
-    });
+    fetch("https://api.cloudinary.com/v1_1/lgo-hust/image/upload", {
+      method: "POST",
+      body: data,
+    })
+      .then((res) => res.json())
+      .then((data) => {
+        updateImage(data.url);
+      })
+      .catch((err) => {
+        message.error("Không thành công!");
+      });
   }
   function updateImage(url) {
-    UserService().update(user.id, {...user, avatar: url}).then((response) => {
-      dispatch(SetUserUpdated())
-      setUser(response)
-      message.success("Thành công")
-    }).catch(e=> {
-      message.error("Server bị lỗi, vui long thử lại")
-    })
+    userService
+      .update(user.id, { ...user, avatar: url })
+      .then((response) => {
+        dispatch(SetUserUpdated());
+        setUser(response);
+        message.success("Thành công");
+      })
+      .catch((e) => {
+        handleError(e);
+      });
   }
-    return <>
+  return (
+    <>
       <article className="flex md:flex-row flex-col">
-        <div className=" grid grid-cols-2 p-5 gap-y-3 basis-1/2" style={{ maxWidth: "500px" }}>
+        <div
+          className=" grid grid-cols-2 p-5 gap-y-2 h-fit basis-1/2"
+          style={{ maxWidth: "500px" }}>
           <p className="">Email :</p>
           <p>{user?.email}</p>
           <p className="">Tên :</p>
@@ -70,8 +81,12 @@ useEffect(()=>{
           <p>{convertMillisecondsToDate(user?.birthDay)}</p>
         </div>
         <div className="p-5 flex-1 md:border-l md:border-gray-300 h-full">
-          <img className="aspect-square mx-auto mb-3 border-blue-600 border-2 rounded-full hover:border-blue-400"
-               src={user?.avatar ? user.avatar : profile} width="120px" height="120px" />
+          <img
+            className="aspect-square mx-auto mb-3 border-blue-600 border-2 rounded-full hover:border-blue-400"
+            src={user?.avatar ? user.avatar : profile}
+            width="120px"
+            height="120px"
+          />
           <input
             ref={fileInputRef}
             type="file"
@@ -81,10 +96,15 @@ useEffect(()=>{
             onChange={handleUploadImg}
             accept="image/*"
           />
-          <Button icon={<UploadOutlined size="50px"/>} className="mx-auto my-4 block" type="primary" onClick={()=> fileInputRef.current.click()}>
+          <Button
+            icon={<UploadOutlined size="50px" />}
+            className="mx-auto my-4 block"
+            type="primary"
+            onClick={() => fileInputRef.current.click()}>
             Tải lên
           </Button>
         </div>
       </article>
-    </>;
-  }
+    </>
+  );
+}

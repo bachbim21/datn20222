@@ -22,25 +22,25 @@ export default function Border({ dom }) {
     cssService
       .getAll(param1)
       .then((res) => {
-        setBorderWidth(res);
+        setBorderWidth(res.content);
       });
     var param2 = "query=name==border-radius;library==tailwind&page=0&size=1000";
     cssService
       .getAll(param2)
       .then((res) => {
-        setBorderRadius(res);
+        setBorderRadius(res.content);
       });
     var param3 = "query=name==border-color;library==tailwind&page=0&size=1000";
     cssService
       .getAll(param3)
       .then((res) => {
-        setBorderColor(res);
+        setBorderColor(res.content);
       });
     var param3 = "query=name==border-style;library==tailwind&page=0&size=1000";
     cssService
       .getAll(param3)
       .then((res) => {
-        setBorderStyle(res);
+        setBorderStyle(res.content);
       });
   }, []);
   const handleChangeWidth = (value) => {

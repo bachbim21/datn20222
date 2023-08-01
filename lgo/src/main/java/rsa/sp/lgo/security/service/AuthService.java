@@ -6,15 +6,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
 import rsa.sp.lgo.core.Constants;
+
 import rsa.sp.lgo.core.error.BadRequestException;
-import rsa.sp.lgo.core.error.NotActiveException;
-import rsa.sp.lgo.core.error.WrongInfroException;
 import rsa.sp.lgo.models.Role;
 import rsa.sp.lgo.models.User;
 import rsa.sp.lgo.repository.UserRepository;
-import rsa.sp.lgo.service.UserService;
 
 import javax.transaction.Transactional;
 import java.util.ArrayList;
@@ -35,6 +32,7 @@ public class AuthService {
         this.tokenValidityInMilliseconds = Constants.ONE_DAY;
         this.tokenValidityInMillisecondsForRememberMe = Constants.ONE_MONTH_30;
     }
+
     public String token(String email, String password, Boolean rememberMe) {
         logger.info("Generate token for user: {}", email);
         User user;
@@ -72,28 +70,25 @@ public class AuthService {
         }
         return authorities;
     }
+
     public User authenticate(String email, String password) {
-        User user;
-        try {
-            user = userRepository.findByEmail(email);
-            logger.info("user :" + user);
-            if (user != null && user.getActive() != null && user.getActive() && user.authenticate(password)) {
-                return user;
-            } else if (user.getActive() == null || !user.getActive()) {
-                throw new NotActiveException("User not active");
-            }
-        } catch (Exception ex) {
-            throw new WrongInfroException();
+        User user = userRepository.findByEmail(email);
+        logger.info("user :" + user);
+        if (user == null) {
+            throw new BadRequestException("User not found", "error", "emailNotFound");
+        } else if (user.authenticate(password)) {
+            throw new BadRequestException("Password not match", "error", "loginError");
+        } else if (user != null && user.getActive() != null && user.getActive() && user.authenticate(password)) {
+            return user;
+        } else if (user.getActive() == null || !user.getActive()) {
+            throw new BadRequestException("User not active", "error", "accountNotActive");
         }
+
         return user;
     }
 
     public String tokenResetPassword(User user) {
         logger.info("Generate token forget-password for user: {}", user.getEmail());
-        if (user == null) {
-            throw new BadRequestException("User not found");
-        }
-
         Date validity;
         long now = (new Date()).getTime();
         validity = new Date(now + Constants.TIME_FORGET_PASSWORD);
@@ -114,7 +109,6 @@ public class AuthService {
 
         return token;
     }
-
 
 
 }

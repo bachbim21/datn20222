@@ -1,7 +1,7 @@
 package rsa.sp.lgo.core.error;
 
-public class ConfirmPasswordException extends BadRequestException{
+public class ConfirmPasswordException extends RuntimeException{
     public ConfirmPasswordException() {
-        super("Xác nhận mật khẩu sai");
+        super("error.confirmPassword");
     }
 }

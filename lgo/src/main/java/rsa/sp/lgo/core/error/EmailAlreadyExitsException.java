@@ -1,7 +1,7 @@
 package rsa.sp.lgo.core.error;
 
-public class EmailAlreadyExitsException extends BadRequestException{
+public class EmailAlreadyExitsException extends RuntimeException{
     public EmailAlreadyExitsException() {
-        super("Email đã được sử dụng");
+        super("error.existsEmail");
     }
 }

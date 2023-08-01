@@ -52,5 +52,8 @@ public class UserController extends CrudApiEndpoint<User, Long> {
     public ResponseEntity resetPassword(@RequestBody User user) {
         return userService.resetPassword(user);
     }
-
+//    @RequestMapping(path = "/logout", method = RequestMethod.GET)
+//    public ResponseEntity logout() {
+//        return userService.resetPassword(user);
+//    }
 }

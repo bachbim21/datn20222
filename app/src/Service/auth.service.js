@@ -6,9 +6,9 @@ export default class AuthService extends BaseApi {
   }
 
   login(data) {
-    return this.post('/user/login', data);
+    return this.post("/user/login", data);
   }
   signup(data) {
-    return this.post('/user/signup', data);
+    return this.post("/user/signup", data);
   }
 }

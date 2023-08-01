@@ -18,8 +18,8 @@ export default function NavbarElement() {
     elementService
       .getAll(`query=${param}&page=0&size=1000`)
       .then((response) => {
-        if (response.length > 0) {
-          setElements(response);
+        if (response.content.length > 0) {
+          setElements(response.content);
         }
       })
   }

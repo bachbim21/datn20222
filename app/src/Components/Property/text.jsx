@@ -24,25 +24,25 @@ export default function Text({ dom }) {
     cssService
       .getAll(param1)
       .then((res) => {
-        setTextColor(res);
+        setTextColor(res.content);
       });
     var param2 = "query=name==text-size;library==tailwind&page=0&size=1000";
     cssService
       .getAll(param2)
       .then((res) => {
-        setTextSize(res);
+        setTextSize(res.content);
       });
     var param3 = "query=name==text-weight;library==tailwind&page=0&size=1000";
     cssService
       .getAll(param3)
       .then((res) => {
-        setTextWeight(res);
+        setTextWeight(res.content);
       });
     var param4 = "query=name==text-align;library==tailwind&page=0&size=1000";
     cssService
       .getAll(param4)
       .then((res) => {
-        setTextAlign(res);
+        setTextAlign(res.content);
       });
   }, []);
   const handleChangeColor = (value) => {

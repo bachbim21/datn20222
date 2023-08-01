@@ -7,11 +7,10 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import rsa.sp.lgo.core.Constants;
 import rsa.sp.lgo.core.CrudService;
 import rsa.sp.lgo.core.SecurityUtils;
-import rsa.sp.lgo.core.error.*;
+import rsa.sp.lgo.core.error.BadRequestException;
 import rsa.sp.lgo.models.Role;
 import rsa.sp.lgo.models.Share;
 import rsa.sp.lgo.models.User;
@@ -22,7 +21,6 @@ import rsa.sp.lgo.repository.UserRepository;
 import rsa.sp.lgo.security.jwt.JwtFilter;
 import rsa.sp.lgo.security.model.JWTToken;
 import rsa.sp.lgo.security.model.LoginRequest;
-import rsa.sp.lgo.security.model.MessageResponse;
 import rsa.sp.lgo.security.model.SignupRequest;
 import rsa.sp.lgo.security.service.AuthService;
 
@@ -60,7 +58,7 @@ public class UserService extends CrudService<User, Long> {
             User dataInDB = userRepository.findById(user.getId()).get();
             user.setPassword(dataInDB.getPassword());
         } else {
-            throw new BadRequestException("Không có quyền chỉnh sửa thông tin");
+            throw new BadRequestException("InvalidToken");
         }
     }
 
@@ -73,22 +71,18 @@ public class UserService extends CrudService<User, Long> {
     }
 
     public ResponseEntity login(LoginRequest login) {
-        try {
-            String token = this.authService.token(login.getEmail(), login.getPassword(), login.getRemember());
-            HttpHeaders httpHeaders = new HttpHeaders();
-            httpHeaders.add(Constants.AUTH_HEADER_STRING, "Bearer " + token);
-            JWTToken jwtToken = new JWTToken(token);
-            return new ResponseEntity(jwtToken, httpHeaders, HttpStatus.OK);
-        }catch (Exception e) {
-            return ResponseEntity.badRequest().body("error.login");
-        }
+
+        String token = this.authService.token(login.getEmail(), login.getPassword(), login.getRemember());
+        HttpHeaders httpHeaders = new HttpHeaders();
+        httpHeaders.add(Constants.AUTH_HEADER_STRING, "Bearer " + token);
+        JWTToken jwtToken = new JWTToken(token);
+        return new ResponseEntity(jwtToken, httpHeaders, HttpStatus.OK);
+
     }
 
-    public ResponseEntity signup(SignupRequest signUpRequest) {
+    public ResponseEntity signup(SignupRequest signUpRequest) throws BadRequestException {
         if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return ResponseEntity
-                    .badRequest()
-                    .body("error.existsEmail");
+            throw  new BadRequestException("Email Already Use","error","emailAlreadyUse");
         }
 
         // Create new user's account
@@ -102,25 +96,25 @@ public class UserService extends CrudService<User, Long> {
 
         if (strRoles == null) {
             Role userRole = roleRepository.findByName(Constants.ROLE_USER)
-                    .orElseThrow(() -> new RoleNotFoundException());
+                    .orElseThrow(() -> new BadRequestException("Role Invalid","error","roleInvalid"));
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
                 switch (role) {
                     case Constants.ROLE_ADMIN:
                         Role adminRole = roleRepository.findByName(Constants.ROLE_ADMIN)
-                                .orElseThrow(() -> new RoleNotFoundException());
+                                .orElseThrow(() -> new BadRequestException("Role Invalid","error","roleInvalid"));
                         roles.add(adminRole);
                         break;
                     default:
-                        new RoleNotFoundException();
+                         throw new BadRequestException("Role Invalid","error","roleInvalid");
                 }
             });
         }
 
         user.setRole(roles);
         create(user);
-        return ResponseEntity.ok("success.common");
+        return ResponseEntity.ok(null);
     }
 
     public Set<String> getShareUser(Long userId, Long nodeId) {
@@ -135,24 +129,38 @@ public class UserService extends CrudService<User, Long> {
     public ResponseEntity forgetPassword(String email) throws MessagingException, UnsupportedEncodingException {
         User user = userRepository.findByEmail(email);
         if (user == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("error.notFoundEmail");
+            throw new BadRequestException("Email not found","error","emailNotFound");
         }
         String token = authService.tokenResetPassword(user);
         mailService.sendEmail(email, token);
-        return ResponseEntity.ok("success.checkMail");
+        return ResponseEntity.ok(null);
     }
 
     public ResponseEntity resetPassword(User user) {
         Boolean checkToken = jwtFilter.validateToken(user.getForgotPasswordToken());
         User current = userRepository.findByEmailAndForgotPasswordToken(user.getEmail(), user.getForgotPasswordToken());
         if (!checkToken || current == null) {
-            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("error.token");
+            throw new BadRequestException("Token is invalid","error","tokenInvalid");
         }
         current.setPassword(user.getPassword());
         current.setForgotPasswordToken(null);
         current.setForgotPasswordTokenCreated(null);
         update(current.getId(), current);
-        return ResponseEntity.ok("success.common");
+        return ResponseEntity.ok(null);
     }
+    public ResponseEntity active(Long id, Boolean active) {
+        if(SecurityUtils.hasAnyAuthority(Constants.ROLE_ADMIN)) {
+            if(active) {
+                activate(id);
+                return ResponseEntity.ok(null);
+            } else {
+                deactivate(id);
+                return ResponseEntity.ok(null);
+            }
+        }else {
+            throw new BadRequestException("Not have privilege", "error", "notHavePrivilege");
+        }
+    }
+
 
 }

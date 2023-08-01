@@ -2,9 +2,8 @@ package rsa.sp.lgo.controllers;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+import rsa.sp.lgo.service.UserService;
 import rsa.sp.lgo.service.admin.ChartService;
 
 @RestController
@@ -12,6 +11,8 @@ import rsa.sp.lgo.service.admin.ChartService;
 public class AdminController {
     @Autowired
     private ChartService chartService;
+    @Autowired
+    private UserService userService;
 
     @RequestMapping(path = "/chart/pie-user", method = RequestMethod.GET)
     public ResponseEntity getChartPieUser() {
@@ -28,5 +29,9 @@ public class AdminController {
     @RequestMapping(path = "/chart/bar-project", method = RequestMethod.GET)
     public ResponseEntity getChartBarProject() {
         return chartService.getBarProject();
+    }
+    @RequestMapping(path = "/active", method = RequestMethod.GET)
+    public ResponseEntity active(@RequestParam("id") Long id, @RequestParam("active") Boolean active) {
+        return userService.active(id, active);
     }
 }

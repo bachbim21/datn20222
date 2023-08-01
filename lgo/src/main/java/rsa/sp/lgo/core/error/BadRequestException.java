@@ -1,19 +1,33 @@
 package rsa.sp.lgo.core.error;
 
-public class BadRequestException extends RuntimeException{
-    private final int errorCode;
-    private final String title;
+public class BadRequestException extends RuntimeException {
+    private String errorKey;
+    private String errorName;
 
-    public BadRequestException(String defaultMessage) {
-        super(defaultMessage);
-        this.title = Status.BAD_REQUEST.getMessage();
-        this.errorCode = Status.BAD_REQUEST.getCode();
+    public BadRequestException(String message) {
+        super(message);
     }
 
-    public int getErrorCode() {
-        return errorCode;
+    public BadRequestException(String message, String errorKey, String errorName) {
+        super(message);
+        this.errorKey = errorKey;
+        this.errorName = errorName;
     }
-    public String getTitle() {
-        return title;
+
+    public String getErrorKey() {
+        return errorKey;
+    }
+
+    public void setErrorKey(String errorKey) {
+        this.errorKey = errorKey;
+    }
+
+    public String getErrorName() {
+        return errorName;
+    }
+
+    public void setErrorName(String errorName) {
+        this.errorName = errorName;
     }
 }
+

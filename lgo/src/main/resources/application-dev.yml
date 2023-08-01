@@ -1,11 +1,14 @@
 server:
   port: 8086
+  error:
+    whitelabel:
+      enabled: false
 
 spring:
   datasource:
     username: root
     password: manh2001
-    url: jdbc:mysql://localhost:3306/server_test?serverTimezone=UTC
+    url: jdbc:mysql://localhost:3306/lgo?serverTimezone=UTC
     driver-class-name: com.mysql.cj.jdbc.Driver
 
   jpa:
@@ -28,6 +31,8 @@ spring:
           smtp:
             auth: true
             starttls.enable: true
+  mvc:
+    throw-exception-if-no-handler-found: true
 
 lgo:
   url: http://localhost:3000

@@ -26,7 +26,7 @@ export default function Display({ dom }) {
     cssService
       .getAll(param)
       .then((res) => {
-        setBgColor(res);
+        setBgColor(res.content);
       });
   }, []);
   useEffect(() => {

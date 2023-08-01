@@ -55,11 +55,11 @@ public abstract class CrudApiEndpoint <T extends AbstractEntity, ID extends Seri
     }
 
     @RequestMapping(path="/search", method = RequestMethod.GET)
-    public ResponseEntity<List<T>>  get(@RequestParam("query") String query, @PageableDefault(size = 20) Pageable pageable) {
+    public ResponseEntity<Page<T>>  get(@RequestParam("query") String query, @PageableDefault(size = 20) Pageable pageable) {
         try{
             Page<T> page = service.search(query, pageable);
             HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page,baseUrl);
-            return new ResponseEntity<>(page.getContent(),headers, HttpStatus.OK);
+            return new ResponseEntity<>(page,headers, HttpStatus.OK);
         } catch (Exception e){
             e.printStackTrace();
             return null;

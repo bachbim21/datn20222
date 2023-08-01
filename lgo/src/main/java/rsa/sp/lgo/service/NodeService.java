@@ -11,7 +11,7 @@ import rsa.sp.lgo.core.Constants;
 import rsa.sp.lgo.core.CrudService;
 import rsa.sp.lgo.core.SecurityUtils;
 import rsa.sp.lgo.core.error.BadRequestException;
-import rsa.sp.lgo.core.error.DuplicateFiledException;
+import rsa.sp.lgo.core.error.InvalidTokenException;
 import rsa.sp.lgo.models.Node;
 import rsa.sp.lgo.models.Share;
 import rsa.sp.lgo.models.Tech;
@@ -48,20 +48,20 @@ public class NodeService extends CrudService<Node, Long> {
         this.userRepository = userRepository;
     }
     private Boolean checkGetCustom(Long useId) {
-        if(SecurityUtils.getCurrentUserId() != useId) return false;
+        if(SecurityUtils.getCurrentUserId() != useId)  throw new InvalidTokenException("Token Invalid", "error","tokenInvalid");
         return true;
     }
 
     @Transactional
     public ResponseEntity getRecentProject(Long userId) {
-        if(!checkGetCustom(userId)) return ResponseEntity.badRequest().body("error.token");
+        checkGetCustom(userId);
         return ResponseEntity.ok(nodeRepository.findAllByUserId(userId));
     }
 
     @Override
     protected void beforeCreate(Node node) {
         super.beforeCreate(node);
-        if(nodeRepository.existsByNameAndUserAndParentId(node.getName(), node.getUser(), node.getParentId())) throw new DuplicateFiledException("Tên đã tồn tại");
+        if(nodeRepository.existsByNameAndUserAndParentId(node.getName(), node.getUser(), node.getParentId())) throw  new BadRequestException("Not Allow", "error","notAllow");
         if(node.getTech() != null) {
             Tech tech = techRepository.findByHtmlFrameWorkAndCssFrameWork(node.getTech().getHtmlFrameWork(), node.getTech().getCssFrameWork());
             node.getTech().setId(tech.getId());
@@ -89,7 +89,7 @@ public class NodeService extends CrudService<Node, Long> {
     }
     @Override
     protected void beforeUpdate(Node node) {
-        if(node.getUser().getId() != SecurityUtils.getCurrentUserId()) throw new BadRequestException("Not privileges");
+        if(node.getUser().getId() != SecurityUtils.getCurrentUserId()) throw new BadRequestException("invalidToken");
         if(!node.getFile()) {
             super.beforeUpdate(node);
             return;
@@ -153,7 +153,7 @@ public class NodeService extends CrudService<Node, Long> {
     }
     @Override
     public void beforeDelete(Node node) {
-        if(node.getUser().getId() != SecurityUtils.getCurrentUserId()) throw new BadRequestException("Not privileges");
+        if(node.getUser().getId() != SecurityUtils.getCurrentUserId()) throw new BadRequestException("invalidToken");
         if(node.getTech() != null) {
             Share share = shareService.simpleGet(node.getId());
             if(share != null) {
@@ -204,7 +204,7 @@ public class NodeService extends CrudService<Node, Long> {
         if(checkGet(root)) {
             return ResponseEntity.ok(root);
         }else {
-            return ResponseEntity.badRequest().body("error.notAllow");
+            throw new BadRequestException("Not Allow","error","notAllow");
         }
     }
 }

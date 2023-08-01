@@ -5,18 +5,15 @@ import logo from "../../assets/images/go.png";
 import { loading } from "../../redux/selector";
 import { LoadingService } from "../../Components/Layout/layout.slice";
 import AuthService from "../../Service/auth.service";
-import { LoadingOutlined } from "@ant-design/icons";
-import moment from "moment";
 import Loading from "../../Components/Loading&Popup/loading";
-import { Form, Input, Button, DatePicker, Spin, message } from "antd";
+import { Form, Input, Button, message } from "antd";
+import { handleError } from "../../utils/error";
 export default function Signup() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [messageApi, contextHolder] = message.useMessage();
-  const antIcon = <LoadingOutlined style={{ fontSize: 34 }} spin />;
   const loadingContext = useSelector(loading);
   const dateFormatList = ["DD/MM/YYYY", "DD/MM/YY", "DD-MM-YYYY", "DD-MM-YY"];
-  const authService = new AuthService()
+  const authService = new AuthService();
   const onFinish = (values) => {
     dispatch(
       LoadingService({
@@ -24,29 +21,28 @@ export default function Signup() {
         status: true,
       })
     );
-    authService.signup({
+    authService
+      .signup({
         email: values.email,
         name: values.name,
         password: values.password,
         // birthDate: moment(values.date).valueOf(),
       })
       .then((response) => {
+        console.log(response);
+        message.success("Thành công");
         dispatch(
           LoadingService({
             text: "",
             status: false,
           })
         );
-        messageApi.open({
-          type: "success",
-          content: log.success.signup,
-          duration: 3,
-        });
         setTimeout(() => {
           navigate("/login");
         }, 3000);
       })
-      .catch((e) => {
+      .catch((error) => {
+        handleError(error);
         dispatch(
           LoadingService({
             text: "",
@@ -57,87 +53,79 @@ export default function Signup() {
   };
   return (
     <div className=" flex justify-center items-center min-h-screen overflow-hidde bg-blue-900">
-      {contextHolder}
-      {loadingContext.status && <Loading text = {loadingContext.text}/>}
-      <Spin
-        className="bg-white/30 rounded-lg"
-        tip={loadingContext.text}
-        size="large"
-        indicator={antIcon}
-        spinning={loadingContext.status}>
-        <div className="mx-4 my-8 sm:mx-0 mobile:w-96 p-6 h-full bg-white rounded-md shadow-md shadow-yellow-300 border-2 max-w-md">
-          <img src={logo} alt="logo" className="w-20 h-20 mx-auto" />
-          <Form
-            name="register"
-            validateTrigger="onSubmit"
-            onFinish={onFinish}
-            style={{ maxWidth: 300, margin: "auto" }}
-            layout="vertical"
-            autoComplete="off">
-            <Form.Item label="Tên" name="name">
-              <Input />
-            </Form.Item>
-            <Form.Item
-              label="Email"
-              name="email"
-              rules={[
-                { required: true, message: log.error.required },
-                {
-                  type: "email",
-                  message: log.error.invalidEmail,
+      {loadingContext.status && <Loading text={loadingContext.text} />}
+      <div className="mx-4 my-8 sm:mx-0 mobile:w-96 p-6 h-full bg-white rounded-md shadow-md shadow-yellow-300 border-2 max-w-md">
+        <img src={logo} alt="logo" className="w-20 h-20 mx-auto" />
+        <Form
+          name="register"
+          validateTrigger="onSubmit"
+          onFinish={onFinish}
+          style={{ maxWidth: 300, margin: "auto" }}
+          layout="vertical"
+          autoComplete="off">
+          <Form.Item label="Tên" name="name">
+            <Input />
+          </Form.Item>
+          <Form.Item
+            label="Email"
+            name="email"
+            rules={[
+              { required: true, message: log.error.required },
+              {
+                type: "email",
+                message: log.error.invalidEmail,
+              },
+            ]}>
+            <Input placeholder="user@gmail.com" />
+          </Form.Item>
+          <Form.Item
+            label="Mật khẩu"
+            name="password"
+            rules={[
+              { required: true, message: log.error.required },
+              { max: 20, message: log.error.maxLength20 },
+              { min: 6, message: log.error.minLength6 },
+            ]}>
+            <Input.Password />
+          </Form.Item>
+          <Form.Item
+            label="Xác nhận mật khẩu"
+            name="confirm_password"
+            dependencies={["password"]}
+            rules={[
+              { required: true, message: log.error.required },
+              { max: 20, message: log.error.maxLength20 },
+              { min: 6, message: log.error.minLength6 },
+              ({ getFieldValue }) => ({
+                validator(_, value) {
+                  if (!value || getFieldValue("password") === value) {
+                    return Promise.resolve();
+                  }
+                  return Promise.reject(
+                    new Error(message.log_not_match_password)
+                  );
                 },
-              ]}>
-              <Input placeholder="user@gmail.com" />
-            </Form.Item>
-            <Form.Item
-              label="Mật khẩu"
-              name="password"
-              rules={[
-                { required: true, message: log.error.required },
-                { max: 20, message: log.error.maxLength20 },
-                { min: 6, message: log.error.minLength6 },
-              ]}>
-              <Input.Password />
-            </Form.Item>
-            <Form.Item
-              label="Xác nhận mật khẩu"
-              name="confirm_password"
-              dependencies={["password"]}
-              rules={[
-                { required: true, message: log.error.required },
-                { max: 20, message: log.error.maxLength20 },
-                { min: 6, message: log.error.minLength6 },
-                ({ getFieldValue }) => ({
-                  validator(_, value) {
-                    if (!value || getFieldValue("password") === value) {
-                      return Promise.resolve();
-                    }
-                    return Promise.reject(
-                      new Error(message.log_not_match_password)
-                    );
-                  },
-                }),
-              ]}>
-              <Input.Password />
-            </Form.Item>
-            <Form.Item className="flex justify-center items-end">
-              <Button type="primary" htmlType="submit" className="bg-blue-500">
-                Đăng ký
-              </Button>
-            </Form.Item>
-          </Form>
+              }),
+            ]}>
+            <Input.Password />
+          </Form.Item>
+          <Form.Item className="flex justify-center items-end">
+            <Button type="primary" htmlType="submit" className="bg-blue-500">
+              Đăng ký
+            </Button>
+          </Form.Item>
+        </Form>
 
-          <p className="mobile:mt-8 custom-font text-center">
-            <span className="mx-4">Bạn đã có tài khoản?</span>
-            <NavLink
-              type="button"
-              className="custom-font hover:text-blue-400 decoration-solid underline "
-              to="/login">
-              Đăng nhập
-            </NavLink>
-          </p>
-        </div>
-      </Spin>
+        <p className="mobile:mt-8  text-center">
+          <span className="mx-4">Bạn đã có tài khoản?</span>
+          <NavLink
+            type="button"
+            className=" hover:text-blue-400 decoration-solid underline "
+            to="/login">
+            Đăng nhập
+          </NavLink>
+        </p>
+      </div>
     </div>
   );
 }

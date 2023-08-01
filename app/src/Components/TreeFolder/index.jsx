@@ -6,21 +6,27 @@ import {
   Input,
   Space,
   Popconfirm,
-  message, Modal
+  message,
+  Modal,
 } from "antd";
 import { useEffect, useState } from "react";
-import {  useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import { useParams } from "react-router";
 import {
   FileAddOutlined,
   FolderAddOutlined,
   DeleteOutlined,
   EditOutlined,
-  SaveOutlined, MailOutlined
+  SaveOutlined,
+  MailOutlined,
 } from "@ant-design/icons";
 import { setLocal } from "../../utils/class";
 import NodeService from "../../Service/node.service";
-import { SetNode, SetProjectId, SetShowShare } from "../../Pages/Project/node.slice";
+import {
+  SetNode,
+  SetProjectId,
+  SetShowShare,
+} from "../../Pages/Project/node.slice";
 import { decode } from "../../utils/token";
 
 const { DirectoryTree } = Tree;
@@ -35,28 +41,28 @@ export default function TreeFolder({ data, view }) {
   const nodeService = new NodeService();
   const [newNode, setNewNode] = useState({
     new: null,
-    old: null
+    old: null,
   });
   const [isModalOpen, setIsModalOpen] = useState({
     open: false,
-    loading: false
+    loading: false,
   });
   function getProject() {
     let pId = null;
     if (id) {
       pId = id;
     } else {
-      pId = data.id;
+      pId = data?.id;
     }
-    nodeService.getOne(pId)
-      .then((response) => {
-        setTreeData([response]);
-        dispatch(SetProjectId(id));
-      });
+    if (!pId) return;
+    nodeService.getOne(pId).then((response) => {
+      setTreeData([response]);
+      dispatch(SetProjectId(id));
+    });
   }
 
   useEffect(() => {
-    if (data) {
+    if (data?.id) {
       setTreeData([data]);
       return;
     }
@@ -67,7 +73,7 @@ export default function TreeFolder({ data, view }) {
       if (folder.keyTree == fileKey) {
         return {
           path: `${path}/${folder.name}`,
-          key: fileKey
+          key: fileKey,
         };
       }
       if (folder.children.length > 0) {
@@ -109,7 +115,7 @@ export default function TreeFolder({ data, view }) {
 
   const [selectedMenu, setSelectedMenu] = useState({
     selected: null,
-    menuItem: null
+    menuItem: null,
   });
 
   const handleMenuClick = ({ domEvent, key }) => {
@@ -139,9 +145,10 @@ export default function TreeFolder({ data, view }) {
         name: newNode.new,
         file: file,
         tech: null,
-        user: { id: currentUser.user_id }
+        user: { id: currentUser.user_id },
       };
-      nodeService.create(node)
+      nodeService
+        .create(node)
         .then((res) => {
           getProject();
           setOpen(false);
@@ -211,13 +218,13 @@ export default function TreeFolder({ data, view }) {
         });
         message.success("Thành công!");
       })
-      .catch(()=>{
+      .catch(() => {
         setLoadings((prevLoadings) => {
           const newLoadings = [...prevLoadings];
           newLoadings[index] = false;
           return newLoadings;
         });
-      })
+      });
   }
 
   const renderMenuItem = (menuItem) => {
@@ -295,13 +302,13 @@ export default function TreeFolder({ data, view }) {
   function handleOpenModal() {
     setIsModalOpen({
       open: true,
-      loading: false
-    })
+      loading: false,
+    });
   }
   const handleCancel = () => {
     setIsModalOpen({
       open: false,
-      loading: false
+      loading: false,
     });
   };
   const widgetMenu = (
@@ -329,28 +336,34 @@ export default function TreeFolder({ data, view }) {
         key="delete"
         className=" text-center"
         onClick={handleMenuClick}>
-          <Button
-            type="primary"
-            size="small"
-            style={{ width: "40px", paddingBottom: "3px" }}
-            icon={<DeleteOutlined className="text-center" />}
-            loading={loadings[0]}
-            onClick={handleOpenModal}
-            danger></Button>
+        <Button
+          type="primary"
+          size="small"
+          style={{ width: "40px", paddingBottom: "3px" }}
+          icon={<DeleteOutlined className="text-center" />}
+          loading={loadings[0]}
+          onClick={handleOpenModal}
+          danger></Button>
       </Menu.Item>
     </Menu>
   );
   return (
     <div
-      className={data ? "max-h-80 min-w-full" : " absolute bottom-0 max-h-80 overflow-scroll min-w-full"}
+      className={
+        data
+          ? "max-h-80 min-w-full"
+          : " absolute bottom-0 max-h-80 overflow-scroll min-w-full"
+      }
       style={{ maxWidth: "350px" }}>
-      {view ? <DirectoryTree
+      {view ? (
+        <DirectoryTree
           showLine={true}
           onSelect={onSelect}
           // onExpand={onExpand}
           onRightClick={handleRightClick}>
           {renderTreeNodes(treeData)}
-        </DirectoryTree> :
+        </DirectoryTree>
+      ) : (
         <Dropdown
           overlay={widgetMenu}
           onOpenChange={handleOpenChange}
@@ -358,7 +371,7 @@ export default function TreeFolder({ data, view }) {
           placement="topRight"
           trigger={["contextMenu"]}
           arrow={{
-            pointAtCenter: true
+            pointAtCenter: true,
           }}>
           <DirectoryTree
             showLine={true}
@@ -368,17 +381,19 @@ export default function TreeFolder({ data, view }) {
             {renderTreeNodes(treeData)}
           </DirectoryTree>
         </Dropdown>
-      }
-      <Modal title="Xác nhận hành động xoá" open={isModalOpen.open} onCancel={handleCancel}
-             footer={[
-               <Button key="back" onClick={handleCancel}>
-                 Huỷ
-               </Button>,
-               <Button  key="submit" type="primary"  onClick={() => handleDelete(0)}>
-                 Xác nhận
-               </Button>,
-             ]}>
-      </Modal>
+      )}
+      <Modal
+        title="Xác nhận hành động xoá"
+        open={isModalOpen.open}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Huỷ
+          </Button>,
+          <Button key="submit" type="primary" onClick={() => handleDelete(0)}>
+            Xác nhận
+          </Button>,
+        ]}></Modal>
     </div>
   );
 }

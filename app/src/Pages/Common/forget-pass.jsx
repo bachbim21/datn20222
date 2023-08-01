@@ -1,5 +1,4 @@
-
-import {  NavLink } from "react-router-dom";
+import { NavLink } from "react-router-dom";
 import { log } from "../../utils/log";
 import AuthService from "../../Service/auth.service";
 import logo from "../../assets/images/go.png";
@@ -8,6 +7,7 @@ import { useDispatch, useSelector } from "react-redux";
 import { LoadingService } from "../../Components/Layout/layout.slice";
 import { loading } from "../../redux/selector";
 import Loading from "../../Components/Loading&Popup/loading";
+import { handleError } from "../../utils/error";
 
 function ForgetPass() {
   const dispatch = useDispatch();
@@ -18,34 +18,36 @@ function ForgetPass() {
     dispatch(
       LoadingService({
         text: null,
-        status: true
+        status: true,
       })
     );
-    authService.forget(values.email).then(data => {
-      message.success(data.text);
-      dispatch(
-        LoadingService({
-          text: null,
-          status: false
-        })
-      );
-    }).catch(error => {
-      dispatch(
-        LoadingService({
-          text: null,
-          status: false
-        })
-      );
+    authService
+      .forget(values.email)
+      .then((data) => {
+        message.success(data.text);
+        dispatch(
+          LoadingService({
+            text: null,
+            status: false,
+          })
+        );
+      })
+      .catch((error) => {
+        handleError(error);
+        dispatch(
+          LoadingService({
+            text: null,
+            status: false,
+          })
+        );
       });
   };
-
 
   return (
     <div className=" flex justify-center items-center min-h-screen overflow-hidde bg-blue-900">
       {contextHolder}
       {loadingContext.status && <Loading text={loadingContext.text} />}
-      <div
-        className="mx-4 sm:mx-0 mobile:w-96 p-6 h-full bg-white rounded-md shadow-md shadow-yellow-300 border-2 max-w-md">
+      <div className="mx-4 sm:mx-0 mobile:w-96 p-6 h-full bg-white rounded-md shadow-md shadow-yellow-300 border-2 max-w-md">
         <img src={logo} alt="logo" className="w-20 h-20 mx-auto" />
         <Form
           name="forgetpass"
@@ -62,8 +64,8 @@ function ForgetPass() {
               { required: true, message: log.error.required },
               {
                 type: "email",
-                message: log.error.invalidEmail
-              }
+                message: log.error.invalidEmail,
+              },
             ]}>
             <Input placeholder="user@gmail.com" />
           </Form.Item>

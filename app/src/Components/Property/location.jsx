@@ -38,25 +38,25 @@ export default function Location({ dom }) {
     cssService
       .getAll(param1)
       .then((res) => {
-        setMarginTop(res);
+        setMarginTop(res.content);
       });
     var param2 = "query=name==margin-bottom;library==tailwind&page=0&size=1000";
     cssService
       .getAll(param2)
       .then((res) => {
-        setMarginBottom(res);
+        setMarginBottom(res.content);
       });
     var param3 = "query=name==margin-left;library==tailwind&page=0&size=1000";
     cssService
       .getAll(param3)
       .then((res) => {
-        setMarginLeft(res);
+        setMarginLeft(res.content);
       });
     var param3 = "query=name==margin-right;library==tailwind&page=0&size=1000";
     cssService
       .getAll(param3)
       .then((res) => {
-        setMarginRight(res);
+        setMarginRight(res.content);
       });
   }, []);
   const handleChangeTop = (value) => {

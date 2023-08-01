@@ -908,6 +908,10 @@ video {
   height: 2rem;
 }
 
+.h-96 {
+  height: 24rem;
+}
+
 .h-\[calc\(100vh_-_4em\)\] {
   height: calc(100vh - 4em);
 }
@@ -930,6 +934,10 @@ video {
 
 .min-h-\[calc\(100\%_-_3\.5rem\)\] {
   min-height: calc(100% - 3.5rem);
+}
+
+.min-h-\[calc\(100vh_-_4em\)\] {
+  min-height: calc(100vh - 4em);
 }
 
 .min-h-screen {
@@ -1155,10 +1163,6 @@ video {
 
 .gap-y-2 {
   row-gap: 0.5rem;
-}
-
-.gap-y-3 {
-  row-gap: 0.75rem;
 }
 
 .gap-y-4 {
@@ -22547,17 +22551,17 @@ video {
   transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/*tr:nth-child(even) {*/
+tbody > tr:nth-child(even) {
+  background-color:  #f2f2f2;
+}
 
-/*  background-color: lightgray;*/
+tbody > tr:nth-child(odd) {
+  background-color: white;
+}
 
-/*}*/
-
-/*tr:nth-child(odd) {*/
-
-/*  background-color: white;*/
-
-/*}*/
+tbody > tr:hover {
+  background-color: lightgray;
+}
 
 .hover-dashed {
   position: relative;

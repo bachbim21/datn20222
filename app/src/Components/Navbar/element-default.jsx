@@ -1,6 +1,8 @@
 import { dragStartCopy } from "../../utils/drag";
-export default function ElementDefault({ data }) {
+import { log } from "../../utils/log";
+export default function ElementDefault({ data, width }) {
   const Tag = data.tag;
+
   if (Tag == "img") {
     return (
       <img
@@ -8,7 +10,7 @@ export default function ElementDefault({ data }) {
         src="../../assets/images/go.png"
         alt=""
         className={data.classes}
-        draggable='true'
+        draggable="true"
         onDragStart={dragStartCopy}
       />
     );
@@ -18,12 +20,13 @@ export default function ElementDefault({ data }) {
       readOnly={data.def ? true : false}
       id={data.configId}
       className={
-        data.classes + " transition ease-in-out delay-150 hover:-translate-x-1"
+        data.classes +
+        " inline-block transition ease-in-out delay-150 hover:-translate-x-1"
       }
       value={
         data.tag == "input" ? data.text : data.tag == "select" ? null : null
       }
-      draggable='true'
+      draggable="true"
       onDragStart={dragStartCopy}
       style={{
         width: "110px",

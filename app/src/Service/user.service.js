@@ -13,4 +13,7 @@ export default class UserService extends BaseApi {
   getShareEmail(userId, nodeId) {
     return this.get("/user/share?userId=" + userId + "&nodeId=" + nodeId);
   }
+  getPage(params) {
+    return this.get("/user/search?" + params);
+  }
 }

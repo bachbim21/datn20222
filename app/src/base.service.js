@@ -2,10 +2,15 @@ import { decode } from "./utils/token";
 import { message } from "antd";
 import { redirect } from "react-router-dom";
 import { log, status } from "./utils/log";
+import { CustomError } from "./utils/error";
 
-const publicUrlPost = ['/user/login', '/user/singup','/user/forget-password?email']
-const publicUrlGet = ['/user/forget-password?email','/css', '/element']
-export const urlApi = process.env.REACT_APP_BASE_URL
+const publicUrlPost = [
+  "/user/login",
+  "/user/singup",
+  "/user/forget-password?email",
+];
+const publicUrlGet = ["/user/forget-password?email", "/css", "/element"];
+export const urlApi = process.env.REACT_APP_BASE_URL;
 export default class BaseApi {
   constructor() {
     this.baseUrl = urlApi;
@@ -19,27 +24,32 @@ export default class BaseApi {
   }
 
   async get(url, options = {}) {
-    let accept = false
+    let accept = false;
     for (let pu of publicUrlGet) {
-      if(url.startsWith(pu)) {
-        accept = true
+      if (url.startsWith(pu)) {
+        accept = true;
       }
     }
-    if(!decode(this.token) && !accept) {
-      message.error("Hết thời gian truy cập vui lòng đăng nhập lại")
-      return redirect("/login")
+    if (!decode(this.token) && !accept) {
+      message.error("Hết thời gian truy cập vui lòng đăng nhập lại");
+      return redirect("/login");
     }
-    const response = await fetch(`${this.baseUrl}${url}`, { method: 'GET', headers: this.headers, ...options });
+    const response = await fetch(`${this.baseUrl}${url}`, {
+      method: "GET",
+      headers: this.headers,
+      ...options,
+    });
+
     return this.handleResponse(response);
   }
 
   async post(url, data, options = {}) {
-    if(!decode(this.token) && !publicUrlPost.includes(url)) {
-      message.error("Hết thời gian truy cập vui lòng đăng nhập lại")
-      return redirect("/login")
+    if (!decode(this.token) && !publicUrlPost.includes(url)) {
+      message.error("Hết thời gian truy cập vui lòng đăng nhập lại");
+      return redirect("/login");
     }
     const response = await fetch(`${this.baseUrl}${url}`, {
-      method: 'POST',
+      method: "POST",
       headers: this.headers,
       body: JSON.stringify(data),
       ...options,
@@ -47,12 +57,12 @@ export default class BaseApi {
     return this.handleResponse(response);
   }
   async put(url, data, options = {}) {
-    if(!decode(this.token)) {
-      message.error("Hết thời gian truy cập vui lòng đăng nhập lại")
-      return redirect("/login")
+    if (!decode(this.token)) {
+      message.error("Hết thời gian truy cập vui lòng đăng nhập lại");
+      return redirect("/login");
     }
     const response = await fetch(`${this.baseUrl}${url}`, {
-      method: 'PUT',
+      method: "PUT",
       headers: this.headers,
       body: JSON.stringify(data),
       ...options,
@@ -61,37 +71,27 @@ export default class BaseApi {
   }
 
   async deleteOne(url, options = {}) {
-    if(!decode(this.token)) {
-      message.error("Hết thời gian truy cập vui lòng đăng nhập lại")
-      return redirect("/login")
+    if (!decode(this.token)) {
+      message.error("Hết thời gian truy cập vui lòng đăng nhập lại");
+      return redirect("/login");
     }
-    const response = await fetch(`${this.baseUrl}${url}`, { method: 'DELETE', headers: this.headers, ...options });
+    const response = await fetch(`${this.baseUrl}${url}`, {
+      method: "DELETE",
+      headers: this.headers,
+      ...options,
+    });
     return this.handleResponse(response);
   }
 
   async handleResponse(response) {
-    if(response.status == status.notAuthentication) {
-      message.warning(log.error.token)
-      return redirect("/login")
+    if (response.status == status.notAuthentication) {
+      message.warning(log.error.tokenInvalid);
+      return redirect("/login");
     }
     if (!response.ok) {
-      const errorText = await response.text();
-      var keys = errorText.split(".");
-      var errorLog = log[keys[0]][keys[1]];
-      if(log[keys[0]][keys[1]]) {
-        message.error(errorLog)
-      }else {
-        message.error(errorText)
-      }
-      throw new Error(`Request failed with status ${response.status}: ${errorText}`);
+      const error = await response.json();
+      throw new CustomError(error.message, error.errorKey, error.errorName);
     }
-
-    // const contentType = response.headers.get('content-type');
-    // if (contentType && contentType.includes('application/json')) {
-      return response ? response.json() : null;
-    // }
-    //
-    // return response.text();
+    return response ? response.json() : null;
   }
-
 }
