@@ -28,6 +28,7 @@ import iconshare from "../../assets/images/share.png";
 import imgshare from "../../assets/images/imgshare.png";
 import earth from "../../assets/images/earth.png";
 import { handleError } from "../../utils/error";
+import letgo from "../../assets/images/letgo.png";
 
 export default function Home() {
   const [listNode, setListNode] = useState([]);
@@ -255,25 +256,30 @@ export default function Home() {
       </Carousel>
 
       <div className="grid sm:grid-cols-2 max-w-7xl mx-auto gap-y-5 sm:gap-x-8 p-4 sm:p-10 md:gap-x-12">
-        <div className=" basis-1/2">
-          {" "}
-          <h2 className="text-xl ">
-            <b>Lgo</b>
-          </h2>
-          <p className="text-base">
-            là website cung cấp các chức năng thiết kế giao diện phần mềm chuyên
-            nghiệp. Giúp bạn trở nên dễ dàng trong việc thiết kế giao diện.{" "}
-          </p>
+        <div className="basis-1/2">
+          <ul>
+            <h2 className="text-xl ">
+              <b>Lgo</b>
+            </h2>
+            <p className="text-base">
+              là website cung cấp các chức năng thiết kế giao diện phần mềm
+              chuyên nghiệp. Giúp bạn trở nên dễ dàng trong việc thiết kế giao
+              diện.{" "}
+            </p>
+            <br />
+            <p className="text-base">
+              Hệ thống cung cấp đầy đủ các thành phần thiết kế cùng bộ công cụ
+              mạnh mẽ giúp bạn có thể thoả sức sáng tạo, chia sẻ
+            </p>
+            <br />
+            <p className="text-base">
+              Tổ chức dự dán theo dạng cây thư mục giúp bạn dễ quản lý và chia
+              sẻ cho các người dùng khác
+            </p>
+          </ul>
           <br />
-          <p className="text-base">
-            Hệ thống cung cấp đầy đủ các thành phần thiết kế cùng bộ công cụ
-            mạnh mẽ giúp bạn có thể thoả sức sáng tạo, chia sẻ
-          </p>
           <br />
-          <p className="text-base">
-            Tổ chức dự dán theo dạng cây thư mục giúp bạn dễ quản lý và chia sẻ
-            cho các người dùng khác
-          </p>
+          <img src={letgo} alt="" />
         </div>
         <div className="grid lg:grid-cols-2 gap-4 sm:gap-6 rounded-md sm:p-6 p-4 border bg-custom">
           <div className="bg-white rounded-md py-3 px-5 shadow-lg">
@@ -330,9 +336,7 @@ export default function Home() {
       </div>
 
       <div className="sticky top-18">
-        <iframe
-          src={docUrl}
-          className="absolute left-8 w-full  min-h-[calc(100vh_-_4rem)]">
+        <iframe src={docUrl} className="w-full min-h-[calc(100vh_-_4rem)]">
           Document
         </iframe>
       </div>

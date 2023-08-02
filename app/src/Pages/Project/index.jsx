@@ -7,7 +7,7 @@ import {
   handleClick,
   handleMouseLeave,
   handleMouseOver,
-  handleMouseDown
+  handleMouseDown,
 } from "../../utils/drag";
 import { Form, Input, Button, Card, message } from "antd";
 import NavbarElement from "../../Components/Navbar/navbar";
@@ -16,7 +16,7 @@ import Property from "../../Components/Property";
 import { UpdateNode } from "./node.slice";
 import { LoadingService } from "../../Components/Layout/layout.slice";
 import NodeService from "../../Service/node.service";
-import "../../assets/output.css"
+import "../../assets/output.css";
 import { useParams } from "react-router";
 import DesignBootstrap from "./design.bootstrap";
 import DesignTailwind from "./design.tailwind";
@@ -24,20 +24,20 @@ import DesignTailwind from "./design.tailwind";
 const { Meta } = Card;
 export default function Project() {
   const currentNode = useSelector(node);
-  const {id} = useParams()
+  const { id } = useParams();
   const currentDomId = useSelector(domId);
   const domIdHover = useSelector(hoverId);
   const dispatch = useDispatch();
   const wrapper = useRef(null);
-  const [root, setRoot] = useState(null)
+  const [root, setRoot] = useState(null);
   let rateScale = null;
-  const nodeService = new NodeService()
-  useEffect(()=> {
-    nodeService.getRoot(id).then(res => {
+  const nodeService = new NodeService();
+  useEffect(() => {
+    nodeService.getRoot(id).then((res) => {
       console.log(res);
-      setRoot(res)
-    })
-  },[id])
+      setRoot(res);
+    });
+  }, [id]);
   function ctrlC(event) {
     if (event.ctrlKey && event.key === "c") {
       var elementToCopy = document.getElementById(currentDomId);
@@ -45,12 +45,13 @@ export default function Project() {
         event.preventDefault();
         var htmlCopy = elementToCopy.outerHTML;
 
-        navigator.clipboard.writeText(htmlCopy)
-          .then(function() {
-            console.log('copy!');
+        navigator.clipboard
+          .writeText(htmlCopy)
+          .then(function () {
+            console.log("copy!");
             document.removeEventListener("keydown", ctrlC);
           })
-          .catch(function(error) {
+          .catch(function (error) {
             console.error("Failed to copy text to clipboard:", error);
           });
       }
@@ -68,13 +69,14 @@ export default function Project() {
       if (!domIdHover) message.warning("Vị trí thêm không hợp lệ");
       var parent = document.getElementById(domIdHover);
       var child = document.createElement("div");
-      navigator.clipboard.readText()
-        .then(function(pastedText) {
+      navigator.clipboard
+        .readText()
+        .then(function (pastedText) {
           child.innerHTML = pastedText;
-          console.log('copy!');
+          console.log("copy!");
           document.removeEventListener("keydown", ctrlV);
         })
-        .catch(function(error) {
+        .catch(function (error) {
           console.error("Failed to read pasted text:", error);
         });
     }
@@ -92,7 +94,7 @@ export default function Project() {
       let root = document.getElementById("root-page");
       const scale = parseFloat(root.style.transform.match(/scale\((.+?)\)/)[1]);
       rateScale = scale;
-      handleScale()
+      handleScale();
       addEvent(root);
     }
     var children = document.querySelectorAll(".node");
@@ -107,7 +109,7 @@ export default function Project() {
     });
   }, [currentNode?.code, currentNode?.id]);
   useEffect(() => {
-    window.addEventListener("resize", function() {
+    window.addEventListener("resize", function () {
       handleScale();
     });
   }, [window.innerWidth, window.innerHeight]);
@@ -141,7 +143,7 @@ export default function Project() {
     addEvent(root);
     let update = {
       ...currentNode,
-      code: root.outerHTML
+      code: root.outerHTML,
     };
     updateNode(update);
   };
@@ -153,20 +155,22 @@ export default function Project() {
   }
 
   function updateNode(update) {
-    dispatch(LoadingService({
-      status: true,
-      text: null
-    }))
-    nodeService
-      .update(update, update.id)
-      .then((response) => {
-        dispatch(UpdateNode(response));
-        message.success("Thành công")
+    dispatch(
+      LoadingService({
+        status: true,
+        text: null,
       })
-    dispatch(LoadingService({
-      status: false,
-      text: null
-    }))
+    );
+    nodeService.update(update, update.id).then((response) => {
+      dispatch(UpdateNode(response));
+      message.success("Thành công");
+    });
+    dispatch(
+      LoadingService({
+        status: false,
+        text: null,
+      })
+    );
   }
 
   const validatePositiveNumber = (_, value) => {
@@ -179,15 +183,19 @@ export default function Project() {
     <div id="page-content" className="bg-default ml-40 relative">
       <NavbarElement />
       <div
-        className="block p-5 bg-custom overflow-scroll bottom-0"
+        className="block pl-5  py-5 bg-custom overflow-scroll bottom-0 pr-10"
         style={{
           width: `calc(${window.innerWidth}px - 10rem)`,
-          height: `calc(${window.innerHeight}px - 3.5rem)`
+          height: `calc(${window.innerHeight}px - 3.5rem)`,
         }}>
-        { root?.tech?.id % 2 == 0 ? <DesignBootstrap ref={wrapper} /> : <DesignTailwind ref={wrapper} /> }
+        {root?.tech?.id % 2 == 0 ? (
+          <DesignBootstrap ref={wrapper} />
+        ) : (
+          <DesignTailwind ref={wrapper} />
+        )}
         <div ref={wrapper} className="top-0 block box-border"></div>
         {currentNode == null && (
-          <div className=" flex flex-row justify-evenly">
+          <div className=" flex flex-row w-fit justify-evenly">
             <Card
               hoverable
               className="w-1/3 inline-block border-2"
@@ -210,47 +218,48 @@ export default function Project() {
             </Card>
           </div>
         )}
-        {currentNode != null && (currentNode.code == null || currentNode.code == undefined) && (
-          <div
-            className=" h-full flex justify-center items-center "
-            style={{
-              backgroundImage: `url(${design_size})`,
-              backgroundRepeat: "no-repeat",
-              backgroundSize: "80%",
-              backgroundPosition: "center",
-            }}>
-            <Form
-              name="root-page"
-              onFinish={onFinish}
-              className="border border-blue-600 p-3 rounded bg-gray-400/70"
-              style={{ maxWidth: 300, margin: "auto" }}
-              layout="vertical"
-              autoComplete="off">
-              <h1 className="text-center my-4 font-bold text-xl">Size</h1>
-              <Form.Item
-                label="Width"
-                name="width"
-                rules={[{ validator: validatePositiveNumber }]}>
-                <Input type="number" suffix="px" />
-              </Form.Item>
+        {currentNode != null &&
+          (currentNode.code == null || currentNode.code == undefined) && (
+            <div
+              className=" h-full flex justify-center items-center "
+              style={{
+                backgroundImage: `url(${design_size})`,
+                backgroundRepeat: "no-repeat",
+                backgroundSize: "80%",
+                backgroundPosition: "center",
+              }}>
+              <Form
+                name="root-page"
+                onFinish={onFinish}
+                className="border border-blue-600 p-3 rounded bg-gray-400/70"
+                style={{ maxWidth: 300, margin: "auto" }}
+                layout="vertical"
+                autoComplete="off">
+                <h1 className="text-center my-4 font-bold text-xl">Size</h1>
+                <Form.Item
+                  label="Width"
+                  name="width"
+                  rules={[{ validator: validatePositiveNumber }]}>
+                  <Input type="number" suffix="px" />
+                </Form.Item>
 
-              <Form.Item
-                label="Height"
-                name="height"
-                rules={[{ validator: validatePositiveNumber }]}>
-                <Input type="number" suffix="px" />
-              </Form.Item>
-              <Form.Item className="flex justify-center">
-                <Button
-                  type="primary"
-                  htmlType="submit"
-                  className="bg-blue-500">
-                  OK
-                </Button>
-              </Form.Item>
-            </Form>
-          </div>
-        )}
+                <Form.Item
+                  label="Height"
+                  name="height"
+                  rules={[{ validator: validatePositiveNumber }]}>
+                  <Input type="number" suffix="px" />
+                </Form.Item>
+                <Form.Item className="flex justify-center">
+                  <Button
+                    type="primary"
+                    htmlType="submit"
+                    className="bg-blue-500">
+                    OK
+                  </Button>
+                </Form.Item>
+              </Form>
+            </div>
+          )}
       </div>
       <Property />
     </div>

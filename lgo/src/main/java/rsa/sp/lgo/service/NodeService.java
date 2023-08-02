@@ -89,7 +89,7 @@ public class NodeService extends CrudService<Node, Long> {
     }
     @Override
     protected void beforeUpdate(Node node) {
-        if(node.getUser().getId() != SecurityUtils.getCurrentUserId()) throw new BadRequestException("invalidToken");
+        if(node.getUser().getId() != SecurityUtils.getCurrentUserId()) throw new BadRequestException("Invalid Token","error","notHavePrivilege");
         if(!node.getFile()) {
             super.beforeUpdate(node);
             return;

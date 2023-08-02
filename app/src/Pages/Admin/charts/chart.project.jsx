@@ -132,10 +132,10 @@ export default function ChartProject() {
   }, []);
   return (
     <div className="bg-white  grid grid-cols-2 w-full rounded shadow-2xl">
-      <h3 className="mx-auto  font-bold">{title1}</h3>
-      <h3 className=" mx-auto  font-bold">Biểu đồ tăng trưởng dự án</h3>
-      <div id="chart-pie-product" className="mt-5 basis-1/2"></div>
-      <div id="chart-bar-project" className="mt-5 basis-1/2"></div>
+      <h3 className="mx-auto mt-5 font-bold">{title1}</h3>
+      <h3 className=" mx-auto mt-5 font-bold">Biểu đồ tăng trưởng dự án</h3>
+      <div id="chart-pie-product" className="mt-5 "></div>
+      <div id="chart-bar-project" className="mt-5 "></div>
     </div>
   );
 }

@@ -13,15 +13,15 @@ export default function NavbarElement() {
   const [elements, setElements] = useState([]);
   const size = useSelector(sizeWindown);
   const decodedToken = decode();
-  const elementService = new ElementService()
+  const elementService = new ElementService();
   function getListElement(param) {
     elementService
-      .getAll(`query=${param}&page=0&size=1000`)
+      .getPage(`query=${param}&page=0&size=1000`)
       .then((response) => {
         if (response.content.length > 0) {
           setElements(response.content);
         }
-      })
+      });
   }
   useEffect(() => {
     getListElement("");
@@ -63,12 +63,7 @@ export default function NavbarElement() {
           className="ml-6 flex flex-col items-center gap-y-2 overflow-y-scroll">
           {elements.length > 0 &&
             elements.map((e) => {
-              return (
-                <ElementDefault
-                  key={e.id}
-                  data={e}
-                />
-              );
+              return <ElementDefault key={e.id} data={e} />;
             })}
         </nav>
         {decodedToken ? <TreeFolder /> : null}

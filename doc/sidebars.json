@@ -1,5 +1,8 @@
 {
-  "dac": [
-    "dac/gioi-thieu"
+  "lgo": [
+    "lgo/intro",
+    "lgo/project",
+    "lgo/design",
+    "lgo/profile"
   ]
 }

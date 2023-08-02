@@ -11,7 +11,7 @@ export default function Text({ dom }) {
   const [textWeight, setTextWeight] = useState([]);
   const [textAlign, setTextAlign] = useState([]);
   const [textContent, setTextContent] = useState(dom?.innerText);
-  const cssService = new CssService()
+  const cssService = new CssService();
   const handleOpenChange = (flag) => {
     setOpen(flag);
   };
@@ -21,29 +21,21 @@ export default function Text({ dom }) {
   }, [dom?.id]);
   useEffect(() => {
     var param1 = "query=name==text-color;library==tailwind&page=0&size=1000";
-    cssService
-      .getAll(param1)
-      .then((res) => {
-        setTextColor(res.content);
-      });
+    cssService.getPage(param1).then((res) => {
+      setTextColor(res.content);
+    });
     var param2 = "query=name==text-size;library==tailwind&page=0&size=1000";
-    cssService
-      .getAll(param2)
-      .then((res) => {
-        setTextSize(res.content);
-      });
+    cssService.getPage(param2).then((res) => {
+      setTextSize(res.content);
+    });
     var param3 = "query=name==text-weight;library==tailwind&page=0&size=1000";
-    cssService
-      .getAll(param3)
-      .then((res) => {
-        setTextWeight(res.content);
-      });
+    cssService.getPage(param3).then((res) => {
+      setTextWeight(res.content);
+    });
     var param4 = "query=name==text-align;library==tailwind&page=0&size=1000";
-    cssService
-      .getAll(param4)
-      .then((res) => {
-        setTextAlign(res.content);
-      });
+    cssService.getPage(param4).then((res) => {
+      setTextAlign(res.content);
+    });
   }, []);
   const handleChangeColor = (value) => {
     handleCheckClass(dom, textColor);

@@ -10,7 +10,7 @@ export default function Location({ dom }) {
   const [marginBottom, setMarginBottom] = useState([]);
   const [marginLeft, setMarginLeft] = useState([]);
   const [marginRight, setMarginRight] = useState([]);
-  const cssService = new CssService()
+  const cssService = new CssService();
   const [defaultValue, setDefault] = useState({
     top: [],
     left: [],
@@ -35,29 +35,21 @@ export default function Location({ dom }) {
   }, [dom?.id]);
   useEffect(() => {
     var param1 = "query=name==margin-top;library==tailwind&page=0&size=1000";
-    cssService
-      .getAll(param1)
-      .then((res) => {
-        setMarginTop(res.content);
-      });
+    cssService.getPage(param1).then((res) => {
+      setMarginTop(res.content);
+    });
     var param2 = "query=name==margin-bottom;library==tailwind&page=0&size=1000";
-    cssService
-      .getAll(param2)
-      .then((res) => {
-        setMarginBottom(res.content);
-      });
+    cssService.getPage(param2).then((res) => {
+      setMarginBottom(res.content);
+    });
     var param3 = "query=name==margin-left;library==tailwind&page=0&size=1000";
-    cssService
-      .getAll(param3)
-      .then((res) => {
-        setMarginLeft(res.content);
-      });
+    cssService.getPage(param3).then((res) => {
+      setMarginLeft(res.content);
+    });
     var param3 = "query=name==margin-right;library==tailwind&page=0&size=1000";
-    cssService
-      .getAll(param3)
-      .then((res) => {
-        setMarginRight(res.content);
-      });
+    cssService.getPage(param3).then((res) => {
+      setMarginRight(res.content);
+    });
   }, []);
   const handleChangeTop = (value) => {
     handleCheckClass(dom, marginTop);

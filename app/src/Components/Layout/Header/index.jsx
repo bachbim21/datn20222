@@ -32,6 +32,7 @@ export default function Header() {
   const location = useLocation();
   const nodeService = new NodeService();
   const userService = new UserService();
+  const shareService = new ShareService();
   const [isModalOpen, setIsModalOpen] = useState({
     open: false,
     loading: false,
@@ -63,7 +64,7 @@ export default function Header() {
   const handleOk = () => {
     if (emails.length == 0)
       return message.warning("Danh sách hiện tại đang trống");
-    ShareService()
+    shareService
       .create(decodedToken.user_id, projectId, emails)
       .then((res) => {
         message.success("Thành công");
@@ -138,9 +139,33 @@ export default function Header() {
         </NavLink>
 
         <span className="italic font-sans"></span>
+        <ul className="flex flex-row ml-10 gap-5">
+          <li>
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? "text-blue-800" : "hover:text-blue-500"
+              }
+              to="/"
+              end
+              style={{ textDecoration: "none" }}>
+              <span>Trang chủ</span>
+            </NavLink>
+          </li>
+          <li className={decodedToken?.user_id ? "" : "hidden"}>
+            <NavLink
+              className={({ isActive }) =>
+                isActive ? "text-blue-800" : "hover:text-blue-500"
+              }
+              to={`profile/${decodedToken?.user_id}/list-project`}
+              end
+              style={{ textDecoration: "none" }}>
+              <span>Dự án</span>
+            </NavLink>
+          </li>
+        </ul>
       </div>
       {location != null && location.pathname.includes("/project") && (
-        <div className="px-4 cursor-pointer border bg-white rounded">
+        <div className="-ml-28 px-4 cursor-pointer border bg-white rounded">
           <Dropdown
             placement="bottom"
             menu={{

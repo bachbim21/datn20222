@@ -133,10 +133,12 @@ export default function ChartUser() {
   }, []);
   return (
     <div className="bg-white grid grid-cols-2 w-full rounded shadow-2xl">
-      <h3 className="mx-auto  font-bold">{title1}</h3>
-      <h3 className=" mx-auto  font-bold">Biểu đồ tăng trưởng người dùng</h3>
-      <div id="chart-user-pie" className="mt-5 basis-1/2"></div>
-      <div id="chart-user-bar" className="mt-5 basis-1/2"></div>
+      <h3 className="mx-auto mt-5 font-bold">{title1}</h3>
+      <h3 className=" mx-auto mt-5 font-bold">
+        Biểu đồ tăng trưởng người dùng
+      </h3>
+      <div id="chart-user-pie" className="mt-5"></div>
+      <div id="chart-user-bar" className="mt-5"></div>
     </div>
   );
 }

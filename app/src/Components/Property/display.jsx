@@ -16,18 +16,16 @@ export default function Display({ dom }) {
     height: dom?.offsetHeight,
     display: dom?.style.display,
   });
-  const cssService = new CssService()
+  const cssService = new CssService();
   const handleOpenChange = (flag) => {
     setOpen(flag);
   };
   useEffect(() => {
     var param =
       "query=name==background-color;library==tailwind&page=0&size=1000";
-    cssService
-      .getAll(param)
-      .then((res) => {
-        setBgColor(res.content);
-      });
+    cssService.getPage(param).then((res) => {
+      setBgColor(res.content);
+    });
   }, []);
   useEffect(() => {
     setOpen(false);

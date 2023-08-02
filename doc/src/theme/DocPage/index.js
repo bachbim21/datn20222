@@ -108,10 +108,10 @@ function DocPageContent({ currentDocRoute, versionMetadata, children }) {
 		setHiddenSidebarContainer(!hiddenSidebarContainer);
 	}, [hiddenSidebar]);
 	const { text, banner, portal } = useMemo(() => {
-		const portalPath = pathname.split('/')[2] || 'dac';
+		const portalPath = pathname.split('/')[2] || 'lgo';
 		return {
-			dac: {
-				text: 'DAC',
+			lgo: {
+				text: 'LGO',
 				banner: bannerSME,
 				portal: portalPath,
 			},
@@ -212,8 +212,8 @@ function DocPageContent({ currentDocRoute, versionMetadata, children }) {
 						<div className={styles.docMainBanner_title}>
 							<span>Hướng dẫn sử dụng</span>
 							<br />
-							<span>hệ thống</span>
-							<span style={{ color: '#2C3D94' }}> {text}</span>
+							<span>website</span>
+							<span style={{ color: '#fde047' }}> {text}</span>
 						</div>
 						<img src={banner} title="main sme" />
 						<div className={styles.docMainBanner_bg} />
