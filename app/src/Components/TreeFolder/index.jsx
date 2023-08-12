@@ -5,7 +5,6 @@ import {
   Dropdown,
   Input,
   Space,
-  Popconfirm,
   message,
   Modal,
 } from "antd";
@@ -18,16 +17,16 @@ import {
   DeleteOutlined,
   EditOutlined,
   SaveOutlined,
-  MailOutlined,
 } from "@ant-design/icons";
 import { setLocal } from "../../utils/class";
 import NodeService from "../../Service/node.service";
 import {
   SetNode,
   SetProjectId,
-  SetShowShare,
 } from "../../Pages/Project/node.slice";
 import { decode } from "../../utils/token";
+import clsx from "clsx";
+import s from "../../assets/css/app.module.css"
 
 const { DirectoryTree } = Tree;
 export default function TreeFolder({ data, view }) {
@@ -349,11 +348,16 @@ export default function TreeFolder({ data, view }) {
   );
   return (
     <div
-      className={
-        data
-          ? "max-h-80 min-w-full"
-          : " absolute bottom-0 max-h-80 overflow-scroll min-w-full"
-      }
+      className={clsx(
+        data ? s['max-h-80'] : s['absolute'],
+        s['bottom-0'],
+        s['overflow-scroll'],
+        s['min-w-full'],
+        {
+          [s['max-h-80']]: data,
+          [s['absolute']]: !data,
+        }
+      )}
       style={{ maxWidth: "350px" }}>
       {view ? (
         <DirectoryTree
@@ -390,7 +394,10 @@ export default function TreeFolder({ data, view }) {
           <Button key="back" onClick={handleCancel}>
             Huỷ
           </Button>,
-          <Button key="submit" type="primary" onClick={() => handleDelete(0)}>
+          <Button
+            key="submit"
+            type="primary"
+            onClick={() => handleDelete(0)}>
             Xác nhận
           </Button>,
         ]}></Modal>

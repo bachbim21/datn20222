@@ -1,58 +1,58 @@
 import { useEffect } from "react";
 import NavbarElement from "../../Components/Navbar/navbar";
 import { useSelector } from "react-redux";
-import { domId, hoverId } from "../../redux/selector";
+import { focusId, hoverId } from "../../redux/selector";
 import {  message } from "antd";
 import Property from "../../Components/Property";
 import { handleClick, handleMouseLeave, handleMouseOver } from "../../utils/drag";
 
 export default function AnonymousProject(params) {
 
-  const currentDomId = useSelector(domId);
+  const currentDomId = useSelector(focusId);
   const domIdHover = useSelector(hoverId);
   let rateScale = null;
 
-  function ctrlC(event) {
-    if (event.ctrlKey && event.key === "c") {
-      var elementToCopy = document.getElementById(currentDomId);
-      if (elementToCopy) {
-        event.preventDefault();
-        var htmlCopy = elementToCopy.outerHTML;
+  // function ctrlC(event) {
+  //   if (event.ctrlKey && event.key === "c") {
+  //     var elementToCopy = document.getElementById(currentDomId);
+  //     if (elementToCopy) {
+  //       event.preventDefault();
+  //       var htmlCopy = elementToCopy.outerHTML;
+  //
+  //       navigator.clipboard.writeText(htmlCopy)
+  //         .then(function() {
+  //           console.log('copy!');
+  //           document.removeEventListener("keydown", ctrlC);
+  //         })
+  //         .catch(function(error) {
+  //           console.error("Failed to copy text to clipboard:", error);
+  //         });
+  //     }
+  //   }
+  // }
 
-        navigator.clipboard.writeText(htmlCopy)
-          .then(function() {
-            console.log('copy!');
-            document.removeEventListener("keydown", ctrlC);
-          })
-          .catch(function(error) {
-            console.error("Failed to copy text to clipboard:", error);
-          });
-      }
-    }
-  }
+  // useEffect(() => {
+  //   if (!currentDomId) return;
+  //   document.addEventListener("keydown", ctrlC);
+  // }, [currentDomId]);
 
-  useEffect(() => {
-    if (!currentDomId) return;
-    document.addEventListener("keydown", ctrlC);
-  }, [currentDomId]);
-
-  function ctrlV(event) {
-    if (event.ctrlKey && event.key === "v") {
-      event.preventDefault();
-      if (!domIdHover) message.warning("Vị trí thêm không hợp lệ");
-      var parent = document.getElementById(domIdHover);
-      var child = document.createElement("div");
-      navigator.clipboard.readText()
-        .then(function(pastedText) {
-          child.innerHTML = pastedText;
-          console.log('copy!');
-          document.removeEventListener("keydown", ctrlV);
-        })
-        .catch(function(error) {
-          console.error("Failed to read pasted text:", error);
-        });
-    }
-  }
+  // function ctrlV(event) {
+  //   if (event.ctrlKey && event.key === "v") {
+  //     event.preventDefault();
+  //     if (!domIdHover) message.warning("Vị trí thêm không hợp lệ");
+  //     var parent = document.getElementById(domIdHover);
+  //     var child = document.createElement("div");
+  //     navigator.clipboard.readText()
+  //       .then(function(pastedText) {
+  //         child.innerHTML = pastedText;
+  //         console.log('copy!');
+  //         document.removeEventListener("keydown", ctrlV);
+  //       })
+  //       .catch(function(error) {
+  //         console.error("Failed to read pasted text:", error);
+  //       });
+  //   }
+  // }
   useEffect(()=>{
   let root  = document.getElementById("root-page")
     addEvent(root)
@@ -62,10 +62,10 @@ export default function AnonymousProject(params) {
     root.addEventListener("mouseover", handleMouseOver);
     root.addEventListener("mouseleave", handleMouseLeave);
   }
-  useEffect(() => {
-    if (!domIdHover) return;
-    document.addEventListener("keydown", ctrlV);
-  }, [domIdHover]);
+  // useEffect(() => {
+  //   if (!domIdHover) return;
+  //   document.addEventListener("keydown", ctrlV);
+  // }, [domIdHover]);
 
   useEffect(() => {
     window.addEventListener("resize", function() {

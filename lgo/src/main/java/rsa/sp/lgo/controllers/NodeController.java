@@ -53,9 +53,14 @@ public class NodeController extends CrudApiEndpoint<Node, Long> {
         logger.info("Create ZIP project by {}", SecurityUtils.getCurrentUserLogin());
         return zipService.exportDirectoryAsZip(id);
     }
-    @RequestMapping(value = "/root/{id}")
+    @RequestMapping(value = "/root/{id}" , method = RequestMethod.GET)
     public ResponseEntity getRootNode(@PathVariable("id") Long id) {
         logger.info("Get root node by {}", SecurityUtils.getCurrentUserLogin());
         return nodeService.getInforRootNode(id);
+    }
+    @RequestMapping(value="/file/{id}", method = RequestMethod.GET)
+    public GeneralEntity downFile(@PathVariable("id") Long id) {
+        logger.info("Download file node by {}", SecurityUtils.getCurrentUserLogin());
+        return zipService.DownloadFile(id);
     }
 }

@@ -4,13 +4,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import rsa.sp.lgo.core.error.BadRequestException;
 import rsa.sp.lgo.core.utils.GeneralEntity;
 import rsa.sp.lgo.models.Node;
 import rsa.sp.lgo.repository.NodeRepository;
-import rsa.sp.lgo.utils.DateUtils;
-import rsa.sp.lgo.utils.StringUtils;
 
-import javax.persistence.Access;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.file.*;
@@ -118,7 +116,9 @@ public class ZipService {
                 "    <script src=\"https://cdn.tailwindcss.com\"></script>\n" +
                 "</head>\n" +
                 "<body>\n" +
+                "<main class='flex justify-center'>\n" +
                 node.getCode() + "\n" +
+                "</main>\n" +
                 "</body>\n" +
                 "</html>";
 
@@ -153,5 +153,27 @@ public class ZipService {
 
         zipOut.close();
         fos.close();
+    }
+
+    public GeneralEntity DownloadFile(Long id) {
+        Node node = nodeRepository.findById(id).orElse(null);
+        if(node == null) throw  new BadRequestException("Not found Node","error","notFound");
+
+        String name = node.getName() +  "_" + node.getId() + "_" + node.getUser().getId();
+        name = name.replace("|", "").replace("\\", "").replace("/", "");
+
+        String directoryName = System.getProperty("user.dir") +"/";
+        String fileUrlName = "export/node/" + name  + ".html";
+        String fileName = directoryName + fileUrlName;
+        fileName = fileName.replaceAll("\\\\", "/"); //replace fileName to download
+        fileUrlName = fileUrlName.replaceAll("\\\\", "/");
+        String codeHtml = generateHtmlContent(node);
+        try {
+            Path filePath = Paths.get(fileUrlName);
+            Files.write(filePath, codeHtml.getBytes());
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return new GeneralEntity(fileName, fileUrlName);
     }
 }

@@ -1,3 +1,4 @@
+// import "../../assets/css/tailwind.css"
 export default function DesignTailwind({ ref }) {
-  return <div ref={ref} className="top-0 block box-border "></div>;
+  return <div id="wrapper-root" className="top-0 block box-border"></div>;
 }

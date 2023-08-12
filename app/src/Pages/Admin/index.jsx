@@ -6,7 +6,8 @@ import logo from "../../assets/images/go.png";
 import { AreaChartOutlined, UsergroupAddOutlined } from "@ant-design/icons";
 import { Outlet } from "react-router";
 import DropDownProfile from "../../Components/Layout/Header/drodown";
-
+import clsx from "clsx";
+import s from "../../assets/css/app.module.css"
 export default function Admin() {
   const [open, setOpen] = useState(false);
   const [header, setHeader] = useState("");
@@ -76,55 +77,93 @@ export default function Admin() {
     <main className="">
       <nav
         onMouseEnter={showDrawer}
-        className="bg-custom fixed top-0 w-16 h-screen shadow-2xl border-r-2 float-left left-0 top-o ">
+        className={clsx(
+          s['bg-custom'],
+          s['fixed'],
+          s['top-0'],
+          s['w-16'],
+          s['h-screen'],
+          s['shadow-xl'],
+          s['border-r-2'],
+          s['border-gray-300'],
+          s['float-left'],
+          s['left-0'],
+          s['top-o']
+        )}
+      >
         <NavLink to="/">
-          <img src={logo} alt="logo" className="w-14 h-14 ml-1" />
+          <img src={logo} alt="logo" className={clsx(s['w-14'], s['h-14'], s['ml-1'])} />
         </NavLink>
-        <ul className="flex flex-col justify-center gap-y-4">
+        <ul className={clsx(s['flex'], s['flex-col'], s['justify-center'], s['gap-y-4'])}>
           <li>
             <AreaChartOutlined
               className={
-                openKeys.includes("chart") ? "block text-blue-600" : "block"
-              }
+                openKeys.includes("chart") ? clsx(s['block'], s['text-blue-600']) : clsx(s['block'])
+                }
             />
           </li>
           <li>
             <GithubOutlined
               className={
-                openKeys.includes("resources") ? "block text-blue-600" : "block"
-              }
+                openKeys.includes("resources") ? clsx(s['block'], s['text-blue-600']) : clsx(s['block'])
+                }
             />
           </li>
           <li>
             <UsergroupAddOutlined
               className={
-                openKeys.includes("list-user") ? "block text-blue-600" : "block"
-              }
+                openKeys.includes("list-user") ?clsx(s['block'], s['text-blue-600']) : clsx(s['block'])
+                }
             />
           </li>
         </ul>
       </nav>
-      <div className="pl-16">
-        <header className="h-14 fixed top-0 bg-custom min-w-[calc(100%_-_3.5rem)] z-10 flex flex-row justify-between items-center shadow-xl drop-shadow-md">
-          <h1 className="text-lg font-base ml-5">{header}</h1>
+      <div className={clsx(s['pl-16'])}>
+        <header
+          className={clsx(
+            s['h-14'],
+            s['fixed'],
+            s['top-0'],
+            s['border-b'],
+            s['border-gray-300'],
+            s['bg-custom'],
+            s['min-w-[calc(100%_-_3.5rem)]'],
+            s['z-10'],
+            s['flex'],
+            s['flex-row'],
+            s['justify-between'],
+            s['items-center'],
+            s['shadow-xl']
+          )}
+        >
+          <h1 className={clsx(s['text-lg'], s['font-base'], s['ml-5'])}>{header}</h1>
           <DropDownProfile />
         </header>
-        <article className="bg-custom flex min-h-[calc(100vh_-_3.5em)] w-full p-3 mt-14">
+        <article
+          className={clsx(
+            s['bg-custom'],
+            s['flex'],
+            s['min-h-[calc(100vh_-_3.5em)]'],
+            s['w-full'],
+            s['p-3'],
+            s['mt-14']
+          )}
+        >
           <Outlet context={[setKeyActive, setOpenKeys, setHeader]} />
         </article>
       </div>
       <Drawer
         title={
-          <div className="relative">
+          <div className={clsx(s['relative'])}>
             <NavLink to="/">
               {" "}
               <img
                 src={logo}
                 alt="logo"
-                className="absolute w-14 h-14 ml-1 -top-3.5"
+                className={clsx(s['absolute'], s['w-14'], s['h-14'], s['ml-1'], s['-top-3.5'])}
               />
             </NavLink>
-            <h1 className="ml-20">Hệ thống Lgo</h1>
+            <h1 className={clsx(s['ml-20'])}>Hệ thống Lgo</h1>
           </div>
         }
         placement="left"
@@ -135,7 +174,8 @@ export default function Admin() {
           <Space>
             <CloseOutlined onClick={onClose} />
           </Space>
-        }>
+        }
+      >
         {widgetMenu}
       </Drawer>
     </main>

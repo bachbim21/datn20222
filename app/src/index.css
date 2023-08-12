@@ -110,6 +110,7 @@ tbody > tr:hover {
 body {
   /* color: #333333; */
   font-family: "Montserrat";
+  box-sizing: border-box !important;
 }
 
 @keyframes translateAndReset {
@@ -154,3 +155,55 @@ body {
   animation: translateAndRotate 4s 7s infinite ease-in-out;
   transform-origin: center center;
 }
+::-webkit-scrollbar {
+  width: 10px;
+  border-radius: 5px;
+  background-color: white;
+}
+::-webkit-scrollbar:horizontal {
+  height: 10px;
+  border-radius: 5px;
+  background-color: white;
+}
+
+/* Chỉnh màu nền khi di chuột vào thanh cuộn */
+::-webkit-scrollbar:hover {
+  background-color: #f2f2f2;
+}
+
+/* Chỉnh màu của thanh cuộn chứa thanh kéo */
+::-webkit-scrollbar-thumb {
+  background-color: #cccccc;
+  border-radius: 5px; /* Bo tròn ở hai đầu của thanh kéo */
+}
+
+/* Chỉnh màu của thanh cuộn chứa thanh kéo khi di chuột vào */
+::-webkit-scrollbar-thumb:hover {
+  background-color: #8c8c8c;
+}
+
+/* Chỉnh kích thước của thanh kéo */
+::-webkit-scrollbar-thumb:vertical {
+  width: 8px;
+}
+
+/* CSS cho thanh kéo ngang (nếu cần) */
+::-webkit-scrollbar-thumb:horizontal {
+  height: 8px;
+}
+
+/* Chỉnh kích thước của vùng trống bên phải/thanh cuộn */
+::-webkit-scrollbar-track {
+  background-color: #f5f5f5;
+}
+
+/* Chỉnh kích thước của vùng trống bên phải/thanh cuộn ngang (nếu cần) */
+::-webkit-scrollbar-track:horizontal {
+  background-color: #f5f5f5;
+}
+
+
+
+
+
+

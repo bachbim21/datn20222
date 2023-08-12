@@ -3,6 +3,8 @@ import { useEffect, useState } from "react";
 import ChartService from "../../../Service/chart.service";
 import "zingchart/es6";
 import zingchart from "zingchart";
+import clsx from "clsx";
+import s from "../../../assets/css/app.module.css"
 
 export default function ChartProject() {
   const [setKeyActive, setOpenKeys, setHeader] = useOutletContext();
@@ -131,11 +133,11 @@ export default function ChartProject() {
     });
   }, []);
   return (
-    <div className="bg-white  grid grid-cols-2 w-full rounded shadow-2xl">
-      <h3 className="mx-auto mt-5 font-bold">{title1}</h3>
-      <h3 className=" mx-auto mt-5 font-bold">Biểu đồ tăng trưởng dự án</h3>
-      <div id="chart-pie-product" className="mt-5 "></div>
-      <div id="chart-bar-project" className="mt-5 "></div>
+    <div className={clsx(s['bg-white'], s['grid'], s['grid-cols-2'], s['w-full'], s['rounded'], s['shadow-2xl'])}>
+      <h3 className={clsx(s['mx-auto'], s['mt-5'], s['font-bold'])}>{title1}</h3>
+      <h3 className={clsx(s['mx-auto'], s['mt-5'], s['font-bold'])}>Biểu đồ tăng trưởng dự án</h3>
+      <div id="chart-pie-product" className={clsx(s['mt-5'])}></div>
+      <div id="chart-bar-project" className={clsx(s['mt-5'])}></div>
     </div>
   );
 }

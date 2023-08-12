@@ -1,5 +1,4 @@
 import { getScale } from "./drag";
-import { handleMouseOver } from "./drag";
 export function makeResizable(element, minW, minH, top, left, bottom, right, corner1, corner2, corner3, corner4) {
   var rateScale = getScale()
 

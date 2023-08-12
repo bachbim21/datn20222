@@ -6,7 +6,7 @@ import router from "./router/app.router";
 import { useEffect } from "react";
 import { setDispatch } from "./utils/drag";
 import 'zingchart/es6';
-import './assets/output.css'
+
 const App = () => {
   const dispatch = useDispatch();
   dispatch(

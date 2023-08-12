@@ -29,6 +29,8 @@ import imgshare from "../../assets/images/imgshare.png";
 import earth from "../../assets/images/earth.png";
 import { handleError } from "../../utils/error";
 import letgo from "../../assets/images/letgo.png";
+import clsx from "clsx";
+import s from "../../assets/css/app.module.css"
 
 export default function Home() {
   const [listNode, setListNode] = useState([]);
@@ -131,22 +133,22 @@ export default function Home() {
       <Carousel autoplay autoplaySpeed={5000}>
         <div>
           <Row
-            className="bg-yellow-300"
+            className={clsx(s['bg-yellow-300'])}
             style={{
               height: "28rem",
             }}>
             <Col
-              span={10}
-              className="flex flex-col justify-center items-center">
+              xs={24} md={10}
+              className={clsx(s.flex, s['flex-col'], s['justify-center'], s['items-center'])}>
               <div>
-                <h1 className="font-mono text-4xl font-extrabold block mb-4">
+                <h1 className={clsx(s['font-mono'], s['text-4xl'], s['font-extrabold'], s.block, s['mb-4'])}>
                   {" "}
                   Lgo
                 </h1>
-                <p className="block text-lg mb-3">
+                <p className={clsx(s.block, s['text-lg'], s['mb-3'])}>
                   Không có điều gì là không thể
                 </p>
-                <p className="block text-lg mb-3">
+                <p className={clsx(s.block, s['text-lg'], s['mb-3'])}>
                   <b>Lgo</b> kết nối tới mọi lập trình viên thoả sức sáng tạo
                   bứt phá
                 </p>
@@ -154,7 +156,7 @@ export default function Home() {
               <img
                 src={roket}
                 alt="roket"
-                className="absolute top-10 right-20"
+                className={clsx(s.absolute, s['top-10'], s['right-20'])}
                 style={{
                   width: "7rem",
                   height: "7rem",
@@ -163,17 +165,17 @@ export default function Home() {
               <img
                 src={saturn}
                 alt="saturn"
-                className="absolute bottom-5 left-20"
+                className={clsx(s.absolute, s['bottom-5'], s['left-20'])}
                 style={{
                   width: "7rem",
                   height: "7rem",
                 }}
               />
             </Col>
-            <Col span={14}>
+            <Col xs={0} md={8} lg={14}>
               <Row
                 gutter={16}
-                className="p-5 h-full flex flex-row justify-center items-center gap-x-4">
+                className={clsx(s['p-5'], s['h-full'], s.flex, s['flex-row'], s['justify-center'], s['items-center'], s['gap-x-4'])}>
                 <Col span={6}>
                   <Card cover={<img alt="html" src={htmlCss} />}>
                     <Card.Meta
@@ -203,49 +205,45 @@ export default function Home() {
           </Row>
         </div>
         <div>
-          <Row
-            className="bg-yellow-300"
-            style={{
-              height: "28rem",
-            }}>
+          <Row className={clsx(s['bg-yellow-300'])} style={{ height: '28rem' }}>
             <Col xs={24} md={12} lg={8}>
               <img
                 src={folder}
                 alt="folder"
+                className={clsx(s['mx-auto'], s['mt-14'], s['rounded-xl'], s['shadow-2xl'], s['drop-shadow-2xl'])}
                 style={{
-                  width: "18rem",
+                  width: '18rem',
                 }}
-                className="mx-auto mt-14 rounded-xl shadow-2xl drop-shadow-2xl"
               />
-              <div className="mt-4 text-center">
-                <h1 className="text-2xl font-bold">Quản lý dự án dễ dàng</h1>
-                <p className="text-base">Sáng tạo không giới hạn</p>
+              <div className={clsx(s['mt-4'], s['text-center'])}>
+                <h1 className={clsx(s['text-2xl'], s['font-bold'])}>Quản lý dự án dễ dàng</h1>
+                <p className={clsx(s['text-base'])}>Sáng tạo không giới hạn</p>
               </div>
             </Col>
             <Col xs={0} md={12} lg={16}>
-              <Row className="mt-14 hidden lg:flex flex-row justify-evenly">
+              <Row className={clsx(s['mt-14'], s['hidden'], s['lg:flex'], s['flex-row'], s['justify-evenly'])}>
                 <img
                   src={iconshare}
                   alt="iconshare"
-                  className="max-h-28 aspect-square drop-shadow-2xl ani-tranrote"
+                  className={clsx(s['max-h-28'], s['aspect-square'], s['drop-shadow-2xl'], s['ani-tranrote'])}
                 />
                 <img
                   src={imgshare}
                   alt="imgshare"
-                  className="w-1/3 rounded-xl shadow-2xl drop-shadow-2xl ani-translate "
+                  className={clsx(s['w-1/3'], s['rounded-xl'], s['shadow-2xl'], s['drop-shadow-2xl'], s['ani-translate'])}
                 />
               </Row>
-              <Row className="hidden md:flex md:flex-row flex-col md:items-center md:justify-start gap-x-10">
+              <Row className={clsx(s['hidden'], s['md:flex'], s['md:flex-row'], s['flex-col'], s['md:items-center'], s['md:justify-start'], s['gap-x-10'])}>
                 <img
                   src={earth}
                   alt="earth"
-                  className="max-h-28 aspect-square drop-shadow-2xl "
+                  className={clsx(s['max-h-28'], s['aspect-square'], s['drop-shadow-2xl'])}
                 />
                 <div className="">
-                  <h3 className="text-2xl">
+                  <h3 className={clsx(s['text-2xl'])}>
                     Chia sẻ dự án rộng rãi tới mọi người
                   </h3>
-                  <p className="text-base mt-2">
+                  <p className={clsx(s['text-base'], s['mt-2'])}>
                     Cùng nhau xây dựng phát triển hệ thống
                   </p>
                 </div>
@@ -255,24 +253,24 @@ export default function Home() {
         </div>
       </Carousel>
 
-      <div className="grid sm:grid-cols-2 max-w-7xl mx-auto gap-y-5 sm:gap-x-8 p-4 sm:p-10 md:gap-x-12">
-        <div className="basis-1/2">
+      <div className={clsx(s.grid, s['sm:grid-cols-2'], s['max-w-7xl'], s['mx-auto'], s['gap-y-5'], s['sm:gap-x-8'], s['p-4'], s['sm:p-10'], s['md:gap-x-12'])}>
+        <div className={clsx(s['basis-1/2'])}>
           <ul>
-            <h2 className="text-xl ">
+            <h2 className={clsx(s['text-xl'])}>
               <b>Lgo</b>
             </h2>
-            <p className="text-base">
+            <p className={clsx(s['text-base'])}>
               là website cung cấp các chức năng thiết kế giao diện phần mềm
               chuyên nghiệp. Giúp bạn trở nên dễ dàng trong việc thiết kế giao
               diện.{" "}
             </p>
             <br />
-            <p className="text-base">
+            <p className={clsx(s['text-base'])}>
               Hệ thống cung cấp đầy đủ các thành phần thiết kế cùng bộ công cụ
               mạnh mẽ giúp bạn có thể thoả sức sáng tạo, chia sẻ
             </p>
             <br />
-            <p className="text-base">
+            <p className={clsx(s['text-base'])}>
               Tổ chức dự dán theo dạng cây thư mục giúp bạn dễ quản lý và chia
               sẻ cho các người dùng khác
             </p>
@@ -281,8 +279,8 @@ export default function Home() {
           <br />
           <img src={letgo} alt="" />
         </div>
-        <div className="grid lg:grid-cols-2 gap-4 sm:gap-6 rounded-md sm:p-6 p-4 border bg-custom">
-          <div className="bg-white rounded-md py-3 px-5 shadow-lg">
+        <div className={clsx(s['grid'], s['lg:grid-cols-2'], s['gap-4'], s['sm:gap-6'], s['rounded-md'], s['sm:p-6'], s['p-4'], s['border'], s['bg-custom'])}>
+          <div className={clsx(s['bg-white'], s['rounded-md'], s['py-3'], s['px-5'], s['shadow-lg'])}>
             <h3 className="text-base font-medium mb-2">Các chức năng</h3>
             <nav className="px-3">
               <li>Thiết kế trang web</li>
@@ -290,17 +288,27 @@ export default function Home() {
               <li>Xem code trực tuyến</li>
               <li>Tải xuống file code</li>
               <NavLink
-                className="text-white block text-center md:w-full mt-6 p-2 bg-blue-600 rounded cursor-pointer"
+                className={clsx(
+                  s['text-white'],
+                  s['block'],
+                  s['text-center'],
+                  s['md:w-full'],
+                  s['mt-6'],
+                  s['p-2'],
+                  s['bg-blue-600'],
+                  s['rounded'],
+                  s['cursor-pointer']
+                )}
                 to="/design">
                 Bắt đầu nào
               </NavLink>
             </nav>
           </div>
-          <div className="bg-white rounded-md py-3 px-5 shadow-lg">
-            <h3 className="text-base font-medium mb-2">
+            <div className={clsx(s['bg-white'], s['rounded-md'], s['py-3'], s['px-5'], s['shadow-lg'])}>
+              <h3 className={clsx(s['text-base'], s['font-medium'], s['mb-2'])}>
               Bạn chưa có tài khoản ?
             </h3>
-            <div className="px-3">
+            <div className={clsx(s['px-3'])}>
               <p>Hãy đăng ký tài khoản để có thể sử dụng toàn bộ chức năng</p>
               <NavLink
                 to="/signup"
@@ -310,23 +318,32 @@ export default function Home() {
             </div>
           </div>
           {decoded?.user_id && (
-            <div className="lg:col-span-2 bg-white rounded-md py-3 px-5 shadow-lg">
-              <h3 className="text-base font-medium mb-3">
-                {listNode?.length > 0 ? "Dự án gần đây" : ""}
+            <div className={clsx(s['lg:col-span-2'], s['bg-white'], s['rounded-md'], s['py-3'], s['px-5'], s['shadow-lg'])}>
+              <h3 className={clsx(s['text-base'], s['font-medium'], s['mb-3'])}>
+                {listNode?.length > 0 ? 'Dự án gần đây' : ''}
               </h3>
-              <ul className="px-3 grid md:grid-cols-2 gap-3  sm:gap-x-6">
-                {listNode.map((node) => {
-                  return (
-                    <NavLink key={node.id} to={`/project/${node.id}`}>
-                      <li className=" bg-yellow-300 rounded p-2 text-center">
-                        {node.name}
-                      </li>
-                    </NavLink>
-                  );
-                })}
+              <ul className={clsx(s['px-3'], s['grid'], s['md:grid-cols-2'], s['gap-3'], s['sm:gap-x-6'])}>
+                {listNode.map((node) => (
+                  <NavLink key={node.id} to={`/project/${node.id}`} className={clsx(s['block'])}>
+                    <li className={clsx(s['bg-yellow-300'], s['rounded'], s['p-2'], s['text-center'])}>
+                      {node.name}
+                    </li>
+                  </NavLink>
+                ))}
               </ul>
               <button
-                className="text-white block text-center w-full mt-6 py-2 px-6 bg-blue-600 rounded cursor-pointer"
+                className={clsx(
+                  s['text-white'],
+                  s['block'],
+                  s['text-center'],
+                  s['w-full'],
+                  s['mt-6'],
+                  s['py-2'],
+                  s['px-6'],
+                  s['bg-blue-600'],
+                  s['rounded'],
+                  s['cursor-pointer']
+                )}
                 onClick={showModal}>
                 Dự án mới
               </button>
@@ -335,8 +352,8 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="sticky top-18">
-        <iframe src={docUrl} className="w-full min-h-[calc(100vh_-_4rem)]">
+      <div className={clsx(s['sticky'], s['top-18'])}>
+        <iframe src={docUrl} className={clsx(s['w-full']) + " min-h-[calc(100vh_-_4rem)]"}>
           Document
         </iframe>
       </div>
@@ -360,48 +377,48 @@ export default function Home() {
             rules={[{ required: true, message: log.log_required }]}>
             <Input />
           </Form.Item>
-          <div className="gird grid-cols-3 w-full">
+          <div className={clsx(s['grid'], s['grid-cols-3'], s['w-full'])}>
             <p>FE</p>
             <Form.Item
               name="html"
-              className="inline-block w-28"
+              className={clsx(s['inline-block'], s['w-28'])}
               valuePropName="checked">
               <Checkbox onChange={handleCheckbox}>HTML</Checkbox>
             </Form.Item>
             <Form.Item
               name="reactjs"
-              className="inline-block w-28"
+              className={clsx(s['inline-block'], s['w-28'])}
               valuePropName="checked">
               <Checkbox onChange={handleCheckbox}>ReactJS</Checkbox>
             </Form.Item>
           </div>
-          <div className="gird grid-cols-3">
+          <div className={clsx(s['grid'], s['grid-cols-3'])}>
             <p>CSS</p>
             <Form.Item
               name="tailwind"
-              className="inline-block w-28"
+              className={clsx(s['inline-block'], s['w-28'])}
               valuePropName="checked">
               <Checkbox onChange={handleCheckbox}>Tailwind</Checkbox>
             </Form.Item>
             <Form.Item
               name="bootstrap"
-              className="inline-block w-28"
+              className={clsx(s['inline-block'], s['w-28'])}
               valuePropName="checked">
               <Checkbox onChange={handleCheckbox}>Bootstrap</Checkbox>
             </Form.Item>
           </div>
 
-          <div className="ant-modal-footer">
-            <Form.Item className="inline-block mb-0 mx-4">
+          <div className='ant-modal-footer'>
+            <Form.Item className={clsx(s['inline-block'], s['mb-0'], s['mx-4'])}>
               <Button key="back" onClick={handleCancel}>
                 Huỷ
               </Button>
             </Form.Item>
-            <Form.Item className="inline-block mb-0">
+            <Form.Item className={clsx(s['inline-block'], s['mb-0'])}>
               <Button
                 type="primary"
                 htmlType="submit"
-                className="bg-blue-500"
+                className={clsx(s['bg-blue-500'])}
                 onClick={handleOk}>
                 Tạo
               </Button>

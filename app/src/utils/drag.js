@@ -5,7 +5,8 @@ import {
   SetOver,
   SetMove
 } from "../Components/Navbar/element.slice";
-import PointDom from "./matrixClass";
+// import PointDom from "./matrixClass";
+import { CustomElement } from "./classE";
 
 var size = 15;
 const top = document.createElement("div");
@@ -119,8 +120,28 @@ function setDispatch(useDispatch) {
   dispatch = useDispatch;
 }
 
+const usedIds = new Set(); // Tập hợp để lưu trữ các id đã được sử dụng
+
 const generateUniqueId = () => {
-  return Math.random().toString(36).substring(2) + Date.now().toString(36);
+  let newId;
+  do {
+    newId = Math.random().toString(36).substring(2) + Date.now().toString(36);
+  } while (usedIds.has(newId)); // Lặp lại việc tạo id mới nếu đã tồn tại trong tập hợp
+  usedIds.add(newId);
+  return newId;
+};
+
+const replaceIdsRecursively = (element) => {
+  if (element) {
+    const oldId = element.id;
+    if (oldId) {
+      const newId = generateUniqueId();
+      element.id = newId;
+    }
+    for (const child of element.children) {
+      replaceIdsRecursively(child);
+    }
+  }
 };
 
 // drap
@@ -146,12 +167,11 @@ function dragStartCopy(e) {
   root.addEventListener("drop", handleDrop);
   root.addEventListener("dragover", dragOver);
   root.addEventListener("dragenter", dragEnter);
-  if (e.target.id.includes("root")) {
-    dragged = { tag: e.target.tagName, text: e.target.innerText };
+  if (e.target.firstElementChild?.id.includes("root")) {
+    dragged = e.target.firstElementChild.cloneNode(true);
   } else {
     dragged = e.target;
   }
-  console.log(dragged);
 }
 
 var initialMouseX = null;
@@ -209,10 +229,10 @@ function dragOver(event) {
 function dragEnter(event) {
   event.preventDefault();
   event.stopPropagation();
-  let children = event.target.querySelectorAll(".node");
-  arrChildren = Array.from(children).map((child) => {
-    return new PointDom(child);
-  });
+  // let children = event.target.querySelectorAll(".node");
+  // arrChildren = Array.from(children).map((child) => {
+  //   return new PointDom(child);
+  // });
   dispatch(SetOver(event.target.id));
 }
 
@@ -221,7 +241,17 @@ function dragLeave(event) {
   event.stopPropagation();
   event.target.classList.remove("over");
 }
-
+function handleZoom(ev) {
+  ev.preventDefault();
+  const key = ev.which || ev.keyCode;
+  rateScale = getScale();
+  console.log('aa');
+  if (key === "z" || key == "Z") {
+    debugger
+    rateScale += 0.1;
+    ev.style.transform = `scale(${rateScale.toFixed(2)})`;
+  }
+}
 const handleClick = (event) => {
   event.preventDefault();
   event.stopPropagation();
@@ -245,7 +275,7 @@ const handleMouseOver = (event) => {
   event.preventDefault();
   event.stopPropagation();
   dispatch(SetHover(event.target.id));
-  removeEvent(event.target.parentNode)
+  removeEvent(event.target.parentNode);
   removeEvent(event.target);
   makeResizable(event.target, parseFloat(event.target.style.minWidth), parseFloat(event.target.style.minHeight), top, left, bottom, right, corner1, corner2, corner3, corner4);
 };
@@ -260,12 +290,10 @@ function handleDrop(event) {
     y: event.clientY
   };
   event.target.classList.remove("over");
-  const id = generateUniqueId();
-
   // set event
-  let element = SetDataElement(id, dragged);
+  let element = SetDataElement(dragged);
   if (element.id == event.target.id) return;
-  setLocation(element, event, rateScale);
+  setLocation(element, event.target, rateScale);
   event.target.appendChild(element);
   element.addEventListener("click", handleClick);
   element.addEventListener("mouseover", handleMouseOver);
@@ -281,32 +309,17 @@ function handleDrop(event) {
   event.target.removeEventListener("dragenter", dragEnter);
 }
 
-function SetDataElement(id, data) {
-  let element;
-  if (data?.tag) {
-    var size = setSize(data.tag);
-    element = document.createElement(`${data.tag}`);
-    element.id = id;
-    element.classList.add("bg-blue-600", "text-white", "node");
-    element.style.width = size[0];
-    element.style.height = size[1];
-    element.style.minWidth = "5px";
-    element.style.minHeight = "5px";
-    element.style.display = size[2];
-    element.style.boxSizing = "border-box";
-    element.style.position = "absolute";
-    element.style.verticalAlign = "top";
-    element.textContent = data.tag == "input" ? null : data.text;
-    element.style.transition =
-      "min-width 0.5s ease-in-out, min-height 0.5s ease-in-out";
-  } else {
-    element = dragged;
+function SetDataElement(element) {
+  console.log(element);
+  if (element?.id.includes('root')) {
+    setSize(element).render();
   }
+  replaceIdsRecursively(element);
   return element;
 }
 
-function setLocation(element, event, rateScale) {
-  var rect = event.target.getBoundingClientRect();
+function setLocation(element, parent, rateScale) {
+  var rect = parent.getBoundingClientRect();
   element.style.left = `${(
     (mouse.x - rect.left) /
     rateScale
@@ -319,26 +332,38 @@ function setLocation(element, event, rateScale) {
   element.setAttribute("data-y", (mouse.y - rect.top) / rateScale);
 }
 
-function setSize(tag) {
-  switch (tag) {
+function setSize(element) {
+  switch (element.tagName.toLowerCase()) {
     case "div":
-      return ["100%", "50px", "inline-block"];
+      return new CustomElement(element,"100%", "50px", "inline-block", null, "bg-blue-600 text-white node");
     case "h1":
-      return ["200px", "50px", "inline-block"];
+      return new CustomElement(element,"200px", "30px", "inline-block", "Heading 1", "text-2xl text-black node");
     case "h2":
-      return ["200px", "50px", "inline-block"];
+      return new CustomElement(element,"180px", "25px", "inline-block", "Heading 2", "text-xl text-black node");
     case "h3":
-      return ["200px", "50px", "inline-block"];
+      return new CustomElement(element,"150px", "20px", "inline-block", "Heading 3", "text-lg text-black node");
     case "h4":
-      return ["200px", "50px", "inline-block"];
+      return new CustomElement(element,"120px", "20px", "inline-block", "Heading 4", "text-base text-black node");
     case "h5":
-      return ["200px", "50px", "inline-block"];
+      return new CustomElement(element,"100px", "20px", "inline-block", "Heading 5", "text-sm text-black node");
     case "button":
-      return ["170px", "40px", "inline-block"];
+      return new CustomElement(element,"100px", "20px", "inline-block", "Heading 6", "text-xs text-black node");
     case "input":
-      return ["200px", "30px", "inline-block"];
+      return new CustomElement(element,"100px", "20px", "inline-block", null, "border border-gray-900 node");
+    case "p":
+      return new CustomElement(element,"100px", "20px", "inline-block", "Text", "border border-gray-900 text-black node");
+    case "a":
+      return new CustomElement(element,"50px", "20px", "inline-block", "Link","bg-blue-600 text-black node");
+    case "label":
+      return new CustomElement(element,"100px", "20px", "inline-block", "Text", "border border-gray-900 text-black node");
+    case "li":
+      return new CustomElement(element,"100px", "20px", "inline-block", "Text", "border border-gray-900 text-black node");
+    case "ul":
+      return new CustomElement(element,"100px", "20px", "inline-block", "Text", "border border-gray-900 text-black node");
+    case "code":
+      return new CustomElement(element,"400px", "100px", "inline-block", "Code", "border border-gray-900 text-black node");
     default:
-      return ["300px", "50px", "inline-block"];
+      return new CustomElement(element,"100px", "20px", "inline-block",null, "border border-gray-900 node bg-blue-600");
   }
 }
 
@@ -355,5 +380,7 @@ export {
   dragEnter,
   setDispatch,
   getScale,
-  removeEvent
+  removeEvent,
+  generateUniqueId,
+  handleZoom
 };

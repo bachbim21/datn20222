@@ -7,7 +7,8 @@ import parserHtml from "prettier/parser-html";
 import { Button, message, Modal, Tooltip } from "antd";
 import { removeEvent } from "../../utils/drag";
 import { decode } from "../../utils/token";
-
+import clsx from "clsx";
+import s from "../../assets/css/app.module.css"
 export default function Codemirror({ dom }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [stringCode, setStringCode] = useState();
@@ -50,7 +51,7 @@ export default function Codemirror({ dom }) {
   }
   return (
     <>
-      <li className="relative flex items-center justify-center list-none cursor-pointer border rounded m-1 hover:border-blue-600 aspect-square hover:bg-blue-200 bg-gray-200">
+      <li className={clsx(s.relative, s.flex, s['items-center'], s['justify-center'], s['list-none'], s['cursor-pointer'], s.border, s.rounded, s.m1, s['hover:border-blue-600'], s['aspect-square'], s['hover:bg-blue-200'], s['bg-gray-200'])}>
         <Tooltip placement="leftTop" title="text">
           <span onClick={showModal}>
             <BsCodeSquare
@@ -83,9 +84,9 @@ export default function Codemirror({ dom }) {
           clickThrough={true}
           onBeforeChange={handleEdit}
         />
-        <div className="ant-modal-footer">
+        <div className={clsx(s['ant-modal-footer'])}>
           <Button
-            className="inline-block mb-0 mx-2"
+            className={clsx(s['inline-block'], s['mb-0'], s['mx-2'])}
             key="back"
             onClick={handleCancel}>
             Đóng
@@ -93,16 +94,18 @@ export default function Codemirror({ dom }) {
 
           <Button
             type="success"
-            className="bg-green-500 inline-block mb-2"
+            className={clsx(s['bg-green-500'], s['inline-block'], s['mb-2'])}
             onClick={handleCopy}>
             Copy
           </Button>
-          {decodedToken ?  <Button
-            type="primary"
-            className="bg-blue-500 inline-block mb-0"
-            onClick={handleOk}>
-            Lưu
-          </Button> : null}
+          {decodedToken ? (
+            <Button
+              type="primary"
+              className={clsx(s['bg-blue-500'], s['inline-block'], s['mb-0'])}
+              onClick={handleOk}>
+              Lưu
+            </Button>
+          ) : null}
         </div>
       </Modal>
     </>

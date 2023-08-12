@@ -1,37 +1,17 @@
 import { dragStartCopy } from "../../utils/drag";
-import { log } from "../../utils/log";
-export default function ElementDefault({ data, width }) {
-  const Tag = data.tag;
+import ReactHtmlParser from "react-html-parser";
+import React from "react";
 
-  if (Tag == "img") {
-    return (
-      <img
-        id={data.configId}
-        src="../../assets/images/go.png"
-        alt=""
-        className={data.classes}
-        draggable="true"
-        onDragStart={dragStartCopy}
-      />
-    );
-  }
+export default function ElementDefault({ data }) {
   return (
-    <Tag
-      readOnly={data.def ? true : false}
-      id={data.configId}
-      className={
-        data.classes +
-        " inline-block transition ease-in-out delay-150 hover:-translate-x-1"
-      }
-      value={
-        data.tag == "input" ? data.text : data.tag == "select" ? null : null
-      }
-      draggable="true"
-      onDragStart={dragStartCopy}
-      style={{
-        width: "110px",
-      }}>
-      {data.tag == "input" ? null : data.text}
-    </Tag>
+    <li style={{
+      width: "110px",
+      listStyleType: "none",
+    }}
+        className="border-2 border-transparent cursor-grabbing rounded shadow-md hover:border-red-500 hover:border-2"
+        draggable={true}
+        onDragStart={dragStartCopy}>
+      {ReactHtmlParser(data.code)}
+    </li>
   );
 }

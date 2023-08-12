@@ -4,6 +4,8 @@ import { useSelector } from "react-redux";
 import { loading } from "../../redux/selector";
 import { LoadingOutlined } from "@ant-design/icons";
 import { Spin } from "antd";
+import clsx from "clsx"
+import s from "../../assets/css/app.module.css"
 export default function DefaultLayout() {
   const loadingContext = useSelector(loading);
   const antIcon = <LoadingOutlined style={{ fontSize: 24 }} spin />;
@@ -12,9 +14,9 @@ export default function DefaultLayout() {
   return (
     <>
       <Header />
-      <div className="pt-14 min-h-[calc(100%_-_3.5rem)]">
+      <div className={clsx(s['pt-14']) + " min-h-[calc(100%_-_3.5rem)]"}>
         <Spin
-          className=" fixed"
+          className={clsx(s.fixed)}
           tip={loadingContext.text}
           size="large"
           indicator={antIcon}

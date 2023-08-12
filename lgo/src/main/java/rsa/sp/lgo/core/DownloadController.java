@@ -40,17 +40,17 @@ public class DownloadController {
 
     public void validateFileName(String fileName){
         if(fileName.contains("../") || fileName.contains("..\\")){
-            throw new BadRequestException("Invalid path");
+            throw new BadRequestException("Invalid path","error","fileNotFound");
         }
 
         if(fileName.matches("%2e%2e%2f|%2e%2e/|..%2f|%2e%2e%5c|%2e%2e\\|..%5c|%252e%252e%255c|..%255c|..%255c|..%c1%9c|%00")){
-            throw new BadRequestException("Invalid path");
+            throw new BadRequestException("Invalid path","error","fileNotFound");
         }
 
         int pos = fileName.lastIndexOf('.');
         String extension = fileName.substring(pos+1);
-        if(!extension.toLowerCase().matches("zip|rar|jpg|jpeg|png|bmp|xlsx|doc|xls|pdf|docx|txt")) {
-            throw new  BadRequestException("Invalid path");
+        if(!extension.toLowerCase().matches("zip|rar|jpg|jpeg|png|bmp|xlsx|doc|xls|pdf|docx|txt|html")) {
+            throw new  BadRequestException("Invalid path","error","fileNotFound");
         }
     }
 }

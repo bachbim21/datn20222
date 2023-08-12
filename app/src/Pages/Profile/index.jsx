@@ -26,6 +26,8 @@ import { NavLink } from "react-router-dom";
 import UserService from "../../Service/user.service";
 import NodeService from "../../Service/node.service";
 import { handleError } from "../../utils/error";
+import clsx from "clsx"
+import s from "../../assets/css/app.module.css"
 export default function Profile() {
   const param = useParams();
   const form = useRef();
@@ -175,42 +177,44 @@ export default function Profile() {
   };
   return (
     <>
-      <div className="bg-custom p-3 md:p-5 h-[calc(100vh_-_4em)] flex flex-row gap-4">
-        <nav className="hidden md:inline bg-white flex flex-col p-3 items-center w-44 shadow-2xl rounded drop-shadow-lg">
-          <div className="mb-2 h-16 border-b w-full  border-b-gray-300">
+      <div className={clsx(s['bg-custom'], s['p-3'], s['md:p-5'], s['flex'], s['flex-row'], s['gap-4']) + " min-h-[calc(100vh_-_4em)]"}>
+        <nav className={clsx(s['hidden'], s['md:inline'],s['border'],s['shadow-lg'], s['bg-white'], s['flex'], s['flex-col'], s['p-3'], s['items-center'], s['w-44'], s['rounded'])}>
+          <div className={clsx(s['mb-2'], s['h-16'], s['border-b'], s['w-full'], s['border-b-gray-300'])}>
             <img
               src={user?.avatar ? user.avatar : profile}
               alt="avatar"
               width="60px"
               height="60px"
-              className="aspect-square mx-auto mb-3 border-blue-600 border-2 rounded-full hover:border-blue-400"
+              className={clsx(
+                s['aspect-square'],
+                s['mx-auto'],
+                s['mb-3'],
+                s['border-blue-600'],
+                s['border-2'],
+                s['rounded-full'],
+                s['hover:border-blue-400']
+              )}
             />
           </div>
-          <ul className="w-full">{widgetMenu}</ul>
+          <ul className={s['w-full']}>{widgetMenu}</ul>
         </nav>
-        <div
-          className="bg-white flex-1 p-5 md:p-3  rounded shadow-2xl drop-shadow-lg "
-          style={{ minHeight: "440px" }}>
-          <header className="w-full h-16 pl-2 border-b border-b-gray-300 flex flex-row">
-            <img
-              src={user?.avatar ? user.avatar : profile}
-              alt="avatar"
-              className="md:hidden aspect-square h-14 w-14 border-blue-600 border-2 rounded-full hover:border-blue-400"
-            />
-            <div className="ml-5 md:ml-2">
-              <h3 className="text-base font-bold">{header.title}</h3>
-              <p className="text-sm mt-1">{header.sub}</p>
+        <div className={clsx(s.relative, s['bg-white'], s['flex-1'], s['p-3'], s['rounded'], s.border, s['shadow-lg'])} style={{ minHeight: "440px" }}>
+          <header className={clsx( s['w-full'], s['h-16'], s['pl-2'], s['border-b'], s['border-b-gray-300'], s['flex'], s['flex-row'])}>
+            {/* Avatar */}
+            <div className={clsx(s['ml-5'], s['md:ml-2'])}>
+              <h3 className={clsx(s['text-base'], s['font-bold'])}>{header.title}</h3>
+              <p className={clsx(s['text-sm'], s['mt-1'])}>{header.sub}</p>
             </div>
             {keyActive == "list-project" && (
-              <div className="absolute right-4 -top-2">
+              <div className={clsx(s.absolute, s['right-4'])}>
                 <button
-                  className="text-white block text-center w-full mt-6 py-2 px-6 bg-blue-600 rounded cursor-pointer"
+                  className={clsx(s['text-white'], s['block'], s['text-center'], s['w-full'], s['py-2'], s['px-5'], s['bg-blue-600'], s['rounded'], s['cursor-pointer'])}
                   onClick={showModal}>
                   Dự án mới
                 </button>
               </div>
             )}
-            <div className="absolute right-4 mt-2 md:hidden">
+            <div className={clsx(s['absolute'], s['right-4'], s['mt-2'], s['md:hidden'])}>
               <MenuUnfoldOutlined
                 style={{
                   fontSize: "20px",
@@ -257,49 +261,53 @@ export default function Profile() {
             rules={[{ required: true, message: log.log_required }]}>
             <Input />
           </Form.Item>
-          <div className="gird grid-cols-3 w-full">
+          <div className={s['grid-cols-3']} className={s['w-full']}>
             <p>FE</p>
             <Form.Item
               name="html"
-              className="inline-block w-28"
-              valuePropName="checked">
+              className={clsx(s['inline-block'], s['w-28'])}
+              valuePropName="checked"
+            >
               <Checkbox onChange={handleCheckbox}>HTML</Checkbox>
             </Form.Item>
             <Form.Item
               name="reactjs"
-              className="inline-block w-28"
-              valuePropName="checked">
+              className={clsx(s['inline-block'], s['w-28'])}
+              valuePropName="checked"
+            >
               <Checkbox onChange={handleCheckbox}>ReactJS</Checkbox>
             </Form.Item>
           </div>
-          <div className="gird grid-cols-3">
+          <div className={s['grid-cols-3']}>
             <p>CSS</p>
             <Form.Item
               name="tailwind"
-              className="inline-block w-28"
-              valuePropName="checked">
+              className={clsx(s['inline-block'], s['w-28'])}
+              valuePropName="checked"
+            >
               <Checkbox onChange={handleCheckbox}>Tailwind</Checkbox>
             </Form.Item>
             <Form.Item
               name="bootstrap"
-              className="inline-block w-28"
-              valuePropName="checked">
+              className={clsx(s['inline-block'], s['w-28'])}
+              valuePropName="checked"
+            >
               <Checkbox onChange={handleCheckbox}>Bootstrap</Checkbox>
             </Form.Item>
           </div>
-
           <div className="ant-modal-footer">
-            <Form.Item className="inline-block mb-0 mx-4">
+            <Form.Item className={clsx(s['inline-block'], s['mb-0'], s['mx-4'])}>
               <Button key="back" onClick={handleCancel}>
                 Huỷ
               </Button>
             </Form.Item>
-            <Form.Item className="inline-block mb-0">
+            <Form.Item className={clsx(s['inline-block'], s['mb-0'])}>
               <Button
                 type="primary"
                 htmlType="submit"
-                className="bg-blue-500"
-                onClick={handleOk}>
+                className={clsx(s['bg-blue-500'])}
+                onClick={handleOk}
+              >
                 Tạo
               </Button>
             </Form.Item>

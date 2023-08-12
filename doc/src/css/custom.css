@@ -74,4 +74,18 @@ main[class^='docMainContainer'] img {
 	margin-right: auto;
 	display: block;
 }
+/* Tạo một thanh cuộn CSS với màu nền trong suốt */
+::-webkit-scrollbar {
+	width: 10px; /* Độ rộng của thanh cuộn */
+}
 
+/* Điều chỉnh thanh cuộn nền trong suốt */
+::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0); /* Màu nền trong suốt */
+	border-radius: 10px; /* Bo góc */
+}
+
+/* Điều chỉnh hover của thanh cuộn nền trong suốt */
+::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(0, 0, 0, 0); /* Màu nền trong suốt khi hover */
+}

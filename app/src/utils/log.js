@@ -26,6 +26,7 @@ export const log = {
     notAllow: "Bạn không có quyền truy cập thông tin",
     notFound: "Dữ liệu không tồn tại",
     roleInvalid: "Vai trò không tồn tại",
+    fileNotFound: "File không tồn tại"
   },
 };
 export const status = {

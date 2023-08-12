@@ -25,6 +25,7 @@ public class InitialDataLoader implements
         String resource =System.getProperty("user.dir");
         Common.createDirectory(resource +"/export/");
         Common.createDirectory(resource +"/export/project/");
+        Common.createDirectory(resource +"/export/node/");
     }
 
 }

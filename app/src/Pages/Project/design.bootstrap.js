@@ -1,4 +1,4 @@
-// import "../../assets/css/bootstrap.css"
+import "../../assets/css/bootstrap.css"
 export default function DesignBootstrap({ref}) {
-  return <div ref={ref} ></div>
+  return <div id="wrapper-root"  ></div>
 }

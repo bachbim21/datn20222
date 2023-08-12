@@ -2,44 +2,46 @@ import { createSlice } from "@reduxjs/toolkit";
 const ElementSlice = createSlice({
   name: "element",
   initialState: {
-    domId: null,
+    focusId: null,
     moveId: null,
-    previousId: null,
-    idOver: null,
-    previousIdOver: null,
-    idHover: null,
-    previousIdHover: null,
+    pFocusId: null,
+    overId: null,
+    pOverId: null,
+    hoverId: null,
+    pHoverId: null,
   },
   reducers: {
     SetDomId: (state, actions) => {
-      if (state.domId != actions.payload) {
-        state.previousId = state.domId;
-        state.domId = actions.payload;
-        let previousElement = document.getElementById(state.previousId);
+      if (state.focusId != actions.payload) {
+        state.pFocusId = state.focusId;
+        state.focusId = actions.payload;
+        let previousElement = document.getElementById(state.pFocusId);
         previousElement?.classList.remove("click-border");
 
-        let currentElement = document.getElementById(state.domId);
+        let currentElement = document.getElementById(state.focusId);
         currentElement?.classList.remove("hover-dashed");
         currentElement?.classList.add("click-border");
       } else {
-        let currentElement = document.getElementById(state.domId);
+        let currentElement = document.getElementById(state.focusId);
         currentElement.classList.remove("click-border");
         currentElement.classList.add("hover-dashed");
-        state.domId = null;
-        state.previousId = null;
+        state.focusId = null;
+        state.pFocusId = null;
+
       }
+
     },
     SetOver: (state, actions) => {
-      state.idOver = actions.payload;
-      let currentElement = document.getElementById(state.idOver);
+      state.overId = actions.payload;
+      let currentElement = document.getElementById(state.overId);
       currentElement?.classList.add("over");
     },
     SetHover: (state, actions) => {
-      state.previousIdHover = state.idHover;
-      state.idHover = actions.payload;
-      let previousElement = document.getElementById(state.previousIdHover);
+      state.pHoverId = state.hoverId;
+      state.hoverId = actions.payload;
+      let previousElement = document.getElementById(state.pHoverId);
       previousElement?.classList.remove("hover-dashed");
-      let currentElement = document.getElementById(state.idHover);
+      let currentElement = document.getElementById(state.hoverId);
       currentElement?.classList.add("hover-dashed");
     },
     SetMove: (state, actions) => {

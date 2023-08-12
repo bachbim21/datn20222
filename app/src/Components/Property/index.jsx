@@ -3,14 +3,16 @@ import Text from "./text";
 import Location from "./location";
 import Border from "./border";
 import Codemirror from "./codemirror";
-import { domId } from "../../redux/selector";
+import { focusId } from "../../redux/selector";
 import { useSelector } from "react-redux";
 import { MdDeleteForever } from "react-icons/md";
 import { GiResize } from "react-icons/gi";
 import { Tooltip } from "antd";
 import { useEffect, useState } from "react";
+import clsx from "clsx";
+import s from "../../assets/css/app.module.css"
 export default function Property() {
-  const idDom = useSelector(domId);
+  const idDom = useSelector(focusId);
   const [currentDom, setDom] = useState(document.getElementById(idDom));
   useEffect(() => {
     setDom(document.getElementById(idDom));
@@ -28,7 +30,17 @@ export default function Property() {
   if (idDom != null || idDom != undefined) {
     return (
       <ul
-        className="z-10 bg-custom rounded-l-sm w-11 right-0 fixed shadow-xl shadow-slate-400 bottom-0"
+        className={clsx(
+          s['z-10'],
+          s['bg-custom'],
+          s['rounded-l-sm'],
+          s['w-11'],
+          s['right-0'],
+          s['fixed'],
+          s['shadow-xl'],
+          s['shadow-slate-400'],
+          s['bottom-0']
+        )}
         style={{
           top: "70px",
         }}>
@@ -37,22 +49,47 @@ export default function Property() {
         <Location dom={currentDom} />
         <Border dom={currentDom} />
         <Codemirror dom={currentDom} />
-        <li className="flex items-center justify-center list-none  border rounded m-1 hover:border-blue-600 aspect-square hover:bg-blue-200 bg-gray-200  cursor-pointer">
+        <li
+          className={clsx(
+            s['flex'],
+            s['items-center'],
+            s['justify-center'],
+            s['list-none'],
+            s['border'],
+            s['rounded'],
+            s['m-1'],
+            s['hover:border-blue-600'],
+            s['aspect-square'],
+            s['hover:bg-blue-200'],
+            s['bg-gray-200'],
+            s['cursor-pointer']
+          )}
+        >
           <Tooltip placement="leftTop" title="scale" onClick={handleScale}>
             <GiResize size="25px" />
           </Tooltip>
         </li>
         <li
-          className={`flex items-center justify-center list-none  border rounded m-1 hover:border-blue-600 aspect-square hover:bg-blue-200 bg-gray-200 ${
-            currentDom?.id == "root-page"
-              ? " cursor-not-allowed "
-              : " cursor-pointer"
-          }`}>
+          className={clsx(
+            s['flex'],
+            s['items-center'],
+            s['justify-center'],
+            s['list-none'],
+            s['border'],
+            s['rounded'],
+            s['m-1'],
+            s['hover:border-blue-600'],
+            s['aspect-square'],
+            s['hover:bg-blue-200'],
+            s['bg-gray-200'],
+            currentDom?.id === "root-page" ? s['cursor-not-allowed'] : s['cursor-pointer']
+          )}
+        >
           <Tooltip placement="leftTop" title="delete" onClick={handleDeleteDom}>
             <MdDeleteForever
               size="25px"
               color="red"
-              opacity={currentDom?.id == "root-page" ? "0.5" : "1"}
+              opacity={currentDom?.id === "root-page" ? "0.5" : "1"}
             />
           </Tooltip>
         </li>

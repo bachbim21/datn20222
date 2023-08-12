@@ -9,6 +9,7 @@ import { Dropdown, Space, message, Modal, Button, Input } from "antd";
 import { CiSaveUp1 } from "react-icons/ci";
 import { BsFillShareFill } from "react-icons/bs";
 import { AiOutlineDownload } from "react-icons/ai";
+import { urlApi } from "../../../base.service";
 import {
   node,
   projectIdSelector,
@@ -21,6 +22,8 @@ import ShareService from "../../../Service/share.service";
 import UserService from "../../../Service/user.service";
 import LoadingDetail from "../../Loading&Popup/LoadingDetail";
 import DropDownProfile from "./drodown";
+import clsx from "clsx";
+import s from "../../../assets/css/app.module.css"
 export default function Header() {
   const decodedToken = decode();
   const dispatch = useDispatch();
@@ -94,11 +97,18 @@ export default function Header() {
     },
     {
       key: "dowload",
-      label: <span onClick={showModal}>Tải xuống</span>,
+      label: <span onClick={downLoadFile}>Tải xuống</span>,
       icon: <AiOutlineDownload size="15px" onClick={showModal} />,
     },
   ];
-
+  function downLoadFile() {
+    nodeService.downFile(currentNode?.id).then(res => {
+      const a = document.createElement("a");
+      a.href = urlApi + "/download?filePath=" + res.url;
+      a.download = "download";
+      a.click();
+    })
+  }
   function handleSave() {
     let currentDom = document.getElementById("root-page");
     if (currentDom != null) {
@@ -132,18 +142,18 @@ export default function Header() {
   }
 
   return (
-    <header className="bg-white fixed w-screen flex flex-row items-center justify-between h-14 top-0 drop-shadow-lg shadow-md z-50">
-      <div className="flex items-center mx-5">
+    <header className={clsx(s['bg-white'], s.fixed, s['w-screen'], s.flex, s['flex-row'], s['items-center'], s['justify-between'], s['h-14'], s['top-0'], s['drop-shadow-lg'], s['shadow-md'], s['z-50'])}>
+      <div className={clsx(s.flex, s['items-center'], s['mx-5'])}>
         <NavLink to="/">
-          <img src={logo} alt="" className="h-12 object-cover w-20" />
+          <img src={logo} alt="" className={clsx(s['h-12'], s['object-cover'], s['w-20'])} />
         </NavLink>
 
-        <span className="italic font-sans"></span>
-        <ul className="flex flex-row ml-10 gap-5">
+        <span className={clsx(s.italic, s['font-sans'])}></span>
+        <ul className={clsx(s.hidden, s['md:flex'], s['flex-row'], s['ml-10'], s['gap-5'])}>
           <li>
             <NavLink
               className={({ isActive }) =>
-                isActive ? "text-blue-800" : "hover:text-blue-500"
+                isActive ? 'text-blue-800' : 'hover:text-blue-500'
               }
               to="/"
               end
@@ -151,10 +161,10 @@ export default function Header() {
               <span>Trang chủ</span>
             </NavLink>
           </li>
-          <li className={decodedToken?.user_id ? "" : "hidden"}>
+          <li className={decodedToken?.user_id ? "" : clsx(s.hidden)}>
             <NavLink
               className={({ isActive }) =>
-                isActive ? "text-blue-800" : "hover:text-blue-500"
+                isActive ? 'text-blue-800' : 'hover:text-blue-500'
               }
               to={`profile/${decodedToken?.user_id}/list-project`}
               end
@@ -165,7 +175,7 @@ export default function Header() {
         </ul>
       </div>
       {location != null && location.pathname.includes("/project") && (
-        <div className="-ml-28 px-4 cursor-pointer border bg-white rounded">
+        <div className={clsx(s['-ml-28'], s['px-4'], s['cursor-pointer'], s['border'], s['bg-white'], s['rounded'])}>
           <Dropdown
             placement="bottom"
             menu={{
@@ -182,7 +192,7 @@ export default function Header() {
       ) : (
         <NavLink
           to="/login"
-          className="px-2 py-1 text-white text-sm mx-5 bg-blue-600 rounded">
+          className={clsx(s['px-2'], s['py-1'], s['text-white'], s['text-sm'], s['mx-5'], s['bg-blue-600'], s['rounded'])}>
           Đăng nhập
         </NavLink>
       )}
@@ -198,37 +208,37 @@ export default function Header() {
             Xác nhận
           </Button>,
         ]}>
-        <Space direction="vertical" className="w-full text-base">
+        <Space direction="vertical" className={clsx(s['w-full'], s['text-base'])}>
           <Space>
             <h3>Nhập email người được chia sẻ</h3>
           </Space>
 
           <Space.Compact style={{ width: "100%" }}>
             <Input
-              className="h-10"
+              className={clsx(s['h-10'])}
               value={email}
               onChange={(e) => setEmail(e.target.value.trim())}
               size="large"
               placeholder="email"
               prefix={<MailOutlined />}
             />
-            <Button type="primary" className="h-10" onClick={addEmail}>
+            <Button type="primary" className={clsx(s['h-10'])} onClick={addEmail}>
               Thêm
             </Button>
           </Space.Compact>
-          <div className="w-full">
+          <div className={clsx(s['w-full'])}>
             {isModalOpen.loading ? (
               <LoadingDetail />
             ) : (
               <ul className="mx-4">
                 {emails.map((e) => {
                   return (
-                    <div key={e} className=" flex flex-row items-center">
-                      <li className="list-disc my-2 border text-base px-4 rounded">
+                    <div key={e} className={clsx(s.flex, s['flex-row'], s['items-center'])}>
+                      <li className={clsx(s['list-disc'], s['my-2'], s.border, s['text-base'], s['px-4'], s.rounded)}>
                         {e}
                       </li>
                       <FaWindowClose
-                        className="ml-4 cursor-pointer text-yellow-400"
+                        className={clsx(s['ml-4'], s['cursor-pointer'], s['text-yellow-400'])}
                         onClick={() => {
                           const newEmails = emails.filter(
                             (element) => element !== e

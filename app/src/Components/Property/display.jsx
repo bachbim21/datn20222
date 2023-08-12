@@ -4,7 +4,8 @@ import { BsTextareaResize } from "react-icons/bs";
 import CssService from "../../Service/css.service";
 import { SaveOutlined } from "@ant-design/icons";
 import { handleCheckClass, getClass } from "../../utils/class";
-
+import clsx from "clsx";
+import s from "../../assets/css/app.module.css"
 export default function Display({ dom }) {
   const [open, setOpen] = useState(false);
   const [bgColor, setBgColor] = useState([]);
@@ -72,7 +73,7 @@ export default function Display({ dom }) {
         <b>Size</b>{" "}
       </h3>
       <Space>
-        <span className=" w-11 block ml-3">width</span>
+        <span className={clsx(s['w-11'], s['block'], s['ml-3'])}>width</span>
         <Space.Compact>
           <Input
             defaultValue={size.width}
@@ -94,7 +95,7 @@ export default function Display({ dom }) {
         </Space.Compact>
       </Space>
       <Space>
-        <span className="w-11 block ml-3">height</span>
+        <span className={clsx(s['w-11'], s['block'], s['ml-3'])}>height</span>
         <Space.Compact>
           <Input
             defaultValue={size.height}
@@ -119,7 +120,7 @@ export default function Display({ dom }) {
         <b>Background</b>{" "}
       </h3>
       <Space>
-        <span className=" w-11 block ml-3">color</span>
+        <span className={clsx(s['w-11'], s['block'], s['ml-3'])}>color</span>
         <Select
           showSearch
           style={{
@@ -139,24 +140,23 @@ export default function Display({ dom }) {
   );
 
   return (
-    <li className="relative flex items-center justify-center list-none cursor-pointer border rounded m-1 hover:border-blue-600 aspect-square hover:bg-blue-200 bg-gray-200">
+    <li className={clsx(s['relative'], s['flex'], s['items-center'], s['justify-center'], s['list-none'], s['cursor-pointer'], s['border'], s['rounded'], s['m-1'], s['hover:border-blue-600'], s['aspect-square'], s['hover:bg-blue-200'], s['bg-gray-200'])}>
       <Dropdown
         placement="bottomRight"
-        // menu={{ menu }}
         overlay={menu}
         trigger={["click"]}
         onOpenChange={handleOpenChange}
         open={open}>
         <Tooltip placement="leftTop" title="display">
-          <span onClick={(e) => e.preventDefault()}>
-            <BsTextareaResize
-              size="25px"
-              color="black"
-              style={{
-                width: "100%",
-              }}
-            />
-          </span>
+      <span onClick={(e) => e.preventDefault()}>
+        <BsTextareaResize
+          size="25px"
+          color="black"
+          style={{
+            width: "100%",
+          }}
+        />
+      </span>
         </Tooltip>
       </Dropdown>
     </li>

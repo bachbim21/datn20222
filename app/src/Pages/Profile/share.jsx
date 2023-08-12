@@ -6,9 +6,9 @@ import NodeService from "../../Service/node.service";
 import { message, Pagination, Tooltip } from "antd";
 import TreeFolder from "../../Components/TreeFolder";
 import { DownloadOutlined, EyeOutlined } from "@ant-design/icons";
-import { SetProjectId, SetShowShare } from "../Project/node.slice";
 import { urlApi } from "../../base.service";
-
+import clsx from "clsx"
+import s from "../../assets/css/app.module.css"
 export default function ShareProject() {
   const dispatch = useDispatch();
   const [user, setUser, setKeyActive, setOpenKeys, setHeader] = useOutletContext();
@@ -71,51 +71,49 @@ function getPage(page, pageSize) {
     return `${formattedDay}/${formattedMonth}/${year}`;
   }
   return <>
-    <table className="w-full my-2">
-      <thead className="text-white bg-yellow-400 h-10">
+    <table className={clsx(s['w-full'], s['my-2'])}>
+      <thead className={clsx(s['text-white'], s['bg-yellow-400'], s['h-10'])}>
       <tr className="">
-        <th className="text-left pl-16">Dự án</th>
-        <th className="w-36  hidden mobile:table-cell">Chủ sở hữu</th>
-        <th className="w-36 hidden mobile:table-cell">Ngày cập nhật</th>
+        <th className={clsx(s['text-left'], s['pl-16'])}>Dự án</th>
+        <th className={clsx(s['w-36'], s['hidden'], s['mobile:table-cell'])}>Chủ sở hữu</th>
+        <th className={clsx(s['w-36'], s['hidden'], s['mobile:table-cell'])}>Ngày cập nhật</th>
         <th className="" style={{ width: "70px" }}>Thao tác</th>
       </tr>
       </thead>
       <tbody>
-      {
-        projects && projects.length > 0 && projects.map((p) => {
-          return <tr key={p.id} className="border-b border-gray-300">
-            <td><TreeFolder data={p} view={true}/></td>
-            <td className="hidden mobile:table-cell">{p?.user.email}</td>
-            <td className="text-center hidden mobile:table-cell">{convertMillisecondsToDate(p?.updated)}</td>
-            <td className="text-center">
-              <Tooltip placement="top" title="xem">
-                <Tooltip placement="top" title="tải xuống">
-                <span onClick={()=>download(p.id)}>
-                  <DownloadOutlined className="hover:cursor-pointer hover:bg-blue-200 hover:rounded-full" style={{
-                    color: "gray",
-                    fontSize: "18px",
-                    width: "30px",
-                    height: "30px"
-                  }}
-                  />
-                  </span>
-                </Tooltip>
-                <NavLink to={`/project/${p.id}`}>
-                  <EyeOutlined  className="hover:cursor-pointer hover:bg-blue-200 hover:rounded-full" style={{
-                    color: "green",
-                    fontSize: "18px",
-                    width: "30px",
-                    height: "30px"
-                  }} />
-                </NavLink>
+      {projects && projects.length > 0 && projects.map((p) => (
+        <tr key={p.id} className={clsx(s['border-b'], s['border-gray-300'])}>
+          <td><TreeFolder data={p} view={true}/></td>
+          <td className={clsx(s['hidden'], s['mobile:table-cell'])}>{p?.user.email}</td>
+          <td className={clsx(s['text-center'], s['hidden'], s['mobile:table-cell'])}>{convertMillisecondsToDate(p?.updated)}</td>
+          <td className={clsx(s['text-center'])}>
+              <Tooltip placement="top" title="tải xuống">
+              <span onClick={() => download(p.id)}>
+                <DownloadOutlined className={clsx(s['hover:cursor-pointer'], s['hover:bg-blue-200'], s['hover:rounded-full'])} style={{
+                  color: "gray",
+                  fontSize: "18px",
+                  width: "30px",
+                  height: "30px"
+                }} />
+              </span>
               </Tooltip>
-            </td>
-          </tr>;
-        })
-      }
+            <Tooltip placement="top" title="xem">
+              <NavLink to={`/project/${p.id}`}>
+                <EyeOutlined className={clsx(s['hover:cursor-pointer'], s['hover:bg-blue-200'], s['hover:rounded-full'])} style={{
+                  color: "green",
+                  fontSize: "18px",
+                  width: "30px",
+                  height: "30px"
+                }} />
+              </NavLink>
+            </Tooltip>
+          </td>
+        </tr>
+      ))}
       </tbody>
     </table>
-    <div className="absolute bottom-2 right-1/2 translate-x-1/2"><Pagination simple current={tableConfig.currentPage +1 } total={tableConfig.totalElements} onChange={getPage}/>
+    <div className={clsx(s['absolute'], s['bottom-2'], s['right-1/2'], s['translate-x-1/2'])}>
+      <Pagination simple current={tableConfig.currentPage + 1} total={tableConfig.totalElements} onChange={getPage}/>
     </div>
   </>
 }

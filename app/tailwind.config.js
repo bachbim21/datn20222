@@ -14,7 +14,6 @@ module.exports = {
       aspectRatio: {
         "4/3": "4 / 3",
       },
-      flexBasis: {},
       backgroundColor: {
         custom: "#F8F8F8",
       },
@@ -33,7 +32,7 @@ module.exports = {
       variants: ["lg", "hover", "focus", "lg:hover"],
     },
     {
-      pattern: /rounded-(md|lg|full)/,
+      pattern: /rounded-(md|lg|full|xl|2xl|3xl|t|r|l|b|s|e|ee|ss)/,
       variants: ["lg", "hover", "focus", "lg:hover"],
     },
   ],

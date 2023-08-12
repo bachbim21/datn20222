@@ -1,6 +1,5 @@
 import { useEffect, useRef } from "react";
 import UserService from "../../Service/user.service";
-import { NavLink } from "react-router-dom";
 import { Button, message } from "antd";
 import profile from "../../assets/images/avatar.png";
 import { UploadOutlined } from "@ant-design/icons";
@@ -8,6 +7,8 @@ import { SetUserUpdated } from "../../Components/Layout/layout.slice";
 import { useDispatch } from "react-redux";
 import { useOutletContext } from "react-router-dom";
 import { handleError } from "../../utils/error";
+import clsx from "clsx"
+import s from "../../assets/css/app.module.css"
 export default function Infor() {
   const dispatch = useDispatch();
   const fileInputRef = useRef(null);
@@ -69,10 +70,8 @@ export default function Infor() {
   }
   return (
     <>
-      <article className="flex md:flex-row flex-col">
-        <div
-          className=" grid grid-cols-2 p-5 gap-y-2 h-fit basis-1/2"
-          style={{ maxWidth: "500px" }}>
+      <article className={clsx(s['flex'], s['md:flex-row'], s['flex-col'])}>
+        <div className={clsx(s['grid'], s['grid-cols-2'], s['p-5'], s['gap-y-2'], s['h-fit'], s['basis-1/2'])} style={{ maxWidth: "500px" }}>
           <p className="">Email :</p>
           <p>{user?.email}</p>
           <p className="">Tên :</p>
@@ -80,9 +79,9 @@ export default function Infor() {
           <p className="">Ngày sinh :</p>
           <p>{convertMillisecondsToDate(user?.birthDay)}</p>
         </div>
-        <div className="p-5 flex-1 md:border-l md:border-gray-300 h-full">
+        <div className={clsx(s['p-5'], s['flex-1'], s['md:border-l'], s['md:border-gray-300'], s['h-full'])}>
           <img
-            className="aspect-square mx-auto mb-3 border-blue-600 border-2 rounded-full hover:border-blue-400"
+            className={clsx(s['aspect-square'], s['mx-auto'], s['mb-3'], s['border-blue-600'], s['border-2'], s['rounded-full'], s['hover:border-blue-400'])}
             src={user?.avatar ? user.avatar : profile}
             width="120px"
             height="120px"
@@ -92,13 +91,13 @@ export default function Infor() {
             type="file"
             id="avatar"
             name="avatar"
-            className="p-upImg hidden"
+            className={clsx(s['p-upImg'], s['hidden'])}
             onChange={handleUploadImg}
             accept="image/*"
           />
           <Button
             icon={<UploadOutlined size="50px" />}
-            className="mx-auto my-4 block"
+            className={clsx(s['mx-auto'], s['my-4'], s['block'])}
             type="primary"
             onClick={() => fileInputRef.current.click()}>
             Tải lên

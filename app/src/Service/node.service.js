@@ -37,4 +37,7 @@ export default class NodeService extends BaseApi {
   getRoot(id) {
     return this.get("/node/root/" + id);
   }
+  downFile(id) {
+    return this.get("/node/file/" + id);
+  }
 }

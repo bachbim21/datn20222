@@ -6,21 +6,24 @@ import imageE from "../../assets/images/elements.png";
 import { Input } from "antd";
 import TreeFolder from "../TreeFolder";
 import ElementDefault from "./element-default";
-import { message } from "antd";
 import { decode } from "../../utils/token";
-
+import LoadingDetail from "../Loading&Popup/LoadingDetail";
+import clsx from "clsx";
+import s from "../../assets/css/app.module.css"
 export default function NavbarElement() {
   const [elements, setElements] = useState([]);
   const size = useSelector(sizeWindown);
   const decodedToken = decode();
   const elementService = new ElementService();
+  var init = false;
   function getListElement(param) {
     elementService
-      .getPage(`query=${param}&page=0&size=1000`)
+      .getPage(`query=${param}&page=0&size=1000&sort=tag`)
       .then((response) => {
         if (response.content.length > 0) {
           setElements(response.content);
         }
+        init = true;
       });
   }
   useEffect(() => {
@@ -30,7 +33,7 @@ export default function NavbarElement() {
     let tag = e.target.value;
     let params = "";
     if (tag != null && tag != "") {
-      params = `tag==${tag}`;
+      params = `tag==*${tag}*`;
     }
     getListElement(params);
   }
@@ -38,34 +41,37 @@ export default function NavbarElement() {
   return (
     <div
       id="element"
-      className="fixed w-40 bg-white border-r border-r-gray-300 top-14 left-0 bottom-0"
+      className={clsx(s['fixed'], s['w-40'], s['bg-white'], s['border-r'], s['border-r-gray-300'], s['top-14'], s['left-0'], s['bottom-0'])}
       style={{
         zIndex: 5,
-      }}>
-      <div className="relative h-full">
-        <div className="flex flex-row items-center">
+      }}
+    >
+      <div className={clsx(s['relative'], s['h-full'])}>
+        <div className={clsx(s['flex'], s['flex-row'], s['items-center'])}>
           <img
             src={imageE}
             alt=""
-            className="h-8 object-cover m-3 inline-block"
+            className={clsx(s['h-8'], s['object-cover'], s['m-3'], s['inline-block'])}
           />
-          <h1 className="text-center font-semibold text-xl inline-block">
+          <h1 className={clsx(s['text-center'], s['font-semibold'], s['text-xl'], s['inline-block'])}>
             Element
           </h1>
         </div>
-        <div className="px-4 py-2">
+        <div className={clsx(s['px-4'], s['py-2'])}>
           <Input onChange={searchElement} placeholder="tìm kiếm" />
         </div>
         <nav
           style={{
             height: `calc(${size.height}px - 210px)`,
           }}
-          className="ml-6 flex flex-col items-center gap-y-2 overflow-y-scroll">
+          className={clsx(s['ml-6'], s['flex'], s['flex-col'], s['items-center'], s['gap-y-2'], s['overflow-y-scroll'])}
+        >
           {elements.length > 0 &&
             elements.map((e) => {
               return <ElementDefault key={e.id} data={e} />;
             })}
         </nav>
+        {elements?.length == 0 && !init && <LoadingDetail />}
         {decodedToken ? <TreeFolder /> : null}
       </div>
     </div>

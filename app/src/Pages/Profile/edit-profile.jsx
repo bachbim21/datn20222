@@ -1,14 +1,15 @@
 import { useDispatch } from "react-redux";
-import { useOutletContext, NavLink } from "react-router-dom";
+import { useOutletContext } from "react-router-dom";
 import { Button, Form, Input, message, DatePicker } from "antd";
 import UserService from "../../Service/user.service";
 import profile from "../../assets/images/avatar.png";
 import { LoadingService } from "../../Components/Layout/layout.slice";
 import { log } from "../../utils/log";
 import moment from "moment";
-import { useEffect, useState } from "react";
-import { DoubleRightOutlined, UploadOutlined } from "@ant-design/icons";
+import { useEffect } from "react";
 import { handleError } from "../../utils/error";
+import clsx from "clsx"
+import s from "../../assets/css/app.module.css"
 export default function EditProfile() {
   const dispatch = useDispatch();
   const [user, setUser, setKeyActive, setOpenKeys, setHeader] =
@@ -53,9 +54,9 @@ export default function EditProfile() {
   if (user) {
     return (
       <>
-        <article className="p-5 flex md:flex-row flex-col">
-          <div className="basis-1/2" style={{ maxWidth: "500px" }}>
-            <h1 className="text-base ml-10 mb-5">Các thông tin chỉnh sửa</h1>
+        <article className={clsx(s['p-5'], s['flex'], s['md:flex-row'], s['flex-col'])}>
+          <div className={clsx(s['basis-1/2'])} style={{ maxWidth: "500px" }}>
+            <h1 className={clsx(s['text-base'], s['ml-10'], s['mb-5'])}>Các thông tin chỉnh sửa</h1>
             <Form
               name="update"
               validateTrigger="onSubmit"
@@ -66,23 +67,23 @@ export default function EditProfile() {
               onFinish={onFinish}
               style={{ maxWidth: "500px" }}
               labelCol={{
-                span: 4,
+                span: 6,
               }}
               wrapperCol={{
-                span: 16,
+                span: 14,
               }}
               autoComplete="off">
               <Form.Item
                 label="Tên"
                 name="name"
-                rules={[{ required: true, message: log.log_required }]}>
+                rules={[{ required: true, message: log.error.required }]}>
                 <Input />
               </Form.Item>
 
               <Form.Item
                 label="Ngày sinh"
                 name="birthDay"
-                rules={[{ required: true, message: log.log_required }]}>
+                rules={[{ required: true, message: log.error.required }]}>
                 <DatePicker
                   placeholder="Chọn ngày"
                   format="DD/MM/YYYY"
@@ -95,14 +96,14 @@ export default function EditProfile() {
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="bg-blue-500 w-full flex justify-center mobile:ml-20 md:block mobile:w-fit">
+                  className={clsx(s['bg-blue-500'], s['w-full'], s['flex'], s['justify-center'], s['mobile:ml-20'], s['md:block'], s['mobile:w-fit'])}>
                   Lưu
                 </Button>
               </Form.Item>
             </Form>
           </div>
-          <div className="px-8 md:border-l md:border-gray-300 h-full basis-1/2">
-            <h1 className="text-base ml-10 mb-5">Đổi mật khẩu</h1>
+          <div className={clsx(s['mobile:px-8'], s['md:border-l'], s['md:border-gray-300'], s['h-full'], s['basis-1/2'])}>
+            <h1 className={clsx(s['text-base'], s['ml-10'], s['mb-5'])}>Đổi mật khẩu</h1>
             <Form
               name="update"
               validateTrigger="onSubmit"
@@ -112,36 +113,36 @@ export default function EditProfile() {
               }}
               onFinish={onFinish}
               labelCol={{
-                span: 8,
+                span: 10,
               }}
               wrapperCol={{
-                span: 16,
+                span: 14,
               }}
               autoComplete="off">
               <Form.Item
                 label="Mật khẩu hiện tại"
                 name="password"
-                rules={[{ required: true, message: log.log_required }]}>
+                rules={[{ required: true, message: log.error.required }]}>
                 <Input />
               </Form.Item>
 
               <Form.Item
                 label="Mật khẩu mới"
                 name="newpass"
-                rules={[{ required: true, message: log.log_required }]}>
+                rules={[{ required: true, message: log.error.required }]}>
                 <Input />
               </Form.Item>
               <Form.Item
                 label="Xác nhận mật khẩu"
                 name="newpass"
-                rules={[{ required: true, message: log.log_required }]}>
+                rules={[{ required: true, message: log.error.required }]}>
                 <Input />
               </Form.Item>
               <Form.Item>
                 <Button
                   type="primary"
                   htmlType="submit"
-                  className="bg-blue-500 w-full flex justify-center mobile:ml-36 md:block mobile:w-fit">
+                  className={clsx(s['bg-blue-500'], s['w-full'], s['flex'], s['justify-center'], s['mobile:ml-36'], s['md:block'], s['mobile:w-fit'])}>
                   Đổi
                 </Button>
               </Form.Item>

@@ -14,7 +14,8 @@ import ElementDefault from "../../../Components/Navbar/element-default";
 import { log } from "../../../utils/log";
 import LoadingDetail from "../../../Components/Loading&Popup/LoadingDetail";
 import { EditOutlined } from "@ant-design/icons";
-
+import clsx from "clsx";
+import s from "../../../assets/css/app.module.css"
 export default function ResourceCss() {
   const [setKeyActive, setOpenKeys, setHeader] = useOutletContext();
   const elementService = new CssService();
@@ -114,24 +115,22 @@ export default function ResourceCss() {
   const onFinish = (values) => {};
   const onFinishActive = () => {};
   return (
-    <div className="bg-white w-full  rounded shadow-2xl p-2">
-      <div className=" flex flex-row justify-between">
-        {" "}
-        <h3 className="font-base text-lg">Danh sách CSS</h3>{" "}
+    <div className={clsx(s['bg-white'], s['w-full'], s['rounded'], s['shadow-2xl'], s['p-2'])}>
+      <div className={clsx(s['flex'], s['flex-row'], s['justify-between'])}>
+        <h3 className={clsx(s['font-base'], s['text-lg'])}>Danh sách CSS</h3>
         <div>
-          <Button className="mx-4" danger>
+          <Button className={clsx(s['mx-4'])} danger>
             Xoá
           </Button>
-
           <Button type="primary" onClick={showModal}>
             Tạo mới
           </Button>
         </div>
       </div>
-      <div className="overflow-scroll h-[calc(100vh_-_10.5rem)]">
-        <table className="w-full  my-2 ">
-          <thead className="sticky top-0 z-20">
-            <tr className="text-white bg-yellow-400 h-10">
+      <div className={clsx(s['overflow-scroll']) + ' h-[calc(100vh_-_10.5rem)]'}>
+        <table className={clsx(s['w-full'], s['my-2'])}>
+          <thead className={clsx(s['sticky'], s['top-0'], s['z-20'])}>
+          <tr className={clsx(s['text-white'], s['bg-yellow-400'], s['h-10'])}>
               <th></th>
               <th className="">Thư viện</th>
               <th className="">Class</th>
@@ -188,20 +187,26 @@ export default function ResourceCss() {
                 return (
                   <tr
                     key={element.id}
-                    className="py-3 h-10 border-b border-gray-300">
-                    <td className="text-center">
-                      <Checkbox />
+                    className={clsx(s['py-3'], s['h-10'], s['border-b'], s['border-gray-300'])}>
+                    <td className={clsx(s['text-center'])}  style={{
+                      zIndex: "0 !important"
+                    }}>
+                      <Checkbox  style={{
+                        zIndex: "0 !important"
+                      }}/>
                     </td>
                     <td className="">{element.library}</td>
                     <td className="">{element.classCustom}</td>
                     <td>{element.name}</td>
-                    <td className="text-center">
+                    <td className={clsx(s['text-center'])}>
                       {convertMillisecondsToDate(element.created)}
                     </td>
                     <td>{element.createdBy}</td>
                     <td>
                       <Button
-                        className=" z-0"
+                        style={{
+                          zIndex: "0 !important"
+                        }}
                         type="primary"
                         danger
                         icon={<EditOutlined />}
@@ -215,12 +220,12 @@ export default function ResourceCss() {
           </tbody>
         </table>
         {elements?.length == 0 && (
-          <div className="h-full">
+          <div className={clsx(s['h-full'])}>
             <LoadingDetail />
           </div>
         )}
       </div>
-      <div className="flex justify-center p-2">
+      <div className={clsx(s['flex'], s['justify-center'], s['p-2'])}>
         <Pagination
           simple
           current={tableConfig.currentPage + 1}
@@ -243,7 +248,7 @@ export default function ResourceCss() {
           <Form.Item
             label="Class"
             name="class"
-            rules={[{ required: true, message: log.log_required }]}>
+            rules={[{ required: true, message: log.error.required }]}>
             <Input />
           </Form.Item>
 
@@ -268,16 +273,16 @@ export default function ResourceCss() {
             <Input />
           </Form.Item>
           <div className="ant-modal-footer">
-            <Form.Item className="inline-block mb-0 mx-4">
+            <Form.Item className={clsx(s['inline-block'], s['mb-0'], s['mx-4'])}>
               <Button key="back" onClick={handleCancel}>
                 Huỷ
               </Button>
             </Form.Item>
-            <Form.Item className="inline-block mb-0">
+            <Form.Item className={clsx(s['inline-block'], s['mb-0'])}>
               <Button
                 type="primary"
                 htmlType="submit"
-                className="bg-blue-500"
+                className={clsx(s['bg-blue-500'])}
                 onClick={handleOk}>
                 Tạo
               </Button>
@@ -298,16 +303,16 @@ export default function ResourceCss() {
           onFinish={onFinishActive}
           layout="vertical">
           <div className="ant-modal-footer">
-            <Form.Item className="inline-block mb-0 mx-4">
+            <Form.Item className={clsx(s['inline-block'], s['mb-0'], s['mx-4'])}>
               <Button key="back" onClick={handleCancelActive}>
                 Huỷ
               </Button>
             </Form.Item>
-            <Form.Item className="inline-block mb-0">
+            <Form.Item className={clsx(s['inline-block'], s['mb-0'])}>
               <Button
                 type="primary"
                 htmlType="submit"
-                className="bg-blue-500"
+                className={clsx(s['bg-blue-500'])}
                 onClick={handleOkActive}>
                 Xác nhận
               </Button>

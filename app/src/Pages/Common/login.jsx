@@ -72,7 +72,7 @@ function Login() {
               { required: true, message: log.error.required },
               {
                 type: "email",
-                message: log.error.invalidEmail,
+                message: log.error.emailInvalid,
               },
             ]}>
             <Input placeholder="user@gmail.com" />

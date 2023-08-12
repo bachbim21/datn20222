@@ -1,8 +1,8 @@
-import profile from "../../assets/images/avatar.png";
+
 import { NavLink, useOutletContext } from "react-router-dom";
 import NodeService from "../../Service/node.service";
 import { useEffect, useState } from "react";
-import { Dropdown, Tooltip, message, Pagination } from "antd";
+import { Tooltip, Pagination } from "antd";
 import TreeFolder from "../../Components/TreeFolder";
 import {
   DeleteOutlined,
@@ -14,7 +14,8 @@ import { useDispatch } from "react-redux";
 import { SetProjectId, SetShowShare } from "../Project/node.slice";
 import { urlApi } from "../../base.service";
 import { handleError } from "../../utils/error";
-
+import clsx from "clsx"
+import s from "../../assets/css/app.module.css"
 export default function ListProject() {
   const dispatch = useDispatch();
   const [user, setUser, setKeyActive, setOpenKeys, setHeader] =
@@ -78,7 +79,6 @@ export default function ListProject() {
   }
   function download(id) {
     nodeService.createZip(id).then((res) => {
-      console.log(res);
       const a = document.createElement("a");
       a.href = urlApi + "/download?filePath=" + res.url;
       a.download = "download";
@@ -88,51 +88,50 @@ export default function ListProject() {
 
   return (
     <>
-      <table className="w-full my-2">
-        <thead className="text-white bg-yellow-400 h-10">
-          <tr className="">
-            <th className="text-left pl-16">Dự án</th>
-            <th className="w-36 hidden mobile:table-cell">Ngày tạo</th>
-            <th className="w-36 hidden mobile:table-cell">Ngày cập nhật</th>
-            <th className="" style={{ width: "150px" }}>
-              Thao tác
-            </th>
-          </tr>
+      <table className={clsx(s['w-full'], s['my-2'])}>
+        <thead className={clsx(s['text-white'], s['bg-yellow-400'], s['h-10'])}>
+        <tr className="">
+          <th className={clsx(s['text-left'], s['pl-16'])}>Dự án</th>
+          <th className={clsx(s['w-36'], s['hidden'], s['mobile:table-cell'])}>Ngày tạo</th>
+          <th className={clsx(s['w-36'], s['hidden'], s['mobile:table-cell'])}>Ngày cập nhật</th>
+          <th className="" style={{ width: "150px" }}>
+            Thao tác
+          </th>
+        </tr>
         </thead>
         <tbody>
-          {projects &&
-            projects.length > 0 &&
-            projects.map((p) => {
-              return (
-                <tr key={p.id} className="border-b border-gray-300">
-                  <td>
-                    <TreeFolder data={p} view={false} />
-                  </td>
-                  <td className="text-center hidden mobile:table-cell">
-                    {convertMillisecondsToDate(p?.created)}
-                  </td>
-                  <td className="text-center hidden mobile:table-cell">
-                    {convertMillisecondsToDate(p?.updated)}
-                  </td>
-                  <td className="text-center">
-                    <Tooltip placement="top" title="chỉnh sửa">
-                      <NavLink to={`/project/${p.id}`}>
-                        <EditOutlined
-                          className="hover:cursor-pointer hover:bg-blue-200 hover:rounded-full"
-                          style={{
-                            color: "green",
-                            fontSize: "18px",
-                            width: "30px",
-                            height: "30px",
-                          }}
-                        />
-                      </NavLink>
-                    </Tooltip>
-
-                    <Tooltip placement="top" title="tải xuống">
+        {projects &&
+          projects.length > 0 &&
+          projects.map((p) => {
+            return (
+              <tr key={p.id} className={clsx(s['border-b'], s['border-gray-300'])}>
+                <td>
+                  <TreeFolder data={p} view={false} />
+                </td>
+                <td className={clsx(s['text-center'], s['hidden'], s['mobile:table-cell'])}>
+                  {convertMillisecondsToDate(p?.created)}
+                </td>
+                <td className={clsx(s['text-center'], s['hidden'], s['mobile:table-cell'])}>
+                  {convertMillisecondsToDate(p?.updated)}
+                </td>
+                <td className={clsx(s['text-center'])}>
+                  <Tooltip placement="top" title="chỉnh sửa">
+                    <NavLink to={`/project/${p.id}`}>
+                      <EditOutlined
+                        className={clsx(s['hover:cursor-pointer'], s['hover:bg-blue-200'], s['hover:rounded-full'])}
+                        style={{
+                          color: "green",
+                          fontSize: "18px",
+                          width: "30px",
+                          height: "30px",
+                        }}
+                      />
+                    </NavLink>
+                  </Tooltip>
+                  <Tooltip placement="top" title="tải xuống">
                       <span onClick={() => download(p.id)}>
                         <DownloadOutlined
-                          className="hover:cursor-pointer hover:bg-blue-200 hover:rounded-full"
+                          className={clsx(s['hover:cursor-pointer'], s['hover:bg-blue-200'], s['hover:rounded-full'])}
                           style={{
                             color: "gray",
                             fontSize: "18px",
@@ -141,42 +140,42 @@ export default function ListProject() {
                           }}
                         />
                       </span>
-                    </Tooltip>
-                    <Tooltip placement="top" title="chia sẻ">
-                      <ShareAltOutlined
-                        className="hover:cursor-pointer hover:bg-blue-200 hover:rounded-full"
+                  </Tooltip>
+                  <Tooltip placement="top" title="chia sẻ">
+                    <ShareAltOutlined
+                      className={clsx(s['hover:cursor-pointer'], s['hover:bg-blue-200'], s['hover:rounded-full'])}
+                      style={{
+                        color: "indigo",
+                        fontSize: "18px",
+                        width: "30px",
+                        height: "30px",
+                      }}
+                      onClick={() => {
+                        dispatch(SetShowShare(true));
+                        dispatch(SetProjectId(p.id));
+                      }}
+                    />
+                  </Tooltip>
+                  <Tooltip placement="top" title="xoá">
+                    <NavLink to={`/project/${p.id}`}>
+                      <DeleteOutlined
+                        className={clsx(s['hover:cursor-pointer'], s['hover:bg-blue-200'], s['hover:rounded-full'])}
                         style={{
-                          color: "indigo",
+                          color: "red",
                           fontSize: "18px",
                           width: "30px",
                           height: "30px",
                         }}
-                        onClick={() => {
-                          dispatch(SetShowShare(true));
-                          dispatch(SetProjectId(p.id));
-                        }}
                       />
-                    </Tooltip>
-                    <Tooltip placement="top" title="xoá">
-                      <NavLink to={`/project/${p.id}`}>
-                        <DeleteOutlined
-                          className="mx-auto hover:cursor-pointer hover:bg-blue-200 hover:rounded-full"
-                          style={{
-                            color: "red",
-                            fontSize: "18px",
-                            width: "30px",
-                            height: "30px",
-                          }}
-                        />
-                      </NavLink>
-                    </Tooltip>
-                  </td>
-                </tr>
-              );
-            })}
+                    </NavLink>
+                  </Tooltip>
+                </td>
+              </tr>
+            );
+          })}
         </tbody>
       </table>
-      <div className="absolute bottom-2 right-1/2 translate-x-1/2">
+      <div className={clsx(s['absolute'], s['bottom-2'], s['right-1/2'], s['translate-x-1/2'])}>
         <Pagination
           simple
           current={tableConfig.currentPage + 1}
@@ -184,6 +183,6 @@ export default function ListProject() {
           onChange={getPage}
         />
       </div>
-    </>
+      </>
   );
 }
