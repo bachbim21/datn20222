@@ -8,7 +8,9 @@ import s from "../../assets/css/app.module.css"
 import { SaveOutlined } from "@ant-design/icons";
 export default function Location({ dom }) {
   const [open, setOpen] = useState(false);
-  const cssService = new CssService();
+  useEffect(()=> {
+
+  },[dom?.id])
   const [location, setLocation] = useState({
     top: null,
     left: null,

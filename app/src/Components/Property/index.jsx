@@ -6,15 +6,17 @@ import Codemirror from "./codemirror";
 import { focusId } from "../../redux/selector";
 import { useSelector } from "react-redux";
 import { MdDeleteForever } from "react-icons/md";
+import {BiImageAdd} from "react-icons/bi"
 import { GiResize } from "react-icons/gi";
 import { Tooltip } from "antd";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import clsx from "clsx";
 import s from "../../assets/css/app.module.css";
 import CssService from "../../Service/css.service";
 
 export default function Property({ data }) {
   const idDom = useSelector(focusId);
+  const refImg = useRef()
   const cssService = new CssService();
   let library = data?.tech?.cssFrameWork;
   const [textColor, setTextColor] = useState([]);
@@ -30,6 +32,7 @@ export default function Property({ data }) {
   const [currentDom, setDom] = useState(document.getElementById(idDom));
   useEffect(() => {
     setDom(document.getElementById(idDom));
+    console.log(idDom);
   }, [idDom]);
 
   useEffect(() => {
@@ -83,6 +86,25 @@ export default function Property({ data }) {
     rate = (window.innerWidth - 220) / parseInt(rootDom.style.width);
     rootDom.style.transform = `scale(${rate.toFixed(2)})`;
   }
+  function handleAddImg() {
+    const imageInput = document.getElementById('imageInput');
+    imageInput.click()
+    imageInput.removeEventListener('change', imgToBase64);
+    imageInput.addEventListener('change', imgToBase64);
+  }
+  function imgToBase64(event) {
+    const selectedImage = event.target.files[0];
+    if (selectedImage && selectedImage.type.startsWith('image/')) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const base64Image = e.target.result;
+        currentDom.src = base64Image;
+      };
+      reader.readAsDataURL(selectedImage);
+    }
+    const imageInput = document.getElementById('imageInput');
+    imageInput.removeEventListener('change', imgToBase64);
+  }
 
   if (idDom != null || idDom != undefined) {
     return (
@@ -126,6 +148,28 @@ export default function Property({ data }) {
             <GiResize size="25px" />
           </Tooltip>
         </li>
+        {(currentDom?.tagName =='img' || currentDom?.tagName =='IMG') && <li
+          className={clsx(
+            s["flex"],
+            s["items-center"],
+            s["justify-center"],
+            s["list-none"],
+            s["border"],
+            s["rounded"],
+            s["m-1"],
+            s["hover:border-blue-600"],
+            s["aspect-square"],
+            s["hover:bg-blue-200"],
+            s["bg-gray-200"],
+            s["cursor-pointer"]
+          )}
+        >
+          <Tooltip placement="leftTop" title="image" onClick={handleAddImg}>
+            <BiImageAdd
+              size="25px"
+            />
+          </Tooltip>
+        </li>}
         <li
           className={clsx(
             s["flex"],

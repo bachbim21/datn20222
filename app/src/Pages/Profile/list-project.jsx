@@ -2,7 +2,7 @@
 import { NavLink, useOutletContext } from "react-router-dom";
 import NodeService from "../../Service/node.service";
 import { useEffect, useState } from "react";
-import { Tooltip, Pagination } from "antd";
+import { Tooltip, Pagination, Button, Modal, message } from "antd";
 import TreeFolder from "../../Components/TreeFolder";
 import {
   DeleteOutlined,
@@ -24,8 +24,13 @@ export default function ListProject() {
     currentPage: 0,
     totalElements: null,
   });
+  const [isModalOpen, setIsModalOpen] = useState({
+    open: false,
+    loading: false,
+  });
   const nodeService = new NodeService();
   const [projects, setProject] = useState([]);
+  const [isDelete, setIsDelete] = useState(null);
   useEffect(() => {
     setKeyActive(["list-project"]);
     setOpenKeys(["project"]);
@@ -64,7 +69,18 @@ export default function ListProject() {
         handleError(e);
       });
   }
-
+  function handleOpenModal() {
+    setIsModalOpen({
+      open: true,
+      loading: false,
+    });
+  }
+  const handleCancel = () => {
+    setIsModalOpen({
+      open: false,
+      loading: false,
+    });
+  }
   function convertMillisecondsToDate(milliseconds) {
     if (milliseconds == null) return;
     const date = new Date(milliseconds);
@@ -85,6 +101,18 @@ export default function ListProject() {
       a.click();
     });
   }
+  function handleDelete() {
+    nodeService
+      .delete(isDelete)
+      .then(() => {
+        message.success("Thành công!");
+        getPage(0)
+      })
+      .catch((e) => {
+        handleError(e)
+      });
+  }
+
 
   return (
     <>
@@ -157,8 +185,8 @@ export default function ListProject() {
                     />
                   </Tooltip>
                   <Tooltip placement="top" title="xoá">
-                    <NavLink to={`/project/${p.id}`}>
                       <DeleteOutlined
+                        onClick={() => {setIsDelete(p.id)}}
                         className={clsx(s['hover:cursor-pointer'], s['hover:bg-blue-200'], s['hover:rounded-full'])}
                         style={{
                           color: "red",
@@ -167,7 +195,6 @@ export default function ListProject() {
                           height: "30px",
                         }}
                       />
-                    </NavLink>
                   </Tooltip>
                 </td>
               </tr>
@@ -183,6 +210,21 @@ export default function ListProject() {
           onChange={getPage}
         />
       </div>
+      <Modal
+        title="Xác nhận hành động xoá"
+        open={isModalOpen.open}
+        onCancel={handleCancel}
+        footer={[
+          <Button key="back" onClick={handleCancel}>
+            Huỷ
+          </Button>,
+          <Button
+            key="submit"
+            type="primary"
+            onClick={() => handleDelete()}>
+            Xác nhận
+          </Button>,
+        ]}></Modal>
       </>
   );
 }

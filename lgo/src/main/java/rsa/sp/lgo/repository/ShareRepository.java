@@ -15,4 +15,5 @@ import java.util.Set;
 public interface ShareRepository extends CustomJpaRepository<Share, Long> {
     Share findByUserAndNode(User user, Node node);
     List<Share> findAllByListReceiverContaining(Long id);
+    Share findByNode(Node node);
 }

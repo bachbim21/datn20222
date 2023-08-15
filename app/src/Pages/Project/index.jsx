@@ -185,7 +185,11 @@ export default function Project() {
   const onFinish = (values) => {
     let rootDom = document.createElement("div");
     rootDom.id = "root-page";
-    rootDom.classList.add("bg-gray-300");
+    if(root.tech.cssFrameWork='tailwind'){
+      rootDom.classList.add("bg-gray-300");
+    }else {
+      rootDom.classList.add("bg-secondary");
+    }
     rootDom.style.width = values.width + "px";
     rootDom.style.height = values.height + "px";
     rootDom.style.display = "block";
@@ -348,6 +352,10 @@ export default function Project() {
           )}
       </div>
       <Property data={root}/>
+      <input style={{
+        position: "absolute",
+        bottom: "-50px"
+      }} type="file" id="imageInput" accept="image/*"/>
     </div>
 
   );

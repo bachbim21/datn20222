@@ -341,35 +341,37 @@ function setLocation(element, parent, rateScale) {
 function setSize(element) {
   switch (element.tagName.toLowerCase()) {
     case "div":
-        return new CustomElement(element,"100%", "50px", "inline-block", null, "bg-blue-600 text-white node");
+        return new CustomElement(element,"100%", "50px", "inline-block", null, library=='tailwind' ? "bg-blue-600 text-white node" : "bg-primary text-white node");
     case "h1":
-      return new CustomElement(element,"200px", "30px", "inline-block", "Heading 1", "text-2xl text-black node");
+      return new CustomElement(element,"200px", "30px", "inline-block", "Heading 1", library=='tailwind' ? "text-2xl text-black node" : "fs1 text-black node");
     case "h2":
-      return new CustomElement(element,"180px", "25px", "inline-block", "Heading 2", "text-xl text-black node");
+      return new CustomElement(element,"180px", "25px", "inline-block", "Heading 2", library=='tailwind' ? "text-xl text-black node" : "fs2 text-black node");
     case "h3":
-      return new CustomElement(element,"150px", "20px", "inline-block", "Heading 3", "text-lg text-black node");
+      return new CustomElement(element,"150px", "20px", "inline-block", "Heading 3", library=='tailwind' ? "text-lg text-black node" : "fs3 text-black node");
     case "h4":
-      return new CustomElement(element,"120px", "20px", "inline-block", "Heading 4", "text-base text-black node");
+      return new CustomElement(element,"120px", "20px", "inline-block", "Heading 4", library=='tailwind' ? "text-base text-black node" : "fs4 text-black node");
     case "h5":
-      return new CustomElement(element,"100px", "20px", "inline-block", "Heading 5", "text-sm text-black node");
+      return new CustomElement(element,"100px", "20px", "inline-block", "Heading 5", library=='tailwind' ? "text-sm text-black node" : "fs5 text-black node");
     case "button":
-      return new CustomElement(element,"100px", "20px", "inline-block", "Button", "text-xs text-white bg-blue-500 rounded node");
+      return new CustomElement(element,"100px", "20px", "inline-block", "Button", library=='tailwind' ? "text-xs text-white bg-blue-500 rounded node" : "text-white rounded bg-primary node");
     case "input":
-      return new CustomElement(element,"100px", "20px", "inline-block", null, "border border-gray-900 node");
+      return new CustomElement(element,"100px", "20px", "inline-block", null, library=='tailwind' ? "border border-gray-900 node" : "border border-dark node");
     case "p":
-      return new CustomElement(element,"100px", "20px", "inline-block", "Text", "border border-gray-900 text-black node");
+      return new CustomElement(element,"100px", "20px", "inline-block", "Text", library=='tailwind' ? "border border-gray-900 text-black node" : "border border-dark text-black node");
     case "a":
-      return new CustomElement(element,"50px", "20px", "inline-block", "Link","bg-blue-600 text-black node");
+      return new CustomElement(element,"50px", "20px", "inline-block", "Link",library=='tailwind' ? "bg-blue-600 text-black node" : "bg-primary text-black node");
     case "label":
-      return new CustomElement(element,"100px", "20px", "inline-block", "Text", "border border-gray-900 text-black node");
+      return new CustomElement(element,"100px", "20px", "inline-block", "Text", library=='tailwind' ? "border border-gray-900 text-black node" : "border border-dark text-black node");
     case "li":
-      return new CustomElement(element,"100px", "20px", "inline-block", "Text", "border border-gray-900 text-black node");
+      return new CustomElement(element,"100px", "20px", "inline-block", "Text", library=='tailwind' ? "border border-gray-900 text-black node" : "border border-dark text-black node");
     case "ul":
-      return new CustomElement(element,"100px", "20px", "inline-block", "Text", "border border-gray-900 text-black node");
+      return new CustomElement(element,"100px", "20px", "inline-block", "Text", library=='tailwind' ? "border border-gray-900 text-black node" : "border border-dark text-black node");
     case "code":
-      return new CustomElement(element,"400px", "100px", "inline-block", "Code", "border border-gray-900 text-black node");
-    default:
-      return new CustomElement(element,"100px", "20px", "inline-block",null, "border border-gray-900 node bg-blue-600");
+      return new CustomElement(element,"400px", "100px", "inline-block", "Code", library=='tailwind' ? "border border-gray-900 text-black node" : "border border-dark text-black node");
+    case "img":
+      return new CustomElement(element,"50px", "50px", "inline-block", null, "node");
+      default:
+      return new CustomElement(element,"100px", "20px", "inline-block",null, library=='tailwind' ? "border border-gray-900 bg-blue-600  text-black node" : "border bg-primary border-dark text-black node");
   }
 }
 

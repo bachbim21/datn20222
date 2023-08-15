@@ -16,7 +16,9 @@ export default function Display({ dom, bgColor }) {
     height: dom?.offsetHeight,
     display: dom?.style.display,
   });
-  const cssService = new CssService();
+  useEffect(()=> {
+
+  },[dom?.id])
   const handleOpenChange = (flag) => {
     setOpen(flag);
   };

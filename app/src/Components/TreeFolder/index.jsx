@@ -27,6 +27,8 @@ import {
 import { decode } from "../../utils/token";
 import clsx from "clsx";
 import s from "../../assets/css/app.module.css"
+import { handleError } from "../../utils/error";
+import { redirect } from "react-router-dom";
 
 const { DirectoryTree } = Tree;
 export default function TreeFolder({ data, view }) {
@@ -57,7 +59,10 @@ export default function TreeFolder({ data, view }) {
     nodeService.getOne(pId).then((response) => {
       setTreeData([response]);
       dispatch(SetProjectId(id));
-    });
+    }).catch(e => {
+      // handleError(e)
+      return redirect("/");
+    })
   }
 
   useEffect(() => {
@@ -206,9 +211,17 @@ export default function TreeFolder({ data, view }) {
       newLoadings[index] = true;
       return newLoadings;
     });
+    if(treeData[0]?.id == rightSelected.id) {
+      message.error("Không cho phép xoá thư mục gốc trong khi chỉnh sửa")
+      return
+    }
     nodeService
       .delete(rightSelected.id)
       .then(() => {
+        setIsModalOpen({
+          open: false,
+          loading: false,
+        });
         getProject();
         setLoadings((prevLoadings) => {
           const newLoadings = [...prevLoadings];
@@ -217,7 +230,8 @@ export default function TreeFolder({ data, view }) {
         });
         message.success("Thành công!");
       })
-      .catch(() => {
+      .catch((e) => {
+        handleError(e)
         setLoadings((prevLoadings) => {
           const newLoadings = [...prevLoadings];
           newLoadings[index] = false;

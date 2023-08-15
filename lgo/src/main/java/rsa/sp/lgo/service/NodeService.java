@@ -129,7 +129,9 @@ public class NodeService extends CrudService<Node, Long> {
     @Override
     public Boolean checkGet(Node o) {
         Long userID = SecurityUtils.getCurrentUserId();
-        if(userID != o.getUser().getId()) {
+        if(o == null) return false;
+        Share share = shareRepository.findByNode(o);
+        if(userID != o.getUser().getId() && share !=null && !share.getListReceiverIds().contains(userID)) {
             return false;
         }
         return true;
@@ -139,6 +141,7 @@ public class NodeService extends CrudService<Node, Long> {
     @Override
     public ResponseEntity get(Long aLong) {
         Node node = simpleGet(aLong);
+        if(node.getParentId()==0 && !checkGet(node)) throw new BadRequestException("Not Allow","error","notAllow");
         setReference(node);
         return super.get(aLong);
     }
@@ -165,6 +168,7 @@ public class NodeService extends CrudService<Node, Long> {
          */
         if(node.getParentId() == 0) {
             Node parent = simpleGet(node.getParentId());
+            if(parent== null) return;
             parent.setNumberChild(parent.getNumberChild() - 1);
             beforeUpdate(parent);
             nodeRepository.save(parent);
