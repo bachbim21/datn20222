@@ -5,12 +5,9 @@ import CssService from "../../Service/css.service";
 import { getClass, handleCheckClass } from "../../utils/class";
 import clsx from "clsx";
 import s from "../../assets/css/app.module.css"
-export default function Border({ dom }) {
+export default function Border({ dom, borderWidth, borderRadius, borderColor, borderStyle }) {
   const [open, setOpen] = useState(false);
-  const [borderWidth, setBorderWidth] = useState([]);
-  const [borderRadius, setBorderRadius] = useState([]);
-  const [borderColor, setBorderColor] = useState([]);
-  const [borderStyle, setBorderStyle] = useState([]);
+
   const cssService = new CssService();
   const handleOpenChange = (flag) => {
     setOpen(flag);
@@ -18,24 +15,6 @@ export default function Border({ dom }) {
   useEffect(() => {
     setOpen(false);
   }, [dom?.id]);
-  useEffect(() => {
-    var param1 = "query=name==border-width;library==tailwind&page=0&size=1000";
-    cssService.getPage(param1).then((res) => {
-      setBorderWidth(res.content);
-    });
-    var param2 = "query=name==border-radius;library==tailwind&page=0&size=1000";
-    cssService.getPage(param2).then((res) => {
-      setBorderRadius(res.content);
-    });
-    var param3 = "query=name==border-color;library==tailwind&page=0&size=1000";
-    cssService.getPage(param3).then((res) => {
-      setBorderColor(res.content);
-    });
-    var param3 = "query=name==border-style;library==tailwind&page=0&size=1000";
-    cssService.getPage(param3).then((res) => {
-      setBorderStyle(res.content);
-    });
-  }, []);
   const handleChangeWidth = (value) => {
     handleCheckClass(dom, borderWidth);
     dom.classList.add(value);

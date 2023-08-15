@@ -1,22 +1,19 @@
-import { Dropdown, Space, Select, Tooltip } from "antd";
+import { Dropdown, Space, Select, Tooltip, Input, Button } from "antd";
 import { useEffect, useState } from "react";
 import { MdMyLocation } from "react-icons/md";
 import CssService from "../../Service/css.service";
 import { getClass, handleCheckClass } from "../../utils/class";
 import clsx from "clsx";
 import s from "../../assets/css/app.module.css"
+import { SaveOutlined } from "@ant-design/icons";
 export default function Location({ dom }) {
   const [open, setOpen] = useState(false);
-  const [marginTop, setMarginTop] = useState([]);
-  const [marginBottom, setMarginBottom] = useState([]);
-  const [marginLeft, setMarginLeft] = useState([]);
-  const [marginRight, setMarginRight] = useState([]);
   const cssService = new CssService();
-  const [defaultValue, setDefault] = useState({
-    top: [],
-    left: [],
-    right: [],
-    bottom: [],
+  const [location, setLocation] = useState({
+    top: null,
+    left: null,
+    right: null,
+    bottom: null,
   });
   const handleOpenChange = (flag) => {
     setOpen(flag);
@@ -25,49 +22,15 @@ export default function Location({ dom }) {
     setOpen(false);
     setTimeout(() => {
       if (dom?.id) {
-        setDefault({
-          top: getClass(dom, marginTop),
-          left: getClass(dom, marginLeft),
-          right: getClass(dom, marginRight),
-          bottom: getClass(dom, marginBottom),
+        setLocation({
+          top: dom?.offsetTop,
+          left: dom?.offsetLeft,
+          right: dom?.offsetRight,
+          bottom: dom?.offsetBottom,
         });
       }
     }, 200);
   }, [dom?.id]);
-  useEffect(() => {
-    var param1 = "query=name==margin-top;library==tailwind&page=0&size=1000";
-    cssService.getPage(param1).then((res) => {
-      setMarginTop(res.content);
-    });
-    var param2 = "query=name==margin-bottom;library==tailwind&page=0&size=1000";
-    cssService.getPage(param2).then((res) => {
-      setMarginBottom(res.content);
-    });
-    var param3 = "query=name==margin-left;library==tailwind&page=0&size=1000";
-    cssService.getPage(param3).then((res) => {
-      setMarginLeft(res.content);
-    });
-    var param3 = "query=name==margin-right;library==tailwind&page=0&size=1000";
-    cssService.getPage(param3).then((res) => {
-      setMarginRight(res.content);
-    });
-  }, []);
-  const handleChangeTop = (value) => {
-    handleCheckClass(dom, marginTop);
-    dom.classList.add(value);
-  };
-  const handleChangeBottom = (value) => {
-    handleCheckClass(dom, marginBottom);
-    dom.classList.add(value);
-  };
-  const handleChangeLeft = (value) => {
-    handleCheckClass(dom, marginLeft);
-    dom.classList.add(value);
-  };
-  const handleChangeRight = (value) => {
-    handleCheckClass(dom, marginRight);
-    dom.classList.add(value);
-  };
   const fieldNames = {
     value: "classCustom", // Tên trường dùng làm value
     label: "classCustom", // Tên trường dùng làm label
@@ -90,67 +53,90 @@ export default function Location({ dom }) {
       </h3>
       <Space>
         <span className={clsx(s['w-11'], s['block'], s['ml-3'])}>top</span>
-        <Select
-          showSearch
-          style={{
-            width: "130px",
-          }}
-          defaultValue={defaultValue.top}
-          placement="bottomLeft"
-          placeholder="Select"
-          onChange={handleChangeTop}
-          optionFilterProp="classCustom"
-          fieldNames={fieldNames}
-          options={marginTop}
-        />
+        <Space.Compact>
+          <Input
+            defaultValue={location.top}
+            onChange={(e) => {
+              setLocation({ ...location, top: e.target.value + "px" });
+            }}
+            suffix="px"
+          />
+          <Button
+            type="primary"
+            // size="small"
+            style={{ backgroundColor: "#1677ff" }}
+            icon={<SaveOutlined />}
+            onClick={() => {
+              dom.id == "root-page"
+                ? dom.style.top = '0px'
+                : (dom.style.top = location.top);
+            }}></Button>
+        </Space.Compact>
       </Space>
       <Space>
         <span className={clsx(s['w-11'], s['block'], s['ml-3'])}>bottom</span>
-        <Select
-          showSearch
-          style={{
-            width: "130px",
-          }}
-          defaultValue={defaultValue.bottom}
-          placement="bottomLeft"
-          placeholder="Select"
-          onChange={handleChangeBottom}
-          optionFilterProp="classCustom"
-          fieldNames={fieldNames}
-          options={marginBottom}
-        />
+        <Space.Compact>
+          <Input
+            defaultValue={location.bottom}
+            onChange={(e) => {
+              setLocation({ ...location, bottom: e.target.value + "px" });
+            }}
+            suffix="px"
+          />
+          <Button
+            type="primary"
+            // size="small"
+            style={{ backgroundColor: "#1677ff" }}
+            icon={<SaveOutlined />}
+            onClick={() => {
+              dom.id == "root-page"
+                ? dom.style.bottom = '0px'
+                : (dom.style.bottom = location.bottom);
+            }}></Button>
+        </Space.Compact>
       </Space>
       <Space>
         <span className={clsx(s['w-11'], s['block'], s['ml-3'])}>left</span>
-        <Select
-          showSearch
-          style={{
-            width: "130px",
-          }}
-          defaultValue={defaultValue.left}
-          placement="bottomLeft"
-          placeholder="Select"
-          onChange={handleChangeLeft}
-          optionFilterProp="classCustom"
-          fieldNames={fieldNames}
-          options={marginLeft}
-        />
+        <Space.Compact>
+          <Input
+            defaultValue={location.left}
+            onChange={(e) => {
+              setLocation({ ...location, left: e.target.value + "px" });
+            }}
+            suffix="px"
+          />
+          <Button
+            type="primary"
+            // size="small"
+            style={{ backgroundColor: "#1677ff" }}
+            icon={<SaveOutlined />}
+            onClick={() => {
+              dom.id == "root-page"
+                ? dom.style.left = '0px'
+                : (dom.style.left = location.left);
+            }}></Button>
+        </Space.Compact>
       </Space>
       <Space>
         <span className={clsx(s['w-11'], s['block'], s['ml-3'])}>right</span>
-        <Select
-          showSearch
-          style={{
-            width: "130px",
-          }}
-          defaultValue={defaultValue.right}
-          placement="bottomLeft"
-          placeholder="Select"
-          onChange={handleChangeRight}
-          optionFilterProp="classCustom"
-          fieldNames={fieldNames}
-          options={marginRight}
-        />
+        <Space.Compact>
+          <Input
+            defaultValue={location.right}
+            onChange={(e) => {
+              setLocation({ ...location, right: e.target.value + "px" });
+            }}
+            suffix="px"
+          />
+          <Button
+            type="primary"
+            // size="small"
+            style={{ backgroundColor: "#1677ff" }}
+            icon={<SaveOutlined />}
+            onClick={() => {
+              dom.id == "root-page" ? dom.style.right = '0px'
+                : (dom.style.right = location.right);
+            }}></Button>
+        </Space.Compact>
       </Space>
     </Space>
   );

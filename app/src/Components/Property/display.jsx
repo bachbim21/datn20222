@@ -6,9 +6,8 @@ import { SaveOutlined } from "@ant-design/icons";
 import { handleCheckClass, getClass } from "../../utils/class";
 import clsx from "clsx";
 import s from "../../assets/css/app.module.css"
-export default function Display({ dom }) {
+export default function Display({ dom, bgColor }) {
   const [open, setOpen] = useState(false);
-  const [bgColor, setBgColor] = useState([]);
   const [defaultValue, setDefault] = useState({
     backgroundColor: [],
   });
@@ -21,13 +20,6 @@ export default function Display({ dom }) {
   const handleOpenChange = (flag) => {
     setOpen(flag);
   };
-  useEffect(() => {
-    var param =
-      "query=name==background-color;library==tailwind&page=0&size=1000";
-    cssService.getPage(param).then((res) => {
-      setBgColor(res.content);
-    });
-  }, []);
   useEffect(() => {
     setOpen(false);
     setTimeout(() => {

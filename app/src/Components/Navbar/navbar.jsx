@@ -10,7 +10,7 @@ import { decode } from "../../utils/token";
 import LoadingDetail from "../Loading&Popup/LoadingDetail";
 import clsx from "clsx";
 import s from "../../assets/css/app.module.css"
-export default function NavbarElement() {
+export default function NavbarElement({data}) {
   const [elements, setElements] = useState([]);
   const size = useSelector(sizeWindown);
   const decodedToken = decode();
@@ -68,7 +68,7 @@ export default function NavbarElement() {
         >
           {elements.length > 0 &&
             elements.map((e) => {
-              return <ElementDefault key={e.id} data={e} />;
+              return <ElementDefault key={e.id} dom={e} data={data}/>;
             })}
         </nav>
         {elements?.length == 0 && !init && <LoadingDetail />}

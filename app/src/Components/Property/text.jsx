@@ -6,12 +6,9 @@ import { handleCheckClass, getClass } from "../../utils/class";
 import { SaveOutlined } from "@ant-design/icons";
 import clsx from "clsx";
 import s from "../../assets/css/app.module.css"
-export default function Text({ dom }) {
+export default function Text({ dom, textColor, textSize, textAlign, textWeight  }) {
   const [open, setOpen] = useState(false);
-  const [textColor, setTextColor] = useState([]);
-  const [textSize, setTextSize] = useState([]);
-  const [textWeight, setTextWeight] = useState([]);
-  const [textAlign, setTextAlign] = useState([]);
+
   const [textContent, setTextContent] = useState(dom?.innerText);
   const cssService = new CssService();
   const handleOpenChange = (flag) => {
@@ -21,24 +18,6 @@ export default function Text({ dom }) {
     setOpen(false);
     setTextContent(dom?.textContent);
   }, [dom?.id]);
-  useEffect(() => {
-    var param1 = "query=name==text-color;library==tailwind&page=0&size=1000";
-    cssService.getPage(param1).then((res) => {
-      setTextColor(res.content);
-    });
-    var param2 = "query=name==text-size;library==tailwind&page=0&size=1000";
-    cssService.getPage(param2).then((res) => {
-      setTextSize(res.content);
-    });
-    var param3 = "query=name==text-weight;library==tailwind&page=0&size=1000";
-    cssService.getPage(param3).then((res) => {
-      setTextWeight(res.content);
-    });
-    var param4 = "query=name==text-align;library==tailwind&page=0&size=1000";
-    cssService.getPage(param4).then((res) => {
-      setTextAlign(res.content);
-    });
-  }, []);
   const handleChangeColor = (value) => {
     handleCheckClass(dom, textColor);
     dom.classList.add(value);

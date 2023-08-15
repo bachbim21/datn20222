@@ -14,7 +14,7 @@
     "antd": "^5.5.1",
     "buffer": "^6.0.3",
     "clsx": "^2.0.0",
-    "codemirror": "^5.65.13",
+    "codemirror": "file:5/addon/mode/simple",
     "dragula": "^3.7.3",
     "jwt-decode": "^3.1.2",
     "moment": "^2.29.4",

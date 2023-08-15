@@ -15,11 +15,8 @@ import java.util.List;
 
 public abstract class CrudApiEndpoint <T extends AbstractEntity, ID extends Serializable> {
     private static Logger logger = LoggerFactory.getLogger(CrudApiEndpoint.class);
-
     protected CrudService<T,ID> service;
-
     protected String baseUrl;
-
     public CrudApiEndpoint(CrudService service) {
         this.service = service;
     }
@@ -29,7 +26,6 @@ public abstract class CrudApiEndpoint <T extends AbstractEntity, ID extends Seri
         HttpHeaders headers = PaginationUtil.generatePaginationHttpHeaders(page,baseUrl);
         return new ResponseEntity<>(page.getContent(),headers, HttpStatus.OK);
     }
-
     @RequestMapping(method = RequestMethod.POST)
     public ResponseEntity create(@RequestBody T entity) {
         logger.info("Call Create API by {}", SecurityUtils.getCurrentUserLogin());

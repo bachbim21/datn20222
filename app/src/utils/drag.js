@@ -115,6 +115,7 @@ let dispatch = null;
 let rateScale = null;
 let dragged;
 var arrChildren = [];
+let library = null
 
 function setDispatch(useDispatch) {
   dispatch = useDispatch;
@@ -168,7 +169,14 @@ function dragStartCopy(e) {
   root.addEventListener("dragover", dragOver);
   root.addEventListener("dragenter", dragEnter);
   if (e.target.firstElementChild?.id.includes("root")) {
+    let type = e.target.getAttribute("data-type");
+    library = e.target.getAttribute("data-library");
     dragged = e.target.firstElementChild.cloneNode(true);
+    if(type && type.length > 0) {
+      dragged.type = type
+      dragged.disabled = false
+      dragged.value=null
+    }
   } else {
     dragged = e.target;
   }
@@ -245,8 +253,7 @@ function handleZoom(ev) {
   ev.preventDefault();
   const key = ev.which || ev.keyCode;
   rateScale = getScale();
-  console.log('aa');
-  if (key === "z" || key == "Z") {
+  if (key == "122") {
     debugger
     rateScale += 0.1;
     ev.style.transform = `scale(${rateScale.toFixed(2)})`;
@@ -310,7 +317,6 @@ function handleDrop(event) {
 }
 
 function SetDataElement(element) {
-  console.log(element);
   if (element?.id.includes('root')) {
     setSize(element).render();
   }
@@ -335,7 +341,7 @@ function setLocation(element, parent, rateScale) {
 function setSize(element) {
   switch (element.tagName.toLowerCase()) {
     case "div":
-      return new CustomElement(element,"100%", "50px", "inline-block", null, "bg-blue-600 text-white node");
+        return new CustomElement(element,"100%", "50px", "inline-block", null, "bg-blue-600 text-white node");
     case "h1":
       return new CustomElement(element,"200px", "30px", "inline-block", "Heading 1", "text-2xl text-black node");
     case "h2":
@@ -347,7 +353,7 @@ function setSize(element) {
     case "h5":
       return new CustomElement(element,"100px", "20px", "inline-block", "Heading 5", "text-sm text-black node");
     case "button":
-      return new CustomElement(element,"100px", "20px", "inline-block", "Heading 6", "text-xs text-black node");
+      return new CustomElement(element,"100px", "20px", "inline-block", "Button", "text-xs text-white bg-blue-500 rounded node");
     case "input":
       return new CustomElement(element,"100px", "20px", "inline-block", null, "border border-gray-900 node");
     case "p":

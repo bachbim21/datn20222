@@ -75,16 +75,16 @@ export default function Codemirror({ dom }) {
         <CodeMirror
           value={stringCode}
           options={{
-            mode: html(),
-            theme: "default",
+            mode: 'dark',
+            language: html.language,
             lineNumbers: true,
             indentUnit: 8,
-            readOnly: decodedToken ? true : false
+            readOnly: true
           }}
           clickThrough={true}
           onBeforeChange={handleEdit}
         />
-        <div className={clsx(s['ant-modal-footer'])}>
+        <div className='ant-modal-footer'>
           <Button
             className={clsx(s['inline-block'], s['mb-0'], s['mx-2'])}
             key="back"

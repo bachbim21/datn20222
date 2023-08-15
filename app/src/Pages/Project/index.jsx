@@ -87,6 +87,22 @@ export default function Project() {
         console.error("Failed to read pasted text:", error);
       });
   }
+  function ctrlX() {
+    if(currentFocusId =='root-page') return
+    let elementToCopy = document.getElementById(currentFocusId);
+    if (elementToCopy) {
+      let htmlCopy = elementToCopy.outerHTML;
+      navigator.clipboard
+        .writeText(htmlCopy)
+        .then(function() {
+          elementToCopy.remove()
+          message.info("Cut!")
+        })
+        .catch(function(error) {
+          console.error("Failed to read copy text:", error);
+        });
+    }
+  }
   function setLocationPasted(element, parent, rateScale) {
     let rect = parent.getBoundingClientRect();
     element.style.left = `${(
@@ -112,7 +128,7 @@ export default function Project() {
     rootDom.addEventListener("click", handleClick);
     rootDom.addEventListener("mouseover", handleMouseOver);
     rootDom.addEventListener("mouseleave", handleMouseLeave);
-    rootDom.addEventListener("keydown",handleZoom)
+    // rootDom.addEventListener("keydown",handleZoom)
   }
 
 
@@ -126,7 +142,7 @@ export default function Project() {
       } else if (key === 67 && ctrl && currentFocusId) {
         ctrlC()
       } else if (key === 88 && ctrl && currentFocusId) {
-        message.info("ctrl x");
+        ctrlX()
       }
     };
 
@@ -222,7 +238,7 @@ export default function Project() {
       id="page-content"
       className={clsx(s['bg-default'], s['ml-40'], s['relative'])}
     >
-      <NavbarElement />
+      <NavbarElement data={root}/>
       <div
         className={clsx(
           s['block'],
@@ -331,7 +347,7 @@ export default function Project() {
             </div>
           )}
       </div>
-      <Property />
+      <Property data={root}/>
     </div>
 
   );
